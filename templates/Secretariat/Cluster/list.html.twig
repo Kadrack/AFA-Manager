@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+<div class="container col col-lg-5">
+    <h1 class="text-center">Liste des commissions/groupes</h1>
+    <div class="text-center mb-3">
+        <button class="btn btn-sm btn-light text-center" onclick="load('{{ path('secretariat-clusterAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+    </div>
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th class="text-center" scope="col">Intitulé</th>
+                <th class="text-center" scope="col">Nombre de membres</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cluster in data.Clusters %}
+            <tr class="table-active" onclick="window.open('{{ path('secretariat-clusterIndex', {'cluster': cluster.getClusterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                <td class="align-middle">{{ cluster.getClusterName() }}</td>
+                <td class="align-middle text-center">{{ cluster.getClusterActiveMembers|length }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

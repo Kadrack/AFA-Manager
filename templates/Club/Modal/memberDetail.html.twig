@@ -1,0 +1,51 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Détails pratiquant</h5>
+        </div>
+        <div class="modal-body">
+            <div class="card text-white bg-primary container col gx-0">
+                <div class="card-header text-center user-select-none">
+                    <h2>{{ data.Member.getMemberFirstname|title }} {{ data.Member.getMemberName|title }}</h2>
+                </div>
+                <div class="card-body row align-items-center">
+                    <div class="col-3 text-center"><img class="rounded img-fluid user-select-none" alt="" src="{{ data.Member.getMemberPhoto() }}" /></div>
+                    <div class="col-9 text-center">
+                        <div class="row">
+                            <div class="col-4 text-end px-1"><strong>N° Licence</strong></div>
+                            <div class="col text-start px-1">{{ data.Member.getMemberId }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-end px-1"><strong>Grade</strong></div>
+                            <div class="col text-start px-1">{{ data.Member.getMemberLastGradeName }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-end px-1"><strong>Club</strong></div>
+                            <div class="col text-start px-1">{{ data.Member.getMemberActualClub.getClubId }} - {{ data.Member.getMemberActualClub.getClubName|title }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-end px-1"><strong>Née le</strong></div>
+                            <div class="col text-start px-1">{{ data.Member.getMemberBirthday()|date("d/m/Y") }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-end px-1"><strong>Sexe</strong></div>
+                            <div class="col text-start px-1">{{ data.Member.getMemberSexName }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if data.Source == 1 or data.Source == 2 %}
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('member-index', {'member': data.Member.getMemberId}) }}">Accéder aux détails complet</a>
+            </div>
+            {% elseif data.Source == 3 %}
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('member-licencesFormPrint', {'member': data.Member.getMemberId}) }}"><i class="bi-download"></i> Formulaire de renouvellement</a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+        </div>
+    </div>
+</div>

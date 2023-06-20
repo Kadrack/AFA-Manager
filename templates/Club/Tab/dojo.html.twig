@@ -1,0 +1,82 @@
+<div class="container col col-lg-8">
+    <h4 class="text-center">Professeur(s) & Assistant(s){% if access.check('Club-TeacherAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('club-teachersAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Titre</th>
+                <th scope="col">Type</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Grade</th>
+                <th scope="col">Titre Enseignement</th>
+                <th scope="col">Formation ADEPS</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for teacher in data.Club.getClubTeachers %}
+            <tr class="table-active"{% if access.check('Club-TeacherEdit') %} onclick="load('{{ path('club-teachersEdit', {'club': data.Club.getClubId, 'teacher': teacher.getClubTeacherId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td class="align-middle">{{ teacher.getClubTeacherTitleDisplay }}</td>
+                <td class="align-middle">{{ teacher.getClubTeacherTypeDisplay }}</td>
+                <td class="align-middle">{{ teacher.getClubTeacherFirstnameDisplay|title }}</td>
+                <td class="align-middle">{{ teacher.getclubTeacherNameDisplay|title }}</td>
+                <td class="align-middle">{{ teacher.getClubTeacherGradeDisplay }}</td>
+                <td class="align-middle">{{ teacher.getClubTeacherTitleAikikaiDisplay }}</td>
+                <td class="align-middle">{{ teacher.getClubTeacherTitleAdepsDisplay }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="text-center">Dojo(s){% if access.check('Club-DojoAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('club-dojosAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Salle</th>
+                <th scope="col">Adresse</th>
+                <th scope="col">Code postal</th>
+                <th scope="col">Localité</th>
+                <th scope="col">Tatamis (m²)</th>
+                <th scope="col">DEA</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for address in data.Club.getClubDojos %}
+            <tr class="table-active"{% if access.check('Club-DojoEdit') %} onclick="load('{{ path('club-dojosEdit', {'club': data.Club.getClubId, 'dojo': address.getClubDojoId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td class="align-middle">{{ address.getClubDojoName|title }}</td>
+                <td class="align-middle">{{ address.getClubDojoStreet|title }}</td>
+                <td class="align-middle">{{ address.getClubDojoZip }}</td>
+                <td class="align-middle">{{ address.getClubDojoCity|title }}</td>
+                <td class="align-middle">{{ address.getClubDojoTatamis }}</td>
+                <td class="align-middle">{{ address.getClubDojoDEADisplay }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="text-center">Horaire des cours{% if access.check('Club-ClassAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('club-classAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Jour</th>
+                <th scope="col">Début</th>
+                <th scope="col">Fin</th>
+                <th scope="col">Type</th>
+                <th scope="col">Salle</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for class in data.Club.getClubClasses %}
+            <tr class="table-active"{% if access.check('Club-ClassEdit') %} onclick="load('{{ path('club-classEdit', {'club': data.Club.getClubId, 'class': class.getClubClassId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td class="align-middle">{{ class.getClubClassDayDisplay }}</td>
+                <td class="align-middle">{{ class.getClubClassStartingHour|date('H:i') }}</td>
+                <td class="align-middle">{{ class.getClubClassEndingHour|date('H:i') }}</td>
+                <td class="align-middle">{{ class.getClubClassTypeDisplay }}</td>
+                <td class="align-middle">{{ class.getClubClassDojoName }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

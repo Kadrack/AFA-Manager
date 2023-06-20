@@ -1,0 +1,27 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">Ajouter un membre</h5>
+        </div>
+        <div class="modal-body">
+            {% if data.Cluster.getClusterUseTitle %}{{ form_row(form.ClusterMemberTitle) }}{% endif %}
+            <h6 class="text-center mt-0 mb-3">Si le membre à ajouter fait partie de l'AFA</h6>
+            {{ form_row(form.ClusterMember) }}
+            <h6 class="text-center mt-0 mb-3">Si le membre à ajouter est un utilisateur</h6>
+            {{ form_row(form.ClusterMemberUser) }}
+            <h6 class="text-center mt-3 mb-3">Si le membre à ajouter ne fait pas parti de l'AFA</h6>
+            {{ form_row(form.ClusterMemberFirstname) }}
+            {{ form_row(form.ClusterMemberName) }}
+            <hr class="mt-1 mb-1">
+            {% if data.Cluster.getClusterUseEmail %}{{ form_row(form.ClusterMemberEmail) }}{% endif %}
+            {{ form_row(form.ClusterMemberDateIn) }}
+            {{ form_row(form.ClusterMemberDateOut) }}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

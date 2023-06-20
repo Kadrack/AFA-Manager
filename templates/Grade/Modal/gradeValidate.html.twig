@@ -1,0 +1,26 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">{% if gradeSession.getGradeSessionType == 1 %}Organisation session et résultats{% else %}Correction promotion{% endif %}</h5>
+        </div>
+        {% if gradeSession.getGradeSessionType == 1 %}
+        <div class="modal-body">
+            <h6>Commentaire inscription</h6>
+            <p class="text-white">{% if candidate.getGradeSessionCandidateComment is null %}Aucun{% else %}{{ candidate.getGradeSessionCandidateComment }}{% endif %}</p>
+            <h6>Organisation de la session</h6>
+            {{ form_row(form.GradeSessionCandidateJury) }}
+            {{ form_row(form.GradeSessionCandidatePosition) }}
+            <h6>Résultats</h6>
+            {{ form_row(form.GradeSessionCandidateResult) }}
+            <br />
+            {{ form_widget(form.GradeSessionCandidateStaffComment) }}
+        </div>
+        {% endif %}
+        <div class="modal-footer">
+            {% if gradeSession.getGradeSessionType == 2 %}<div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>{% else %}{{ form_widget(form.Submit) }}{% endif %}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

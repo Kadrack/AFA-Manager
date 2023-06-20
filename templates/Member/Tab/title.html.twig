@@ -1,0 +1,45 @@
+<div class="container col col-lg-8">
+    <h4 class="text-center mb-3">Titres{% if access.check('Member-TitleAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('member-titlesAdd', {'member': data.Member.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
+    {% if data.Member.getMemberTitles|length > 0 %}
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Titre</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">N° Diplôme</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for title in data.Member.getMemberTitles() %}
+                <tr class="table-active"{% if access.check('Member-TitleEdit') %} onclick="load('{{ path('member-titlesEdit', {'member': data.Member.getMemberId, 'title': title.getTitleId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <td>{{ listData.getTitleAikikai(title.getTitleRank) }}</td>
+                    <td>{{ title.getTitleDate|date("d/m/Y") }}</td>
+                    <td>{{ title.getTitleCertificate }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <h4 class="text-center mb-3">Formations{% if access.check('Member-FormationAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('member-formationsAdd', {'member': data.Member.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
+    {% if data.Member.getMemberFormations|length > 0 %}
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Intitulé</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">N° Diplôme</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for formation in data.Member.getMemberFormations() %}
+                <tr class="table-active"{% if access.check('Member-FormationEdit') %} onclick="load('{{ path('member-formationsEdit', {'member': data.Member.getMemberId, 'formation': formation.getFormationId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <td>{{ listData.getFormation(formation.getFormationRank) }}</td>
+                    <td>{{ formation.getFormationDate|date("d/m/Y") }}</td>
+                    <td>{{ formation.getFormationCertificate }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>

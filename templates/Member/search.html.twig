@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    {% if app.user.userMember is defined and app.user.userMember is not null %}<div class="text-center"><a class="btn btn-light" href="{{ path('member-index', {'member': app.user.userMember.memberId}) }}">Voir ma fiche</a></div>{% endif %}
+    <div class="container text-center col col-lg-4">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+
+    {% if data.Results is defined and data.Results is not null %}
+    <h2>Résultats de la recherche</h2>
+    <table class="table table-sm table-hover unselectable">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Licence n°</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Club</th>
+                <th scope="col">Echéance</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for member in data.Results %}
+            <tr onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                <td class="align-middle">{{ loop.index }}</td>
+                <td class="align-middle"><img alt="" src="{{ member.Photo }}" /></td>
+                <td class="align-middle">{{ member.Id }}</td>
+                <td class="align-middle">{{ member.FirstName|title }}</td>
+                <td class="align-middle">{{ member.Name|title }}</td>
+                <td class="align-middle">{{ member.ClubId }} - {{ member.Club|title }}</td>
+                <td class="align-middle">{% if member.Deadline == 'Inconnue' %}Inconnue{% else %}{{ member.Deadline|date("d/m/Y") }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

@@ -1,0 +1,27 @@
+<div class="container col col-lg-8">
+    {# <h4 class="text-center">Nombre d'heure de cours depuis le dernier grade : {{ data.LessonCount.Sum/60 }} h</h4> #}
+    {% for grade in data.Stages.History %}
+        <h4 class="text-center">{{ listData.grade(grade.Rank) }} ({{ grade.Total }} h)</h4>
+
+        {% if grade.Stage is defined %}
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Durée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for stage in grade.Stage %}
+                    <tr class="table-active">
+                        <td>{{ stage.Date|date("d/m/Y") }}</td>
+                        <td>{{ stage.Name }}</td>
+                        <td>{{ stage.Duration }} h</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endfor %}
+</div>

@@ -1,0 +1,18 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Modifier détails réseaux sociaux</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_start(form) }}
+            {{ form_row(form.ClubFacebook) }}
+            {{ form_row(form.ClubInstagram) }}
+            {{ form_row(form.ClubYoutube) }}
+            <div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>
+            {{ form_end(form) }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>

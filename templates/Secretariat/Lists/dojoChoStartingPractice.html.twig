@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h1>Liste années de pratique Dojo-Cho</h1>
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Club</th>
+                <th scope="col">Année de pratique</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dojoCho in list %}
+            <tr class="table-active">
+                <td class="align-middle">{{ dojoCho.Firstname|title }}</td>
+                <td class="align-middle">{{ dojoCho.Name|title }}</td>
+                <td class="align-middle">{{ dojoCho.ClubName|title }}</td>
+                <td class="align-middle">{{ date()|date("Y") - dojoCho.Starting|date("Y") }} ans</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

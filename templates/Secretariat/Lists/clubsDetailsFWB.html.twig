@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Liste pour la Fédération Wallonie Bruxelles</h1>
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th class="text-center align-middle" scope="col">Club n°</th>
+                <th class="text-center align-middle" scope="col">Nom</th>
+                <th class="text-center align-middle" scope="col">Adresse du siège</th>
+                <th class="text-center align-middle" scope="col">Adresse dojo</th>
+                <th class="text-center align-middle" scope="col">Président</th>
+                <th class="text-center align-middle" scope="col">Secrétaire</th>
+                <th class="text-center align-middle" scope="col">Trésorier</th>
+                <th class="text-center align-middle" scope="col">Inconnue</th>
+                <th class="text-center align-middle" scope="col">Professeurs</th>
+                <th class="text-center align-middle" scope="col">Adresse de correspondance</th>
+                <th class="text-center align-middle" scope="col">Email</th>
+                <th class="text-center align-middle" scope="col">DEA</th>
+                <th class="text-center align-middle" scope="col">Formation au DEA</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for club in data %}
+            <tr class="table-active">
+                <td class="align-middle">{{ club.Id }}</td>
+                <td class="align-middle">{{ club.Name|title }}</td>
+                <td class="align-middle">{{ club.Address|raw }}</td>
+                <td class="align-middle">{% for dojo in club.Dojo %}{{ dojo|raw }}<br />{% endfor %}</td>
+                <td class="align-middle">{{ club.President|title }}</td>
+                <td class="align-middle">{{ club.Secretary|title }}</td>
+                <td class="align-middle">{{ club.Treasurer|title }}</td>
+                <td class="align-middle">A préciser</td>
+                <td class="align-middle">{% for teacher in club.Teacher %}{{ teacher|title }}<br />{% endfor %}</td>
+                <td class="align-middle">{{ club.Address|raw }}</td>
+                <td class="align-middle">{{ club.Email }}</td>
+                <td class="align-middle">{% if club.DEA == 1 %}Oui{% else %}Non{% endif %}</td>
+                <td class="align-middle">Inconnue</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

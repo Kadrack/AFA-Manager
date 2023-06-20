@@ -1,0 +1,122 @@
+<html lang="fr">
+<head>
+    <title>{{ data.Subject }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div>{{ data.Content|raw }}</div>
+
+    {% if data.Official %}
+        <table style="background: #ffffff; width: 263px; padding: 0; font-size: 12px !important; font-family: 'Montserrat', sans-serif !important;">
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr style="width: 263px;">
+                <td><img src="https://caractere-web.be/signaturemail/afa/images/logo-small.png" width="100%" height="108" alt=""></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <h2 style="color: #02324f; font-weight: 800; text-transform: uppercase; font-size:20px;">
+                        <strong style="font-weight:600;">{{ data.Firstname }} {{ data.Name }}</strong><br />
+                        {% if data.Title is not null %}<span style="font-weight: 200; text-transform: capitalize; font-size: 13px;">{{ listData.getClusterTitle(data.Title) }}</span><br />{% endif %}
+                        {% if data.Cluster is not null %}<span style="font-weight: 200; font-size: 13px;">{{ data.Cluster }}</span>{% endif %}
+                    </h2>
+                </td>
+            </tr>
+            {% if data.Phone is not null %}
+                <tr>
+                    <td style="padding: 0 1.5rem;">
+                        <a href="tel:{{ data.Phone }}" style="color: #21EFCC; font-size: 18px; font-weight: 800; text-decoration: none !important;">T. {{ data.Phone }}</a>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9;"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <p style="color: #21EFCC; font-size: 13px; font-weight: 200;">
+                        Tour Sablon - Rue Joseph Stevens 7<br />
+                        B-1000 Bruxelles
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9;"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr style="display: block; border-right: 1px solid #e8eae9; margin-right: 4rem;">
+                <td style="padding: 0 1.5rem; margin-right: 3rem !important; display: inline-block; height: 20px">
+                    <a style="color:#21EFCC; font-size:20px; text-decoration: none !important;" href="https://www.aikido.be/">
+                        www.<strong style="color:#02324f;font-weight:600;">aikido</strong>.be
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 0 0 1.5rem;">
+                    <a style="text-decoration: none !important;" href="https://www.instagram.com/afa_aikido/">
+                        <img src="https://caractere-web.be/signaturemail/afa/images/img_rs_300_01.png" width="30" height="30" alt="">
+                    </a>
+                    <a style="text-decoration: none !important;" href="https://www.youtube.com/channel/UClEnAVJiY2eeFE48pyuWSBQ">
+                        <img src="https://caractere-web.be/signaturemail/afa/images/img_rs_300_02.png" width="30" height="30" alt="">
+                    </a>
+                    <a style="text-decoration: none !important;" href="https://www.facebook.com/aikido.be">
+                        <img src="https://caractere-web.be/signaturemail/afa/images/img_rs_300_03.png" width="30" height="30" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9;"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr style="width: 263px;">
+                <td style="padding: 0 1.5rem;">
+                    <img src="https://caractere-web.be/signaturemail/afa/images/img_logo_300.jpg" width="262.5" alt="">
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px;border-bottom: 1px solid #e8eae9"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <span>
+                        <p style="color: #02324f; font-size: 9px; text-align: justify;">
+                            Avant d'imprimer une copie de cet e-mail, veuillez considérer l'environnement.
+                            Ce message et toutes les pièces jointes sont confidentiels et destinés uniquement à la ou aux adresse désignées.
+                            Si vous avez reçu ce message par erreur, veuillez en informer immédiatement l'expéditeur avant de le supprimer.
+                            Toutes modification, édition utilisation ou diffusion non autorisée est interdite.
+                            L'expéditeur ne saurait être responsable de ce message s'il a été modifié, altéré, falsifié, infecté par un virus ou encore édité ou diffusé sans autorisation
+                        </p>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9"></td>
+            </tr>
+        </table>
+    {% endif %}
+</body>
+</html>

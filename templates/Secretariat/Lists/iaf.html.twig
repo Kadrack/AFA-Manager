@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Liste IAF</h1>
+    <div class="container col col-lg-8">
+        <h1 class="text-center">Entre 25 et 45 ans au moins Nidan et maximum Yondan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Date du Grade</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Date de naissance</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in data.List.First %}
+                <tr class="table-active" onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ member.FirstName|title }}</td>
+                    <td class="align-middle">{{ member.Name|title }}</td>
+                    <td class="align-middle">{{ listData.getGrade(member.Grade) }}</td>
+                    <td class="align-middle">{{ member.GradeDate|date('d/m/Y') }}</td>
+                    <td class="align-middle">{{ member.Email }}</td>
+                    <td class="align-middle">{{ member.Birthday|date('d/m/Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h1 class="text-center">Entre 18 et 25 ans au moins Shodan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Date du Grade</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Date de naissance</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in data.List.Second %}
+                <tr class="table-active" onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ member.FirstName|title }}</td>
+                    <td class="align-middle">{{ member.Name|title }}</td>
+                    <td class="align-middle">{{ listData.getGrade(member.Grade) }}</td>
+                    <td class="align-middle">{{ member.GradeDate|date('d/m/Y') }}</td>
+                    <td class="align-middle">{{ member.Email }}</td>
+                    <td class="align-middle">{{ member.Birthday|date('d/m/Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

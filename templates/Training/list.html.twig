@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="container col col-lg-5">
+        <h1 class="text-center">Liste des stages {% if access.check('Training-Add') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('training-trainingAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h1>
+
+        <select class="form-select" onchange="window.open('{{ path('training-list') }}' + '/' + this.value, '_self')">
+            {% for year in data.YearList %}
+            <option value="{{ year }}" {% if year == data.Year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+
+        <table id="stageList" class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Stage</th>
+                    <th scope="col"># Cours</th>
+                    {% if access.check('Training-TotalPayment') %}<th scope="col">Caisse</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% if access.check('Training-TotalPayment') %}{% set total = 0 %}{% endif %}
+            {% for training in data.Trainings %}
+                <tr class="table-active" {% if access.check('Training-Index') %}onclick="window.open('{{ path('training-index', {'training': training.getTrainingId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ training.getTrainingFirstDate|date("d/m/Y") }}</td>
+                    <td class="align-middle">{{ training.getTrainingName }}</td>
+                    <td class="align-middle">{{ training.getTrainingSessionsTotal }}</td>
+                    {% if access.check('Training-TotalPayment') %}<td class="align-middle text-end">{{ ((training.getTrainingPaymentsTotal.Cash + training.getTrainingPaymentsTotal.Card + training.getTrainingPaymentsTotal.Transfert) / 100)|number_format(2, ',', '.') }} €</td>{% endif %}
+                </tr>
+                {% if access.check('Training-TotalPayment') %}{% set total = total + ((training.getTrainingPaymentsTotal.Cash + training.getTrainingPaymentsTotal.Card + training.getTrainingPaymentsTotal.Transfert) / 100) %}{% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if access.check('Training-TotalPayment') %}
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">Total pour l'année</th>
+                    <th scope="col" class="text-center">{{ total|number_format(2, ',', '.') }} €</th>
+                </tr>
+            </thead>
+        </table>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

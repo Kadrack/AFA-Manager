@@ -1,0 +1,48 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            {% if data == 1 %}
+            <h5 class="modal-title">Modifier la photo</h5>
+            {% elseif data == 2 %}
+            <h5 class="modal-title">Modifier le nom</h5>
+            {% elseif data == 3 %}
+            <h5 class="modal-title">Modifier la date de naissance</h5>
+            {% elseif data == 4 %}
+            <h5 class="modal-title">Modifier le sexe</h5>
+            {% elseif data == 5 %}
+            <h5 class="modal-title">Modifier l'adresse</h5>
+            {% elseif data == 6 %}
+            <h5 class="modal-title">Modifier le numéro de téléphone</h5>
+            {% elseif data == 7 %}
+            <h5 class="modal-title">Modifier l'email</h5>
+            {% endif %}
+        </div>
+        <div class="modal-body">
+            {% if data == 1 %}
+                {{ form_widget(form.MemberPhoto) }}
+            {% elseif data == 2 %}
+                {{ form_row(form.MemberFirstname) }}
+                {{ form_row(form.MemberName) }}
+            {% elseif data == 3 %}
+                {{ form_widget(form.MemberBirthday) }}
+            {% elseif data == 4 %}
+                {{ form_row(form.MemberSex) }}
+            {% elseif data == 5 %}
+                {{ form_row(form.MemberAddress) }}
+                {{ form_row(form.MemberZip) }}
+                {{ form_row(form.MemberCity) }}
+                {{ form_row(form.MemberCountry) }}
+            {% elseif data == 6 %}
+                {{ form_row(form.MemberPhone) }}
+            {% elseif data == 7 %}
+                {{ form_row(form.MemberEmail) }}
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

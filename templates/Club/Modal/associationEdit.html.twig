@@ -1,0 +1,22 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Modifier détails association</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_start(form) }}
+            {{ form_row(form.ClubName) }}
+            {{ form_row(form.ClubType) }}
+            {{ form_row(form.ClubAddress) }}
+            {{ form_row(form.ClubZip) }}
+            {{ form_row(form.ClubCity) }}
+            {{ form_row(form.ClubIban) }}
+            {{ form_row(form.ClubBceNumber) }}
+            <div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>
+            {{ form_end(form) }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>

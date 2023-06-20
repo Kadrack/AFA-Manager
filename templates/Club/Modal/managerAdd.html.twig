@@ -1,0 +1,20 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">Ajouter un professeur</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_row(form.ClubManagerIsMain) }}
+            <h6 class="text-center">Si le gestionnaire est membre de l'AFA</h6>
+            {{ form_row(form.ClubManagerMember) }}
+            <h6 class="text-center">Si le gestionnaire n'est pas membre</h6>
+            {{ form_row(form.ClubManagerLogin) }}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

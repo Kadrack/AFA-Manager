@@ -1,0 +1,93 @@
+<div style="background-color:#e7e7e7;">
+    <table style="background: #ffffff; max-width: 600px; width: 100%; margin: 0 auto">
+        <tbody>
+            {% if address is defined %}
+            <tr style="height: 100px">
+                <td style="padding-left: 20px; text-align: left;">
+                    <span style="color: #8b94a7; font-size: 16px;">{{ data.getNewsletterTitle }}</span>
+                </td>
+                <td style="padding-right: 20px; text-align: right;">
+                    <span style="color: #8b94a7; font-size: 16px;">
+                        <a href="https://afamanager.aikido.be/newsletter/voir/{{ data.getNewsletterId }}" style="color: inherit; text-decoration: none;" target="_blank">Voir la version en ligne</a>
+                    </span>
+                </td>
+            </tr>
+            {% endif %}
+            <tr style="height: 100px">
+                <td colspan="2" style="background:#1feecb; width: 183px; text-align: center">
+                    <a href="https://www.aikido.be/" target="_blank">
+                        <img alt="" src="https://www.aikido.be/wp-content/uploads/2022/01/logo-footer-1.png">
+                    </a>
+                </td>
+            </tr>
+            <tr style="height: 250px;">
+                <td colspan="2" style="background: url('https://www.aikido.be/wp-content/uploads/2022/07/Header_newsletter_V2.jpg'); width: 183px; text-align: center">
+                    <span style="font-size: 56px; color: #ffffff;">
+                        <b>Newsletter</b>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background: #ffffff; text-align: center; padding-top: 30px">
+                    <span style="color: #0c253c; font-size: 40px;">
+                        <b>{{ data.getNewsletterTitle }}</b>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background: #ffffff; text-align: center; padding-top: 30px; padding-bottom: 30px">
+                    <span style="color: #5e6977; font-size: 16px; line-height: 25px;">
+                        {{ data.getNewsletterText|raw }}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background: #0c253c; text-align: center; padding-top: 30px; padding-bottom: 30px">
+                    <span style="color: #ffffff; font-size: 29px; padding-bottom: 20px;">
+                        <b>L'Aïkido, un art martial pour tous</b>
+                    </span>
+                    <br />
+                    <br />
+                    <span style="color: #ffffff; font-size: 14px; background: #1feecb; padding: 15px 25px 15px 25px; border-radius: 30px;">
+                        <a href="https://www.aikido.be/" style="text-decoration: none;" target="_blank">
+                            <b>Visitez notre site</b>
+                        </a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background: #0c253c; font-size: 0; padding-left: 25px; padding-right: 25px;">
+                    <p style="border-top: solid 2px #E6E6E6; font-size: 1px; margin: 0 auto; width: 100%;"></p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background: #0c253c; text-align: center; padding-top: 20px; padding-bottom: 20px; color: #ffffff">
+                    <span style="font-size: 20px; line-height: 20px;">
+                        <b>Association Francophone d'Aïkido</b>
+                    </span><br />
+                    <span style="font-size: 15px; line-height: 20px;">Rue Joseph Stevens 7</span><br />
+                    <span style="font-size: 15px; line-height: 20px;">B-1000 Bruxelles</span><br />
+                    <span style="font-size: 15px; line-height: 20px; color: #1feecb;"><b>T. </b></span><span style="font-size: 15px; line-height: 20px;">+32 (0)2 537 47 62</span><br />
+                    <span style="font-size: 15px; line-height: 20px; color: #1feecb;"><b>M. </b></span><span style="font-size: 15px; line-height: 20px;">afa@aikido.be</span><br />
+                    <br />
+                    <a href="https://www.facebook.com/aikido.be" style="background: #1feecb; border-radius: 100%; text-decoration: none;" target="_blank">
+                        <img height="25" src="https://www.mailjet.com/images/theme/v1/icons/ico-social/facebook.png" alt="">
+                    </a>&nbsp
+                    <a href="https://www.instagram.com/afa_aikido/" style="background: #1feecb; border-radius: 50%; text-decoration: none;" target="_blank">
+                        <img height="25" src="https://www.mailjet.com/images/theme/v1/icons/ico-social/instagram.png" alt="">
+                    </a>&nbsp
+                    <a href="https://www.youtube.com/channel/UClEnAVJiY2eeFE48pyuWSBQ" style="background: #1feecb; border-radius: 50%; text-decoration: none;" target="_blank">
+                        <img height="25" src="https://www.mailjet.com/images/theme/v1/icons/ico-social/youtube.png" alt="">
+                    </a>
+                </td>
+            </tr>
+            {% if address is defined %}
+            <tr>
+                <td colspan="2" style="font-size: 16px; padding-top: 20px; padding-bottom: 20px; text-align: center;">
+                    <span style="line-height: 22px; color: #8b94a7;">Cet email a été envoyé à {{ address.getNewsletterSubscriptionEmail }}, <a href="https://afamanager.aikido.be/newsletter/{{ data.getNewsletterId }}/desabonner/{{ address.getNewsletterSubscriptionId }}/{{ address.getNewsletterSubscriptionUniqueId }}" style="color:inherit;text-decoration:none;" target="_blank">cliquez ici pour vous désabonner</a>.</span><br />
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>

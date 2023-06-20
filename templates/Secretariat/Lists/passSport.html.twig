@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h2 class="text-center">Liste des Pass Sport ({{ list|length }}/376)</h2>
+    <div class="text-center"><a class="btn btn-sm btn-light" href="{{ path('secretariat-passSportDownload') }}"><i class="bi-download"></i> Télécharger la liste</a></div>
+    <div class="container col col-lg-6">
+        <table class="table table-sm table-hover user-select-none">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Licence n°</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Club</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in list %}
+                <tr class="table-active">
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ member.Id }}</td>
+                    <td class="align-middle">{{ member.FirstName|title }}</td>
+                    <td class="align-middle">{{ member.Name|title }}</td>
+                    <td class="align-middle">{{ member.ClubId }} - {{ member.Club|title }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

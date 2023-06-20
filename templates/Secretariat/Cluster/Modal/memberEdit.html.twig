@@ -1,0 +1,36 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Edition membre commission/groupe</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_start(formEdit) }}
+            {% if formEdit.ClusterMemberTitle is defined %}{{ form_row(formEdit.ClusterMemberTitle) }}{% endif %}
+            {% if formEdit.ClusterMember is defined %}
+                {{ form_row(formEdit.ClusterMember) }}
+            {% elseif formEdit.ClusterMemberUser is defined %}
+                {{ form_row(formEdit.ClusterMemberUser) }}
+            {% else %}
+                {{ form_row(formEdit.ClusterMemberFirstname) }}
+                {{ form_row(formEdit.ClusterMemberName) }}
+            {% endif %}
+            {% if formEdit.ClusterMemberEmail is defined %}{{ form_row(formEdit.ClusterMemberEmail) }}{% endif %}
+            {{ form_row(formEdit.ClusterMemberDateIn) }}
+            {{ form_row(formEdit.ClusterMemberDateOut) }}
+            <div class="d-grid gap-0">{{ form_widget(formEdit.Submit) }}</div>
+            {{ form_end(formEdit) }}
+        </div>
+        <div class="modal-header">
+            <h5 class="modal-title">Suppression</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_start(formDelete) }}
+            {{ form_row(formDelete.Delete) }}
+            <div class="d-grid gap-0">{{ form_widget(formDelete.Submit) }}</div>
+            {{ form_end(formDelete) }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>

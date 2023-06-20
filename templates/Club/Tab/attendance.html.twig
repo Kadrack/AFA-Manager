@@ -1,0 +1,30 @@
+<h3 class="text-center">Liste des cours</h3>
+
+<div class="text-center mb-1">
+    <button class="btn btn-sm btn-light mb-1" onclick="load('{{ path('club-lessonOld', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Voir les anciennes dates</button><br />
+    {% for lesson in data.Club.getClubClasses %}
+        <button class="btn btn-sm btn-light mb-1" onclick="window.open('{{ path('club-lessonAdd', {'club': data.Club.getClubId, 'number': loop.index}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ lesson.getClubClassDayDisplay }} {{ lesson.getClubClassStartingHour|date('H:i') }}</button>
+    {% endfor %}<br />
+    <button class="btn btn-sm btn-light" onclick="load('{{ path('club-lessonAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Autres jours</button>
+</div>
+
+<div class="container col col-lg-4">
+    <table id="MembersList" class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center">Date</th>
+                <th scope="col" class="text-center">Début</th>
+                <th scope="col" class="text-center"># pratiquants</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lesson in data.Lesson %}
+                <tr class="table-active" onclick="window.open('{{ path('club-lessonIndex', {'club': data.Club.getClubId, 'lesson': lesson.getLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="text-center">{{ lesson.getLessonDate|date("d/m/Y") }}</td>
+                    <td class="text-center">{{ lesson.getLessonStartingHour|date('H:i') }}</td>
+                    <td class="text-center">{{ lesson.getLessonAttendances|length }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

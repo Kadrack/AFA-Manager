@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>formulaire</title>
+    <meta http-equiv="Content-Type" content="text/html">
+
+    <style>
+        body
+        {
+            font-size: 18px;
+        }
+
+        h1
+        {
+            margin: 0;
+        }
+
+        table
+        {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .title
+        {
+            background: #686f74;
+            border: 1px solid black;
+            color: white;
+        }
+
+        .content
+        {
+            border: 1px solid black;
+        }
+
+        .text-center
+        {
+            text-align: center;
+        }
+
+        .text-left
+        {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="text-center">Liste des candidats de la session d'examen du {{ session.gradeSessionDate|date('d/m/Y') }}</h1>
+    <table>
+        <tr>
+            <td class="text-center title"><strong>Grade présenté</strong></td>
+            <td class="text-center title"><strong>Prénom</strong></td>
+            <td class="text-center title"><strong>Nom</strong></td>
+            <td class="text-center title"><strong>Age</strong></td>
+            <td class="text-center title"><strong>Professeur</strong></td>
+        </tr>
+        {% for member in members %}
+        <tr>
+            <td class="content">{{ listData.getGrade(member.Grade) }}</td>
+            <td class="content">{{ member.Firstname|title }}</td>
+            <td class="content">{{ member.Name|title }}</td>
+            <td class="content">{{ date().diff(date(member.Birthday)).y }} ans</td>
+            <td class="content">{% for teacher in member.Teachers %}{{ teacher.Firstname|title }} {{ teacher.Name|title }}{% if loop.index < member.Teachers|length %}, {% endif %}{% endfor %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br />
+    <div class="text-left">Liste à l'usage exclusif des membres de la commission technique lors de la session d'examens à {{ session.gradeSessionCity }} le {{ session.gradeSessionDate|date('d/m/Y') }}</div>
+    <div class="text-left">Imprimé par {{ user|title }} le {{ date()|date('d/m/Y') }}</div>
+</body>
+</html>

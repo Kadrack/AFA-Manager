@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h2 class="text-center">Liste des timbres à imprimer</h2>
+
+    <div class="container col col-lg-6">
+        {% for club in list %}
+        <h2>{{ club.0.getMemberLicenceClub.getClubId }} - {{ club.0.getMemberLicenceClub.getClubName|title }}</h2>
+
+        <table class="table table-sm table-hover user-select-none" onclick="window.open('{{ path('club-index', {'club': club.0.getMemberLicenceClub.getClubId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Encodage</th>
+                <th scope="col">Licence n°</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Echéance</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for member in club %}
+                <tr class="table-active">
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{% if member.getMemberLicenceUpdate != null %}{{ member.getMemberLicenceUpdate|date("d/m/Y") }}{% else %}--/--/----{% endif %}</td>
+                    <td class="align-middle">{{ member.getMemberLicence.getMemberId }}</td>
+                    <td class="align-middle">{{ member.getMemberLicence.getMemberFirstName|title }}</td>
+                    <td class="align-middle">{{ member.getMemberLicence.getMemberName|title }}</td>
+                    <td class="align-middle">{% if member.getMemberLicenceDeadline != null %}{{ member.getMemberLicenceDeadline|date("d/m/Y") }}{% else %}--/--/----{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>{% block title %}AFA-Manager{% endblock %}</title>
+
+        <link rel="icon" type="image/svg" href="{{ asset('images/favicon.svg') }}" />
+
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}" />
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+        <style>
+            @media print
+            {
+                body
+                {
+                    display: none;
+                }
+            }
+        </style>
+
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ path('common-index') }}">AFA-Manager</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarColor01">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('newsletter-index') }}">Newsletter</a>
+                        </li>
+                        {% if access.check('Member-Menu') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('member-search') }}">Membre</a>
+                        </li>
+                        {% endif %}
+                        {% if access.check('Club-Menu') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('club-list') }}">Club</a>
+                        </li>
+                        {% endif %}
+                        {% if access.check('Training-Menu') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('training-list') }}">Stages</a>
+                        </li>
+                        {% endif %}
+                        {% if access.check('Grade-Menu') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('grade-list') }}">Grades</a>
+                        </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_USER') %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="{{ path('statistics-index') }}">Statistiques</a>
+                            </li>
+                        {% endif %}
+                        {% if access.check('Admin-Menu') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gestion</a>
+                            <div class="dropdown-menu">
+                                {% if access.check('Admin-Login') %}<a class="dropdown-item" href="{{ path('secretariat-loginIndex') }}">Accès non membres</a>{% endif %}
+                                {% if access.check('Admin-Cluster') %}<a class="dropdown-item" href="{{ path('secretariat-clusterList') }}">Groupes</a>{% endif %}
+                                {% if access.check('Admin-Mailing') %}<a class="dropdown-item" href="{{ path('secretariat-mailingIndex') }}">Mailing</a>{% endif %}
+                                {% if access.check('Admin-List') %}<a class="dropdown-item" href="{{ path('secretariat-listIndex') }}">Liste</a>{% endif %}
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_USER') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mon Compte</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" onclick="load('{{ path('loginEdit') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modification Login</a>
+                                <a class="dropdown-item" onclick="load('{{ path('passwordEdit') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modification Mot de Passe</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ path('logout') }}">Déconnexion</a>
+                            </div>
+                        </li>
+                        {% if access.getAccessList|length > 1 %}
+                            <li class="nav-item dropdown">
+                                <label>
+                                    <select class="form-select" onchange='window.open("{{ path('common-changeCluster', {'id': 0}) }}".replace("/0", "/" + this.value), "_self")'>
+                                        {% for Id, Name in access.getAccessList %}
+                                            <option value="{{ Id }}" {% if Id == app.session.get('Id') %}selected{% endif %}>{{ Name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </li>
+                        {% endif %}
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('login') }}">Connexion</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container-fluid">
+            <div class="container col col-lg-6">
+                {% for type, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="text-center alert alert-dismissible alert-{{ type }}">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% block body %}{% endblock %}
+            <div class="modal" id="popup"></div>
+        </main>
+
+        <footer class="container-fluid">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+            <script src="https://cdn.tiny.cloud/1/2ux855hneh65oq06q262g2y9ixi12oqgmky42zyktf02p4f3/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+            <script type="text/javascript">
+                tinymce.init({
+                    selector: 'textarea',
+                    language: 'fr_FR',
+                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                    toolbar: 'undo redo | blocks fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                });
+            </script>
+            <script type="text/javascript">
+                function load(url, id)
+                {
+                    let xhttp = new XMLHttpRequest();
+
+                    xhttp.onreadystatechange = function()
+                    {
+                        if (this.readyState === 4 && this.status === 200)
+                        {
+                            document.getElementById(id).innerHTML = this.responseText;
+
+                            if (id === 'popup')
+                            {
+                                new bootstrap.Modal(document.getElementById("popup"), {}).show();
+                            }
+
+                            tinymce.init({
+                                selector: 'textarea',
+                                language: 'fr_FR',
+                                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                                toolbar: 'undo redo | blocks fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                            });
+                        }
+                    };
+
+                    xhttp.open("GET", url, true);
+                    xhttp.send();
+                }
+            </script>
+            <script type="text/javascript">
+                function sortTable(id, n)
+                {
+                    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+
+                    table = document.getElementById(id);
+
+                    switching = true;
+
+                    dir = "asc";
+
+                    while (switching)
+                    {
+                        switching = false;
+
+                        rows = table.rows;
+
+                        for (i = 1; i < (rows.length - 1); i++)
+                        {
+                            shouldSwitch = false;
+
+                            x = rows[i].getElementsByTagName("TD")[n];
+                            y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                            if (dir === "asc")
+                            {
+                                if (!isNaN(moment(x.innerHTML, 'DD/MM/YYYY', true).toDate().getTime()) && !isNaN(moment(y.innerHTML, 'DD/MM/YYYY', true).toDate().getTime()))
+                                {
+                                    if (moment(x.innerHTML, 'DD/MM/YYYY', true).toDate().getTime() > moment(y.innerHTML, 'DD/MM/YYYY', true).toDate().getTime())
+                                    {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                                else if (!isNaN(parseFloat(x.innerHTML)) && !isNaN(parseFloat(y.innerHTML)))
+                                {
+                                    if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML))
+                                    {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                                else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
+                                {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            else if (dir === "desc")
+                            {
+                                if (!isNaN(moment(x.innerHTML, 'DD/MM/YYYY', true).toDate().getTime()) && !isNaN(moment(y.innerHTML, 'DD/MM/YYYY', true).toDate().getTime()))
+                                {
+                                    if (moment(x.innerHTML, 'DD/MM/YYYY').toDate().getTime() < moment(y.innerHTML, 'DD/MM/YYYY').toDate().getTime())
+                                    {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                                else if (!isNaN(parseFloat(x.innerHTML)) && !isNaN(parseFloat(y.innerHTML)))
+                                {
+                                    if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML))
+                                    {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                                else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())
+                                {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (shouldSwitch)
+                        {
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
+
+                            switchcount ++;
+                        }
+                        else
+                        {
+                            if (switchcount === 0 && dir === "asc")
+                            {
+                                dir = "desc";
+                                switching = true;
+                            }
+                        }
+                    }
+                }
+            </script>
+            {% block javascripts %}{% endblock %}
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+<h1 class="text-center">Newsletters {% if access.check('News-Create') %}<a class="btn btn-sm btn-light" onclick="window.open('{{ path('newsletter-create') }}', '_self')" onmouseover="this.style.cursor='pointer'">Créer</a>{% endif %}</h1>
+
+<div class="container col-lg-8">
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th class="text-center" scope="col">Date d'envoi</th>
+                <th class="text-center" scope="col">Titre</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for newsletter in data.OnGoing %}
+            <tr class="table-active" onclick="window.open('{{ path('newsletter-view', {'newsletter': newsletter.getNewsletterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                <td class="text-center col-3">En attente</td>
+                <td class="col-9">{{ newsletter.getNewsletterTitle }}</td>
+            </tr>
+        {% endfor %}
+        {% for newsletter in data.Published %}
+            <tr class="table-active" onclick="window.open('{{ path('newsletter-view', {'newsletter': newsletter.getNewsletterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                <td class="text-center col-3">{{ newsletter.getNewsletterDate|date("d/m/Y") }}</td>
+                <td class="col-9">{{ newsletter.getNewsletterTitle }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

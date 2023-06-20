@@ -1,0 +1,33 @@
+{% if access.check('Club-MemberAdd', data.Club) %}
+<div class="text-center mb-3">
+    <button class="btn btn-sm btn-light" onclick="load('{{ path('club-membersAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+</div>
+{% endif %}
+<div class="container col col-lg-8">
+    <table id="MembersList" class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col" onclick="sortTable('MembersList', 0)" onmouseover="this.style.cursor='pointer'"></th>
+                <th scope="col" onclick="sortTable('MembersList', 1)" onmouseover="this.style.cursor='pointer'">N° Licence</th>
+                <th scope="col" onclick="sortTable('MembersList', 2)" onmouseover="this.style.cursor='pointer'">Prénom</th>
+                <th scope="col" onclick="sortTable('MembersList', 3)" onmouseover="this.style.cursor='pointer'">Nom</th>
+                <th scope="col" onclick="sortTable('MembersList', 4)" onmouseover="this.style.cursor='pointer'">Stage (h)</th>
+                <th scope="col" onclick="sortTable('MembersList', 5)" onmouseover="this.style.cursor='pointer'">Grade</th>
+                <th scope="col" onclick="sortTable('MembersList', 6)" onmouseover="this.style.cursor='pointer'">Date de passage</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for member in data.ActiveMemberList %}
+            <tr class="table-active"{% if access.check('Club-MemberDetail', data.Club) %} onclick="load('{{ path('club-memberDetail', {'club': data.Club.getClubId, 'member': member.getMemberId, 'source': 1}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ loop.index }}</td>
+                <td>{{ member.getMemberId }}</td>
+                <td>{{ member.getMemberFirstname|title }}</td>
+                <td>{{ member.getMemberName|title }}</td>
+                <td>{% if data.AttendanceTotal[member.getMemberId] is defined %}{{ data.AttendanceTotal[member.getMemberId] / 60 }}{% else %}Aucune{% endif %}</td>
+                <td>{{ member.getMemberLastGradeName }}</td>
+                <td>{{ member.getMemberLastGradeDate|date("d/m/Y") }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

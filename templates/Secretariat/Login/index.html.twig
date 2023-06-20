@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="container col col-lg-7">
+        <h2 class="text-center">Gestion des accès non membres</h2>
+        <div class="text-center mb-3">
+            <button class="btn btn-sm btn-light" onclick="load('{{ path('secretariat-loginAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+        </div>
+        <table class="table table-sm table-hover user-select-none">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Login</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in data.List %}
+                <tr class="table-active" onclick="load('{{ path('secretariat-loginEdit', {'user': user.id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ user.getLogin|title }}</td>
+                    <td class="align-middle">{{ user.getUserFirstname|title }}</td>
+                    <td class="align-middle">{{ user.getUserRealName|title }}</td>
+                    <td class="align-middle">{{ user.getUserEmail }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

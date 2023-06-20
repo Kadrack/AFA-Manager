@@ -1,0 +1,36 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">{% if member is not null %}{{ member.getMemberFirstname()|title }} {{ member.getMemberName()|title }}{% else %}Inscription non membre{% endif %}</h5>
+        </div>
+        <div class="modal-body text-center">
+            {{ form_widget(form.TrainingAttendanceSubscribe) }}
+            <hr class="mt-1 mb-1" />
+            {% if member is null %}
+                {{ form_row(form.TrainingAttendanceName) }}
+                {{ form_widget(form.TrainingAttendanceSex) }}
+                {{ form_widget(form.TrainingAttendanceCountry) }}
+                <hr class="mt-1 mb-1" />
+            {% endif %}
+            {% if lessons %}
+                {{ form_widget(form.TrainingAttendanceSessions) }}
+                <label class="form-check-label"><input id="checkall" class="form-check-input" type="checkbox" onchange="check()" />&nbsp;Tous</label>
+                <hr class="mt-1 mb-1" />
+            {% endif %}
+            {% if free == false %}
+                {{ form_widget(form.TrainingAttendancePayment) }}
+                {{ form_widget(form.TrainingAttendancePaymentType) }}
+                <hr class="mt-1 mb-1" />
+                <h2>Déjà payé : {{ (total / 100)|number_format(2, ',', '.') }} €</h2>
+            {% else %}
+                <h2>Stage Gratuit</h2>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h2 class="text-center">Liste diverses</h2>
+
+    <div class="container col col-lg-4">
+        <table class="table table-sm table-hover user-select-none">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Liste</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for number, list in data.List %}
+                    <tr class="table-active" onclick="window.open('{{ path('secretariat-listIndex', {'list': number}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                        <td class="align-middle">{{ loop.index }}</td>
+                        <td class="align-middle">{{ list }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

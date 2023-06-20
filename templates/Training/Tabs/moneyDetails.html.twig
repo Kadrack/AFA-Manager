@@ -1,0 +1,28 @@
+<div class="container col col-lg-4">
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th class="align-middle text-center" scope="col">Cash</th>
+                <th class="align-middle text-center" scope="col">Carte</th>
+                <th class="align-middle text-center" scope="col">Payconiq</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active">
+                <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Cash / 100)|number_format(2, ',', '.') }} €</td>
+                <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Card / 100)|number_format(2, ',', '.') }} €</td>
+                <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Transfert / 100)|number_format(2, ',', '.') }} €</td>
+            </tr>
+        </tbody>
+        <thead>
+            <tr>
+                <th class="align-middle text-center" scope="col" colspan="3">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active">
+                <td class="align-middle text-center" colspan="3">{{ ((data.Training.getTrainingPaymentsTotal.Cash + data.Training.getTrainingPaymentsTotal.Card + data.Training.getTrainingPaymentsTotal.Transfert) / 100)|number_format(2, ',', '.') }} €</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

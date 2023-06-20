@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+<div class="container col col-lg-7">
+    <h1 class="text-center">{{ data.Cluster.getClusterName }} <button class="btn btn-sm btn-light" onclick="load('{{ path('secretariat-clusterEdit', {'cluster': data.Cluster.getClusterId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button></h1>
+    <div class="text-center mb-3">
+        <button class="btn btn-sm btn-light text-center" onclick="load('{{ path('secretariat-clusterMemberAdd', {'cluster': data.Cluster.clusterId()}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+    </div>
+    {% if data.Cluster.ClusterFutureMembers|length > 0 %}
+        <h2 class="text-center">Futur membres</h2>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    {% if data.Cluster.getClusterUseTitle %}<th>Titre</th>{% endif %}
+                    <th>Nom</th>
+                    {% if data.Cluster.getClusterUseEmail %}<th>Adresse de fonction</th>{% endif %}
+                    <th>Commence le</th>
+                    <th>Expire le</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in data.Cluster.ClusterFutureMembers %}
+                <tr class="table-active" onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                    {% if data.Cluster.getClusterUseTitle %}<td class="align-middle">{% if member.getClusterMemberTitle is null %}A définir{% else %}{{ listData.getClusterTitle(member.getClusterMemberTitle) }}{% endif %}</td>{% endif %}
+                    <td class="align-middle">{% if member.getClusterMember is null %}{{ member.getClusterMemberUser.getUserFirstname|title }} {{ member.getClusterMemberUser.getUserRealName|title }}{% else %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% endif %}</td>
+                    {% if data.Cluster.getClusterUseEmail %}<td class="align-middle">{% if member.getClusterMemberEmail is null %}A définir{% else %}{{ member.getClusterMemberEmail }}{% endif %}</td>{% endif %}
+                    <td class="align-middle">{{ member.getClusterMemberDateIn|date("d/m/Y") }}</td>
+                    <td class="align-middle">{% if member.getClusterMemberDateOut is null %}Non Défini{% else %}{{ member.getClusterMemberDateOut|date("d/m/Y") }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <h2 class="text-center">Membres actuel</h2>
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                {% if data.Cluster.getClusterUseTitle %}<th>Titre</th>{% endif %}
+                <th>Nom</th>
+                {% if data.Cluster.getClusterUseEmail %}<th>Adresse de fonction</th>{% endif %}
+                <th>Depuis le</th>
+                <th>Expire le</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for member in data.Cluster.ClusterActiveMembers %}
+            <tr class="table-active" onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                {% if data.Cluster.getClusterUseTitle %}<td class="align-middle">{% if member.getClusterMemberTitle is null %}A définir{% else %}{{ listData.getClusterTitle(member.getClusterMemberTitle) }}{% endif %}</td>{% endif %}
+                <td class="align-middle">{% if member.getClusterMember is not null %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% elseif member.getClusterMemberUser is not null %}{{ member.getClusterMemberUser.getUserFirstname|title }} {{ member.getClusterMemberUser.getUserRealName|title }}{% else %}{{ member.getClusterMemberFirstname|title }} {{ member.getClusterMemberName|title }}{% endif %}</td>
+                {% if data.Cluster.getClusterUseEmail %}<td class="align-middle">{% if member.getClusterMemberEmail is null %}A définir{% else %}{{ member.getClusterMemberEmail }}{% endif %}</td>{% endif %}
+                <td class="align-middle">{{ member.getClusterMemberDateIn|date("d/m/Y") }}</td>
+                <td class="align-middle">{% if member.getClusterMemberDateOut is null %}Non Défini{% else %}{{ member.getClusterMemberDateOut|date("d/m/Y") }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if data.Cluster.ClusterOldMembers|length > 0 %}
+        <h2 class="text-center">Anciens membres</h2>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    {% if data.Cluster.getClusterUseTitle %}<th>Titre</th>{% endif %}
+                    <th>Nom</th>
+                    {% if data.Cluster.getClusterUseEmail %}<th>Adresse de fonction</th>{% endif %}
+                    <th>Depuis le</th>
+                    <th>Expiré depuis le</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in data.Cluster.ClusterOldMembers %}
+                <tr class="table-active" onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                    {% if data.Cluster.getClusterUseTitle %}<td class="align-middle">{% if member.getClusterMemberTitle is null %}A définir{% else %}{{ listData.getClusterTitle(member.getClusterMemberTitle) }}{% endif %}</td>{% endif %}
+                    <td class="align-middle">{% if member.getClusterMember is null %}{{ member.getClusterMemberUser.getUserFirstname|title }} {{ member.getClusterMemberUser.getUserRealName|title }}{% else %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% endif %}</td>
+                    {% if data.Cluster.getClusterUseEmail %}<td class="align-middle">{% if member.getClusterMemberEmail is null %}A définir{% else %}{{ member.getClusterMemberEmail }}{% endif %}</td>{% endif %}
+                    <td class="align-middle">{{ member.getClusterMemberDateIn|date("d/m/Y") }}</td>
+                    <td class="align-middle">{{ member.getClusterMemberDateOut|date("d/m/Y") }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

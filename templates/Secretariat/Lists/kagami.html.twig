@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="container col col-lg-5">
+        <h1 class="text-center">Nanadan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Nanadan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Rokudan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Rokudan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Godan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Godan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Yondan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Yondan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Sandan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Sandan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Nidan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Nidan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Shodan</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Dernier Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in list.Shodan %}
+                <tr onclick="window.open('{{ path('member-index', {'member': candidate.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.FirstName|title }}</td>
+                    <td class="align-middle">{{ candidate.Name|title }}</td>
+                    <td class="align-middle">{{ candidate.GradeDate|date('Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

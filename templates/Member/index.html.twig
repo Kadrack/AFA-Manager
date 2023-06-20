@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="card text-white bg-primary container col col-lg-3 gx-0">
+        <div class="card-header text-center user-select-none"><h2>{{ data.Member.getMemberFirstname|title }} {{ data.Member.getMemberName|title }}</h2></div>
+        <div class="card-body row align-items-center">
+            <div class="col-3 text-center"><img class="rounded img-fluid user-select-none" alt="" src="{{ data.Member.getMemberPhoto }}" /></div>
+            <div class="col-9 text-center">
+                <div class="row">
+                    <div class="col-4 text-end px-1"><strong>N° Licence</strong></div>
+                    <div class="col text-start px-1">{{ data.Member.getMemberId }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-4 text-end px-1"><strong>Grade</strong></div>
+                    <div class="col text-start px-1">{{ listData.getGrade(data.Member.getMemberLastGrade.getGradeRank) }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-4 text-end px-1"><strong>Club</strong></div>
+                    <div class="col text-start px-1">{{ data.Member.getMemberActualClub.getClubId }} - {{ data.Member.getMemberActualClub.getClubName|title }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-4 text-end px-1"><strong>Née le</strong></div>
+                    <div class="col text-start px-1">{{ data.Member.getMemberBirthday()|date("d/m/Y") }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-4 text-end px-1"><strong>Sexe</strong></div>
+                    <div class="col text-start px-1">{{ listData.getSex(data.Member.getMemberSex) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="nav nav-tabs nav-justified">
+            {% if access.check('Member-LicenceTab') %}
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#licence" id="licenceTab" onclick="load('{{ path('member-licenceTab', {'member': data.Member.getMemberId}) }}', 'licence')"><strong>Licence {% if data.Member.getMemberLastLicence.getMemberLicenceDeadline < date() %}<i class="bi-exclamation-triangle text-danger"></i>{% elseif data.Member.getMemberLicences.0.getMemberLicenceDeadline.diff(date()).days <= 90 %}<i class="bi-exclamation-triangle text-warning"></i>{% endif %}</strong></a>
+            </li>
+            {% endif %}
+            {% if access.check('Member-GradeTab') %}
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#grade" id="gradeTab" onclick="load('{{ path('member-gradeTab', {'member': data.Member.getMemberId}) }}', 'grade')"><strong>Grade</strong></a>
+            </li>
+            {% endif %}
+            {% if access.check('Member-TrainingTab') %}
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#training" id="trainingTab" onclick="load('{{ path('member-trainingTab', {'member': data.Member.getMemberId}) }}', 'training')"><strong>Stage</strong></a>
+            </li>
+            {% endif %}
+            {% if access.check('Member-TitleTab') %}
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#title" id="titleTab" onclick="load('{{ path('member-titleTab', {'member': data.Member.getMemberId}) }}', 'title')"><strong>Titre</strong></a>
+            </li>
+            {% endif %}
+            {% if access.check('Member-EmailTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#email" id="emailTab" onclick="load('{{ path('member-emailTab', {'member': data.Member.getMemberId}) }}', 'email')"><strong>Email</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Member-PersonalTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#personal" id="personalTab" onclick="load('{{ path('member-personalTab', {'member': data.Member.getMemberId}) }}', 'personal')"><strong>Personnelles</strong></a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="tab-content">
+            {% if access.check('Member-LicenceTab') %}<div class="tab-pane fade show my-3" id="licence"></div>{% endif %}
+            {% if access.check('Member-GradeTab') %}<div class="tab-pane fade show my-3" id="grade"></div>{% endif %}
+            {% if access.check('Member-TrainingTab') %}<div class="tab-pane fade show my-3" id="training"></div>{% endif %}
+            {% if access.check('Member-TitleTab') %}<div class="tab-pane fade show my-3" id="title"></div>{% endif %}
+            {% if access.check('Member-EmailTab') %}<div class="tab-pane fade show my-3" id="email"></div>{% endif %}
+            {% if access.check('Member-PersonalTab') %}<div class="tab-pane fade show my-3" id="personal"></div>{% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% if app.session.get('activeMemberTab') == 'licenceTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('licenceTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('licence');
+            pane.classList.add("active");
+
+            load('{{ path('member-licenceTab', {'member': data.Member.getMemberId}) }}', 'licence');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeMemberTab') == 'gradeTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('gradeTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('grade');
+            pane.classList.add("active");
+
+            load('{{ path('member-gradeTab', {'member': data.Member.getMemberId}) }}', 'grade');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeMemberTab') == 'trainingTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('trainingTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('training');
+            pane.classList.add("active");
+
+            load('{{ path('member-trainingTab', {'member': data.Member.getMemberId}) }}', 'training');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeMemberTab') == 'titleTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('titleTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('title');
+            pane.classList.add("active");
+
+            load('{{ path('member-titleTab', {'member': data.Member.getMemberId}) }}', 'title');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeMemberTab') == 'emailTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('emailTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('email');
+            pane.classList.add("active");
+
+            load('{{ path('member-emailTab', {'member': data.Member.getMemberId}) }}', 'email');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeMemberTab') == 'personalTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('personalTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('personal');
+            pane.classList.add("active");
+
+            load('{{ path('member-personalTab', {'member': data.Member.getMemberId}) }}', 'personal');
+        </script>
+    {% endif %}
+{% endblock %}

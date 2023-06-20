@@ -1,0 +1,48 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Téléchargement des formulaires</h5>
+        </div>
+        <div class="modal-body">
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 1}) }}"><i class="bi-download"></i> Janvier</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 2}) }}"><i class="bi-download"></i> Février</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 3}) }}"><i class="bi-download"></i> Mars</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 4}) }}"><i class="bi-download"></i> Avril</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 5}) }}"><i class="bi-download"></i> Mai</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 6}) }}"><i class="bi-download"></i> Juin</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 7}) }}"><i class="bi-download"></i> Juillet</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 8}) }}"><i class="bi-download"></i> Août</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 9}) }}"><i class="bi-download"></i> Septembre</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 10}) }}"><i class="bi-download"></i> Octobre</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 11}) }}"><i class="bi-download"></i> Novembre</a>
+            </div>
+            <div class="d-grid gap-0">
+                <a class="btn btn-light" href="{{ path('club-formRenewDownload', {'club': club.getClubId, 'month': 12}) }}"><i class="bi-download"></i> Décembre</a>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+        </div>
+    </div>
+</div>

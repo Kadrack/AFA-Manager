@@ -1,0 +1,19 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">Horaires des différentes sessions d'examen</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_row(form.GradeSessionShodan) }}
+            {{ form_row(form.GradeSessionNidan) }}
+            {{ form_row(form.GradeSessionSandan) }}
+            {{ form_row(form.GradeSessionYondan) }}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

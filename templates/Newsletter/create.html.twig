@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+<h1 class="text-center">Rédaction Newsletter</h1>
+
+<div class="container col-lg-8">
+    {{ form_start(form) }}
+    {{ form_row(form.NewsletterTitle) }}
+    {{ form_widget(form.NewsletterText) }}
+    {{ form_widget(form.Submit) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

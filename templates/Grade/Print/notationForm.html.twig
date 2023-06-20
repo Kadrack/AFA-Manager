@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>formulaire</title>
+    <meta http-equiv="Content-Type" content="text/html">
+
+    <style>
+        body
+        {
+            font-size: 18px;
+        }
+
+        h1
+        {
+            margin: 0;
+        }
+
+        table
+        {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        img
+        {
+            border: 2px solid black;
+        }
+
+        .block-right
+        {
+            display: block;
+            float: right;
+            margin-top: 15px;
+        }
+
+        .title
+        {
+            background: #686f74;
+            border: 1px solid black;
+            color: white;
+        }
+
+        .content
+        {
+            background: #bdbfc2;
+            border: 1px solid black;
+        }
+
+        .cotation
+        {
+            border: 1px solid black;
+        }
+
+        .text-center
+        {
+            text-align: center;
+        }
+
+        .text-left
+        {
+            text-align: left;
+        }
+
+        .text-right
+        {
+            text-align: right;
+        }
+
+        .small
+        {
+            font-size: xx-small;
+        }
+    </style>
+</head>
+<body>
+    {% for member in members %}
+    <div class="block-right"><img src="{{ member.Photo }}" alt="Photo"/></div>
+    <h1 class="text-center">Examen {{ listData.getGrade(member.Grade) }}</h1>
+    <div class="text-center">Table {% if member.Jury is null %}.....{% else %}{{ member.Jury }}{% endif %} - Ordre de passage {% if member.Position is null %}.....{% else %}{{ member.Position }}{% endif %}</div>
+    <div class="text-left"><strong>{{ member.Name|title }} {{ member.Firstname|title }}</strong></div>
+    <div class="text-left">Né(e) le {{ member.Birthday|date('d/m/Y') }} ({{ date().diff(date(member.Birthday)).y }} ans)</div>
+    <div class="text-left">Grade actuel depuis {{ date().diff(date(member.ActualGradeDate)).y }} ans</div>
+    <div class="text-left">{{ member.TrainingActual.0.Total/60 }} heures de stages depuis le grade actuel</div>
+    <div class="text-left">Professeur : {% for teacher in member.Teachers %}{{ teacher.getMemberFirstname|title }} {{ teacher.getMemberName|title }}{% if loop.index < member.Teachers|length %}, {% endif %}{% endfor %}</div>
+    <table>
+        <tr>
+            <td class="corner" colspan="3"></td>
+            <td class="text-center title"><strong>Tachi<br />Waza</strong></td>
+            <td class="text-center title"><strong>Ushiro<br />Waza</strong></td>
+            <td class="text-center title"><strong>Hanmi<br />Handachi<br />Waza</strong></td>
+            <td class="text-center title"><strong>Suwari<br />Waza</strong></td>
+            <td class="text-center title"><strong>Buki<br />Waza</strong></td>
+        </tr>
+        <tr>
+            <td class="text-center title" colspan="3"><strong>Critères formels</strong></td>
+            <td class="text-center content" colspan="5">B = bon / M = moyen / I = insuffisant</td>
+        </tr>
+        <tr>
+            <td class="content" colspan="3">Connaissance formelle des techniques</td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="3">Placements, déplacements</td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="3">Equilibre, déséquilibres, contrôles</td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="3">Engagement</td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="text-center title" colspan="3"><strong>Critères globaux</strong></td>
+            <td class="text-center title" colspan="5"><strong>Remarques</strong></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="2">Préservation de l'intégrité</td>
+            <td class="cotation"></td>
+            <td class="cotation" colspan="5" rowspan="9"></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="2">Fluidité, sérénité</td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="2">Condition physique</td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="content" colspan="2">Respect du reishiki</td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="text-center title" colspan="3"><strong>Travail en tant que UKE</strong></td>
+        </tr>
+        <tr>
+            <td class="text-center content">Justesse</td>
+            <td class="text-center content">Intégrité</td>
+            <td class="text-center content">Présence</td>
+        </tr>
+        <tr>
+            <td class="cotation"><br /></td>
+            <td class="cotation"></td>
+            <td class="cotation"></td>
+        </tr>
+        <tr>
+            <td class="text-center title" colspan="3"><strong>Proposition de l'examinateur</strong></td>
+        </tr>
+        <tr>
+            <td class="text-center cotation" colspan="3">BON - INSUFFISANT</td>
+        </tr>
+    </table>
+    <br />
+    <div class="text-left">Formulaire à l'usage exclusif des membres de la commission technique lors de la session d'examens à {{ gradeSession.gradeSessionCity }} le {{ gradeSession.gradeSessionDate|date('d/m/Y') }}</div>
+    <div class="text-left small"><br />Imprimé par {{ user|title }} le {{ date()|date('d/m/Y') }}</div>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="card text-white bg-primary container col col-lg-3 gx-0">
+        <div class="card-header text-center"><h2>{{ data.Club.getClubName|title }}</h2></div>
+        <div class="card-body row align-items-center">
+            <div class="col text-center">
+                <div class="row">
+                    <div class="col text-end px-1"><strong>N° Club</strong></div>
+                    <div class="col text-start px-1">{{ data.Club.getClubId }}</div>
+                </div>
+                <div class="row">
+                    <div class="col text-end px-1"><strong>Gestionnaire(s)</strong></div>
+                    <div class="col text-start px-1">{{ data.Club.getClubManagers|length }}</div>
+                </div>
+                <div class="row">
+                    <div class="col text-end px-1"><strong>Nbre membres</strong></div>
+                    <div class="col text-start px-1">{{ data.ActiveMemberCount.Total }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="nav nav-tabs nav-justified">
+            {% if access.check('Club-AttendanceTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="attendanceTab" href="#attendance" onclick="load('{{ path('club-attendanceTab', {'club': data.Club.getClubId}) }}', 'attendance')"><strong>Présence</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Club-AdultTab') and data.ActiveMemberCount.Adult > 0 %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="adultTab" href="#adult" onclick="load('{{ path('club-adultTab', {'club': data.Club.getClubId}) }}', 'adult')"><strong>Adultes ({{ data.ActiveMemberCount.Adult }})</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Club-ChildTab') and data.ActiveMemberCount.Child > 0 %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="childTab" href="#child" onclick="load('{{ path('club-childTab', {'club': data.Club.getClubId}) }}', 'child')"><strong>Enfants ({{ data.ActiveMemberCount.Child }})</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Club-EmailTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="emailTab" href="#email" onclick="load('{{ path('club-emailTab', {'club': data.Club.getClubId}) }}', 'email')"><strong>Emails</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Club-DojoTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="dojoTab" href="#dojo" onclick="load('{{ path('club-dojoTab', {'club': data.Club.getClubId}) }}', 'dojo')"><strong>Dojos</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Club-SecretariatTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="secretariatTab" href="#secretariat" onclick="load('{{ path('club-secretariatTab', {'club': data.Club.getClubId}) }}', 'secretariat')"><strong>Secrétariat</strong></a>
+                </li>
+            {% endif %}
+            {% if access.check('Club-ManagementTab') %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" id="managementTab" href="#management" onclick="load('{{ path('club-managementTab', {'club': data.Club.getClubId}) }}', 'management')"><strong>Gestion</strong></a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="tab-content">
+            {% if access.check('Club-AttendanceTab') %}<div class="tab-pane fade show my-3" id="attendance"></div>{% endif %}
+            {% if access.check('Club-AdultTab') and data.ActiveMemberCount.Adult > 0 %}<div class="tab-pane fade show my-3" id="adult"></div>{% endif %}
+            {% if access.check('Club-ChildTab') and data.ActiveMemberCount.Child > 0 %}<div class="tab-pane fade show my-3" id="child"></div>{% endif %}
+            {% if access.check('Club-EmailTab') %}<div class="tab-pane fade show my-3" id="email"></div>{% endif %}
+            {% if access.check('Club-DojoTab') %}<div class="tab-pane fade show my-3" id="dojo"></div>{% endif %}
+            {% if access.check('Club-SecretariatTab') %}<div class="tab-pane fade show my-3" id="secretariat"></div>{% endif %}
+            {% if access.check('Club-ManagementTab') %}<div class="tab-pane fade show my-3" id="management"></div>{% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% if app.session.get('activeClubTab') == 'attendanceTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('attendanceTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('attendance');
+            pane.classList.add("active");
+
+            load('{{ path('club-attendanceTab', {'club': data.Club.getClubId, 'date': app.request.get('date')}) }}', 'attendance');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeClubTab') == 'adultTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('adultTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('adult');
+            pane.classList.add("active");
+
+            load('{{ path('club-adultTab', {'club': data.Club.getClubId}) }}', 'adult');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeClubTab') == 'childTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('childTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('child');
+            pane.classList.add("active");
+
+            load('{{ path('club-childTab', {'club': data.Club.getClubId}) }}', 'child');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeClubTab') == 'emailTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('emailTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('email');
+            pane.classList.add("active");
+
+            load('{{ path('club-emailTab', {'club': data.Club.getClubId}) }}', 'email');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeClubTab') == 'dojoTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('dojoTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('dojo');
+            pane.classList.add("active");
+
+            load('{{ path('club-dojoTab', {'club': data.Club.getClubId}) }}', 'dojo');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeClubTab') == 'secretariatTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('secretariatTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('secretariat');
+            pane.classList.add("active");
+
+            load('{{ path('club-secretariatTab', {'club': data.Club.getClubId, 'date': app.request.get('date')}) }}', 'secretariat');
+        </script>
+    {% endif %}
+    {% if app.session.get('activeClubTab') == 'managementTab' %}
+        <script type="text/javascript">
+            let tab = document.getElementById('managementTab');
+            tab.classList.add("active");
+
+            let pane = document.getElementById('management');
+            pane.classList.add("active");
+
+            load('{{ path('club-managementTab', {'club': data.Club.getClubId}) }}', 'management');
+        </script>
+    {% endif %}
+{% endblock %}

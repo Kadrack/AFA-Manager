@@ -1,0 +1,410 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% set Limit1 = 0 %}{% set Limit2 = 0 %}{% set Limit3 = 0 %}{% set Limit4 = 0 %}{% set Limit5 = 0 %}{% set Limit6 = 0 %}{% set Limit7 = 0 %}{% set Limit8 = 0 %}{% set Limit9 = 0 %}{% set Limit10 = 0 %}{% set Limit11 = 0 %}{% set Limit12 = 0 %}
+{% set Grade1 = 0 %}{% set Grade2 = 0 %}{% set Grade3 = 0 %}{% set Grade4 = 0 %}{% set Grade5 = 0 %}{% set Grade6 = 0 %}{% set Grade7 = 0 %}{% set Grade8 = 0 %}{% set Grade9 = 0 %}{% set Grade10 = 0 %}{% set Grade11 = 0 %}{% set Grade12 = 0 %}{% set Grade13 = 0 %}
+
+{% block body %}
+<div class="container">
+    <ul class="nav nav-tabs nav-justified">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#membre"><strong>Membre</strong></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#ADEPS"><strong>ADEPS</strong></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#grade"><strong>Grade</strong></a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show my-3 active" id="membre">
+            <h3 class="text-center">Décompte des membres pour le {{ listData.province(data.Province)|title }} en date du {{ data.Date|date('d-m-Y') }}</h3>
+            <table class="table table-sm table-hover">
+                <thead class="text-center">
+                    <tr>
+                        <th class="align-middle" rowspan="2" scope="col">Numéro</th>
+                        <th class="align-middle" rowspan="2" scope="col">Nom</th>
+                        <th colspan="2" scope="col">- de 6</th>
+                        <th colspan="2" scope="col">- de 12</th>
+                        <th colspan="2" scope="col">- de 18</th>
+                        <th colspan="2" scope="col">- de 25</th>
+                        <th colspan="2" scope="col">- de 35</th>
+                        <th colspan="2" scope="col">+ de 35</th>
+                        <th colspan="2" scope="col">Total</th>
+                        <th class="align-middle" rowspan="2" scope="col">Total<br />Membres</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    {% for club in data.Statistics %}
+                    <tr>
+                        <td class="align-middle text-left">{{ club.ClubId }}</td>
+                        <td class="align-middle text-left">{{ club.ClubName|title }}</td>
+                        <td class="align-middle">{{ club.Limits.1 }}{% set Limit1 = Limit1 + club.Limits.1 %}</td>
+                        <td class="align-middle">{{ club.Limits.2 }}{% set Limit2 = Limit2 + club.Limits.2 %}</td>
+                        <td class="align-middle">{{ club.Limits.3 }}{% set Limit3 = Limit3 + club.Limits.3 %}</td>
+                        <td class="align-middle">{{ club.Limits.4 }}{% set Limit4 = Limit4 + club.Limits.4 %}</td>
+                        <td class="align-middle">{{ club.Limits.5 }}{% set Limit5 = Limit5 + club.Limits.5 %}</td>
+                        <td class="align-middle">{{ club.Limits.6 }}{% set Limit6 = Limit6 + club.Limits.6 %}</td>
+                        <td class="align-middle">{{ club.Limits.7 }}{% set Limit7 = Limit7 + club.Limits.7 %}</td>
+                        <td class="align-middle">{{ club.Limits.8 }}{% set Limit8 = Limit8 + club.Limits.8 %}</td>
+                        <td class="align-middle">{{ club.Limits.9 }}{% set Limit9 = Limit9 + club.Limits.9 %}</td>
+                        <td class="align-middle">{{ club.Limits.10 }}{% set Limit10 = Limit10 + club.Limits.10 %}</td>
+                        <td class="align-middle">{{ club.Limits.11 }}{% set Limit11 = Limit11 + club.Limits.11 %}</td>
+                        <td class="align-middle">{{ club.Limits.12 }}{% set Limit12 = Limit12 + club.Limits.12 %}</td>
+                        <td class="align-middle">{{ club.Limits.1 + club.Limits.3 + club.Limits.5 + club.Limits.7 + club.Limits.9 + club.Limits.11 }}</td>
+                        <td class="align-middle">{{ club.Limits.2 + club.Limits.4 + club.Limits.6 + club.Limits.8 + club.Limits.10 + club.Limits.12 }}</td>
+                        <td class="align-middle">{{ club.Limits.1 + club.Limits.2 + club.Limits.3 + club.Limits.4 + club.Limits.5 + club.Limits.6 + club.Limits.7 + club.Limits.8 + club.Limits.9 + club.Limits.10 + club.Limits.11 + club.Limits.12 }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td class="align-middle text-left" colspan="2">Total</td>
+                        <td class="align-middle">{{ Limit1 }}</td>
+                        <td class="align-middle">{{ Limit2 }}</td>
+                        <td class="align-middle">{{ Limit3 }}</td>
+                        <td class="align-middle">{{ Limit4 }}</td>
+                        <td class="align-middle">{{ Limit5 }}</td>
+                        <td class="align-middle">{{ Limit6 }}</td>
+                        <td class="align-middle">{{ Limit7 }}</td>
+                        <td class="align-middle">{{ Limit8 }}</td>
+                        <td class="align-middle">{{ Limit9 }}</td>
+                        <td class="align-middle">{{ Limit10 }}</td>
+                        <td class="align-middle">{{ Limit11 }}</td>
+                        <td class="align-middle">{{ Limit12 }}</td>
+                        <td class="align-middle" id="totalMen">{{ Limit1 + Limit3 + Limit5 + Limit7 + Limit9 + Limit11 }}</td>
+                        <td class="align-middle" id="totalWomen">{{ Limit2 + Limit4 + Limit6 + Limit8 + Limit10 + Limit12 }}</td>
+                        <td class="align-middle">{{ Limit1 + Limit2 + Limit3 + Limit4 + Limit5 + Limit6 + Limit7 + Limit8 + Limit9 + Limit10 + Limit11 + Limit12 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="container col col-lg-3">
+                <canvas id="sexChart"></canvas>
+            </div>
+        </div>
+        <div class="tab-pane fade show my-3" id="ADEPS">
+            <h3 class="text-center">Répartition des formations ADEPS pour le {{ listData.province(data.Province)|title }} en date du {{ data.Date|date('d-m-Y') }}</h3>
+            <table class="table table-sm table-hover">
+                <thead class="text-center">
+                    <tr>
+                        <th class="align-middle" scope="col" rowspan="2">Numéro</th>
+                        <th class="align-middle" scope="col" rowspan="2">Nom</th>
+                        <th scope="col" colspan="2">Initiateur</th>
+                        <th scope="col" colspan="2">Aide-moniteur</th>
+                        <th scope="col" colspan="2">Moniteur</th>
+                        <th scope="col" colspan="2">Moniteur animateur</th>
+                        <th scope="col" colspan="2">Moniteur initateur</th>
+                        <th scope="col" colspan="2">Moniteur éducateur</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                        <th scope="col">H</th>
+                        <th scope="col">F</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                {% set Level1 = 0 %}{% set Level2 = 0 %}{% set Level3 = 0 %}{% set Level4 = 0 %}{% set Level5 = 0 %}{% set Level6 = 0 %}
+                {% for club in data.Statistics %}
+                    <tr>
+                        <td class="align-middle text-left">{{ club.ClubId }}</td>
+                        <td class="align-middle text-left">{{ club.ClubName|title }}</td>
+                        <td class="align-middle">{{ club.ADEPS.1  }}{% set Level1 = Level1 + club.ADEPS.1  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.2  }}{% set Level1 = Level1 + club.ADEPS.2  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.3  }}{% set Level2 = Level2 + club.ADEPS.3  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.4  }}{% set Level2 = Level2 + club.ADEPS.4  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.5  }}{% set Level3 = Level3 + club.ADEPS.5  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.6  }}{% set Level3 = Level3 + club.ADEPS.6  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.7  }}{% set Level4 = Level4 + club.ADEPS.7  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.8  }}{% set Level4 = Level4 + club.ADEPS.8  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.9  }}{% set Level5 = Level5 + club.ADEPS.9  %}</td>
+                        <td class="align-middle">{{ club.ADEPS.10 }}{% set Level5 = Level5 + club.ADEPS.10 %}</td>
+                        <td class="align-middle">{{ club.ADEPS.11 }}{% set Level6 = Level6 + club.ADEPS.11 %}</td>
+                        <td class="align-middle">{{ club.ADEPS.12 }}{% set Level6 = Level6 + club.ADEPS.12 %}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td class="align-middle text-left" colspan="2">Total</td>
+                        <td class="align-middle" id="totalLevel1" colspan="2">{{ Level1 }}</td>
+                        <td class="align-middle" id="totalLevel2" colspan="2">{{ Level2 }}</td>
+                        <td class="align-middle" id="totalLevel3" colspan="2">{{ Level3 }}</td>
+                        <td class="align-middle" id="totalLevel4" colspan="2">{{ Level4 }}</td>
+                        <td class="align-middle" id="totalLevel5" colspan="2">{{ Level5 }}</td>
+                        <td class="align-middle" id="totalLevel6" colspan="2">{{ Level6 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="container col col-lg-3">
+                <canvas id="adepsChart"></canvas>
+            </div>
+        </div>
+        <div class="tab-pane fade show my-3" id="grade">
+            <h3 class="text-center">Répartition des grades pour le {{ listData.province(data.Province)|title }} en date du {{ data.Date|date('d-m-Y') }}</h3>
+            <table class="table table-sm table-hover">
+                <thead class="text-center">
+                    <tr>
+                        <th class="align-middle" rowspan="2" scope="col">Numéro</th>
+                        <th class="align-middle" rowspan="2" scope="col">Nom</th>
+                        <th class="align-middle" colspan="6" scope="col">Grade kyu</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">6ème kyu</th>
+                        <th scope="col">5ème kyu</th>
+                        <th scope="col">4ème kyu</th>
+                        <th scope="col">3ème kyu</th>
+                        <th scope="col">2ème kyu</th>
+                        <th scope="col">1er kyu</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                {% for club in data.Statistics %}
+                    <tr>
+                        <td class="align-middle text-left">{{ club.ClubId }}</td>
+                        <td class="align-middle text-left">{{ club.ClubName|title }}</td>
+                        <td class="align-middle">{{ club.Grade.1 }}{% set Grade1 = Grade1 + club.Grade.1 %}</td>
+                        <td class="align-middle">{{ club.Grade.2 }}{% set Grade2 = Grade2 + club.Grade.2 %}</td>
+                        <td class="align-middle">{{ club.Grade.3 }}{% set Grade3 = Grade3 + club.Grade.3 %}</td>
+                        <td class="align-middle">{{ club.Grade.4 }}{% set Grade4 = Grade4 + club.Grade.4 %}</td>
+                        <td class="align-middle">{{ club.Grade.5 }}{% set Grade5 = Grade5 + club.Grade.5 %}</td>
+                        <td class="align-middle">{{ club.Grade.6 }}{% set Grade6 = Grade6 + club.Grade.6 %}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td class="align-middle text-left" colspan="2">Total</td>
+                        <td class="align-middle" id="totalGrade1">{{ Grade1 }}</td>
+                        <td class="align-middle" id="totalGrade2">{{ Grade2 }}</td>
+                        <td class="align-middle" id="totalGrade3">{{ Grade3 }}</td>
+                        <td class="align-middle" id="totalGrade4">{{ Grade4 }}</td>
+                        <td class="align-middle" id="totalGrade5">{{ Grade5 }}</td>
+                        <td class="align-middle" id="totalGrade6">{{ Grade6 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-hover">
+                <thead class="text-center">
+                    <tr>
+                        <th class="align-middle" rowspan="2" scope="col">Numéro</th>
+                        <th class="align-middle" rowspan="2" scope="col">Nom</th>
+                        <th class="align-middle" colspan="7" scope="col">Grade dan</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Shodan</th>
+                        <th scope="col">Nidan</th>
+                        <th scope="col">Sandan</th>
+                        <th scope="col">Yondan</th>
+                        <th scope="col">Godan</th>
+                        <th scope="col">Rokudan</th>
+                        <th scope="col">Nanadan</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                {% for club in data.Statistics %}
+                    <tr>
+                        <td class="align-middle text-left">{{ club.ClubId }}</td>
+                        <td class="align-middle text-left">{{ club.ClubName|title }}</td>
+                        <td class="align-middle">{{ club.Grade.7 + club.Grade.8 }}{% set Grade7 = Grade7 + club.Grade.7 + club.Grade.8 %}</td>
+                        <td class="align-middle">{{ club.Grade.9 + club.Grade.10 }}{% set Grade8 = Grade8 + club.Grade.9 + club.Grade.10 %}</td>
+                        <td class="align-middle">{{ club.Grade.11 + club.Grade.12 }}{% set Grade9 = Grade9 + club.Grade.11 + club.Grade.12 %}</td>
+                        <td class="align-middle">{{ club.Grade.13 + club.Grade.14 }}{% set Grade10 = Grade10 + club.Grade.13 + club.Grade.14 %}</td>
+                        <td class="align-middle">{{ club.Grade.15 + club.Grade.16 }}{% set Grade11 = Grade11 + club.Grade.15 + club.Grade.16 %}</td>
+                        <td class="align-middle">{{ club.Grade.17 + club.Grade.18 }}{% set Grade12 = Grade12 + club.Grade.17 + club.Grade.18 %}</td>
+                        <td class="align-middle">{{ club.Grade.19 + club.Grade.20 }}{% set Grade13 = Grade13 + club.Grade.19 + club.Grade.20 %}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td class="align-middle text-left" colspan="2">Total</td>
+                        <td class="align-middle" id="totalGrade7">{{ Grade7 }}</td>
+                        <td class="align-middle" id="totalGrade8">{{ Grade8 }}</td>
+                        <td class="align-middle" id="totalGrade9">{{ Grade9 }}</td>
+                        <td class="align-middle" id="totalGrade10">{{ Grade10 }}</td>
+                        <td class="align-middle" id="totalGrade11">{{ Grade11 }}</td>
+                        <td class="align-middle" id="totalGrade12">{{ Grade12 }}</td>
+                        <td class="align-middle" id="totalGrade13">{{ Grade13 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="container">
+                <div class="row">
+                    <div class="col"><canvas id="gradeChart"></canvas></div>
+                    <div class="col"><canvas id="yudanshaChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        let totalMen = parseInt(document.getElementById('totalMen').innerText);
+        let totalWomen = parseInt(document.getElementById('totalWomen').innerText);
+
+        let totalLevel1 = parseInt(document.getElementById('totalLevel1').innerText);
+        let totalLevel2 = parseInt(document.getElementById('totalLevel2').innerText);
+        let totalLevel3 = parseInt(document.getElementById('totalLevel3').innerText);
+        let totalLevel4 = parseInt(document.getElementById('totalLevel4').innerText);
+        let totalLevel5 = parseInt(document.getElementById('totalLevel5').innerText);
+        let totalLevel6 = parseInt(document.getElementById('totalLevel6').innerText);
+
+        let totalGrade1 = parseInt(document.getElementById('totalGrade1').innerText);
+        let totalGrade2 = parseInt(document.getElementById('totalGrade2').innerText);
+        let totalGrade3 = parseInt(document.getElementById('totalGrade3').innerText);
+        let totalGrade4 = parseInt(document.getElementById('totalGrade4').innerText);
+        let totalGrade5 = parseInt(document.getElementById('totalGrade5').innerText);
+        let totalGrade6 = parseInt(document.getElementById('totalGrade6').innerText);
+        let totalGrade7 = parseInt(document.getElementById('totalGrade7').innerText);
+        let totalGrade8 = parseInt(document.getElementById('totalGrade8').innerText);
+        let totalGrade9 = parseInt(document.getElementById('totalGrade9').innerText);
+        let totalGrade10 = parseInt(document.getElementById('totalGrade10').innerText);
+        let totalGrade11 = parseInt(document.getElementById('totalGrade11').innerText);
+        let totalGrade12 = parseInt(document.getElementById('totalGrade12').innerText);
+        let totalGrade13 = parseInt(document.getElementById('totalGrade13').innerText);
+
+        let ctx = document.getElementById('sexChart').getContext('2d');
+
+        let sexChart = new Chart
+        (ctx,
+            {
+                type: 'pie',
+                options:
+                    {
+                        plugins:
+                            {
+                                title: { display: true, text: 'Répartition des sexes', color: 'white', font: { size: 20 } },
+                                legend: { display: true, labels: { color: 'white', font: { size: 14 } } }
+                            }
+                    },
+                data:
+                    {
+                        labels: ['Hommes', 'Femmes'],
+                        datasets:
+                            [{
+                                data: [totalMen, totalWomen],
+                                backgroundColor: [ 'rgba(0, 255, 0, 2)', 'rgba(0, 0, 255, 2)' ],
+                                borderColor: [ 'rgba(0, 255, 0, 2)', 'rgba(0, 0, 255, 2)' ],
+                                borderWidth: 1,
+                                fontColor: ['rgba(255, 255, 255)']
+                            }]
+                    },
+            }
+        );
+
+        let ctx2 = document.getElementById('adepsChart').getContext('2d');
+
+        let adepsChart = new Chart
+        (ctx2,
+            {
+                type: 'pie',
+                options:
+                    {
+                        plugins:
+                            {
+                                title: { display: true, text: 'Répartition des formations', color: 'white', font: { size: 20 } },
+                                legend: { display: true, labels: { color: 'white', font: { size: 14 } } }
+                            }
+                    },
+                data:
+                    {
+                        labels: ['Initiateur', 'Aide-moniteur', 'Moniteur', 'Moniteur animateur', 'Moniteur initiateur', 'Moniteur éducateur'],
+                        datasets:
+                            [{
+                                data: [totalLevel1, totalLevel2, totalLevel3, totalLevel4, totalLevel5, totalLevel6],
+                                backgroundColor: [ 'rgba(0, 0, 0, 2)', 'rgba(50, 50, 50, 2)', 'rgba(100, 100, 100, 2)', 'rgba(150, 150, 150, 2)', 'rgba(200, 200, 200, 2)', 'rgba(250, 250, 250, 2)' ],
+                                borderColor: [ 'rgba(0, 0, 0, 2)', 'rgba(50, 50, 50, 2)', 'rgba(100, 100, 100, 2)', 'rgba(150, 150, 150, 2)', 'rgba(200, 200, 200, 2)', 'rgba(250, 250, 250, 2)' ],
+                                borderWidth: 1,
+                                fontColor: ['rgba(255, 255, 255)']
+                            }]
+                    },
+            }
+        );
+
+        let ctx3 = document.getElementById('gradeChart').getContext('2d');
+
+        let gradeChart = new Chart
+        (ctx3,
+            {
+                type: 'pie',
+                options:
+                    {
+                        plugins:
+                            {
+                                title: { display: true, text: 'Répartition des grades', color: 'white', font: { size: 20 } },
+                                legend: { display: true, labels: { color: 'white', font: { size: 14 } } }
+                            }
+                    },
+                data:
+                    {
+                        labels: ['6ème kyu', '5ème kyu', '4ème kyu', '3ème kyu', '2ème kyu', '1er kyu', 'Yudansha'],
+                        datasets:
+                            [{
+                                data: [totalGrade1, totalGrade2, totalGrade3, totalGrade4, totalGrade5, totalGrade6, totalGrade7 + totalGrade8 + totalGrade9 + totalGrade10 + totalGrade11 + totalGrade12 + totalGrade13],
+                                backgroundColor: [ 'rgba(255, 255, 255, 2)', 'rgba(255, 255, 0, 2)', 'rgba(255, 165, 0, 2)', 'rgba(0, 255, 0, 2)', 'rgba(0, 0, 255, 2)', 'rgba(128, 64, 0, 2)', 'rgba(0, 0, 0, 2)' ],
+                                borderColor: [ 'rgba(255, 255, 255, 2)', 'rgba(255, 255, 0, 2)', 'rgba(255, 165, 0, 2)', 'rgba(0, 255, 0, 2)', 'rgba(0, 0, 255, 2)', 'rgba(128, 64, 0, 2)', 'rgba(0, 0, 0, 2)' ],
+                                borderWidth: 1,
+                                fontColor: ['rgba(255, 255, 255)']
+                            }]
+                    },
+            }
+        );
+
+        let ctx4 = document.getElementById('yudanshaChart').getContext('2d');
+
+        let yudanshaChart = new Chart
+        (ctx4,
+            {
+                type: 'pie',
+                options:
+                    {
+                        plugins:
+                            {
+                                title: { display: true, text: 'Répartition des Yudansha', color: 'white', font: { size: 20 } },
+                                legend: { display: true, labels: { color: 'white', font: { size: 14 } } }
+                            }
+                    },
+                data:
+                    {
+                        labels: ['Shodan', 'Nidan', 'Sandan', 'Yondan', 'Godan', 'Rokudan', 'Nanadan'],
+                        datasets:
+                            [{
+                                data: [totalGrade7, totalGrade8, totalGrade9, totalGrade10, totalGrade11, totalGrade12, totalGrade13],
+                                backgroundColor: [ 'rgba(0, 0, 0, 2)', 'rgba(40, 40, 40, 2)', 'rgba(80, 80, 80, 2)', 'rgba(120, 120, 120, 2)', 'rgba(160, 160, 160, 2)', 'rgba(200, 200, 200, 2)', 'rgba(240, 240, 240, 2)' ],
+                                borderColor: [ 'rgba(0, 0, 0, 2)', 'rgba(40, 40, 40, 2)', 'rgba(80, 80, 80, 2)', 'rgba(120, 120, 120, 2)', 'rgba(160, 160, 160, 2)', 'rgba(200, 200, 200, 2)', 'rgba(240, 240, 240, 2)' ],
+                                borderWidth: 1,
+                                fontColor: ['rgba(255, 255, 255)'],
+                            }]
+                    },
+            }
+        );
+    </script>
+{% endblock %}

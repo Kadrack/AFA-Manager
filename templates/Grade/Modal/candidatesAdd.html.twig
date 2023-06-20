@@ -1,0 +1,20 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Inscription</h5>
+        </div>
+        <div class="modal-body">
+            <div class="d-grid gap-0">
+                {{ form_start(form) }}
+                {{ form_row(form.GradeSessionCandidateRank) }}
+                {{ form_widget(form.GradeSessionCandidateComment) }}
+                {% if gradeSession.getGradeSessionType == 1 %}{{ form_row(form.Condition) }}{% endif %}
+                <div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+        </div>
+    </div>
+</div>

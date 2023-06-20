@@ -1,0 +1,24 @@
+<p>Cher candidat, chère candidate,</p>
+<p>Ta candidature pour les prochains examens yudansha a bien été enregistrée. Ces examens se dérouleront le samedi {{ gradeSession.getGradeSessionDate|date('d/m/Y') }} à l’adresse suivante:</p>
+<p>
+    {{ gradeSession.getGradeSessionStreet }}<br />
+    {{ gradeSession.getGradeSessionZip }} {{ gradeSession.getGradeSessionCity }}
+</p>
+<p>
+    L'horaire prévu est le suivant:
+    <ul>
+        {% if data.Shodan.Schedule is not null %}<li>Heure de début des examens shodan{% if data.Nidan.Schedule  is null %}{% if data.Sandan.Schedule is not null %} et{% else %},{% endif %} nidan{% if data.Sandan.Schedule is null %}{% if data.Yondan.Schedule is not null %} et{% else %},{% endif %} sandan{% if data.Yondan.Schedule is null %} et yondan{% endif %}{% endif %}{% endif %} : {{ data.Shodan.Schedule }}</li>{% endif %}
+        {% if data.Nidan.Schedule  is not null %}<li>Heure de début des examens nidan{% if data.Sandan.Schedule is null %}{% if data.Yondan.Schedule is not null %} et{% else %},{% endif %} sandan{% if data.Yondan.Schedule is null %} et yondan{% endif %}{% endif %} : {{ data.Nidan.Schedule }}</li>{% endif %}
+        {% if data.Sandan.Schedule is not null %}<li>Heure de début des examens sandan{% if data.Yondan.Schedule is null %} et yondan{% endif %} : {{ data.Sandan.Schedule }}</li>{% endif %}
+        {% if data.Yondan.Schedule is not null %}<li>Heure de début des examens yondan : {{ data.Yondan.Schedule }}</li>{% endif %}
+    </ul>
+</p>
+<p>Pour rappel, les candidats doivent être prêts, en keikogi, une demi-heure avant le début de leur série d'examen.</p>
+<p>Les candidats de la première série et leurs accompagnants sont invités à arriver un peu plus tôt, afin d’aider à la mise en place des tatamis.</p>
+<p>Si tu possèdes déjà un carnet yudansha (candidats nidan et au-delà), n'oublie pas de me l'apporter le jour de l'examen, afin que, en cas de réussite, nous puissions le faire mettre à jour par le Hombu Dojo.</p>
+<p>Dans l'attente du plaisir de te rencontrer, je te prie d'agréer mes cordiales salutations.</p>
+<p>
+    Pour la CT,<br />
+    Frédéric Ernould,<br />
+    Secrétaire
+</p>

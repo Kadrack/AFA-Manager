@@ -1,0 +1,25 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">Ajouter un professeur</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_row(form.ClubTeacherTitle) }}
+            {{ form_row(form.ClubTeacherType) }}
+            <h6 class="text-center">Si le professeur est membre de l'AFA</h6>
+            {{ form_row(form.ClubTeacherMember) }}
+            <h6 class="text-center">Si le professeur n'est pas membre</h6>
+            {{ form_row(form.ClubTeacherFirstname) }}
+            {{ form_row(form.ClubTeacherName) }}
+            {{ form_row(form.ClubTeacherGrade) }}
+            {{ form_row(form.ClubTeacherTitleAikikai) }}
+            {{ form_row(form.ClubTeacherTitleAdeps) }}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

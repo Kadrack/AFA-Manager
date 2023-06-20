@@ -1,0 +1,25 @@
+<div class="container col col-lg-8">
+    <div class="text-center mb-3">
+        {% if access.check('Member-LicenceAdd') %}<a class="btn btn-sm btn-light" onclick="load('{{ path('member-licencesAdd', {'member': data.Member.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Renouveller</a>{% endif %}
+        {% if access.check('Member-LicenceFormPrint') %}<a class="btn btn-sm btn-light" href="{{ path('member-licencesFormPrint', {'member': data.Member.getMemberId}) }}"><i class="bi-download"></i> Formulaire</a>{% endif %}
+        {% if access.check('Member-LicenceStampPrint') %}<a class="btn btn-sm btn-light" href="{{ path('member-licencesStampPrint', {'member': data.Member.getMemberId}) }}"><i class="bi-download"></i> Timbre</a>{% endif %}
+        {% if access.check('Member-LicenceCardPrint') %}<a class="btn btn-sm btn-light" href="{{ path('member-licencesCardPrint', {'member': data.Member.getMemberId}) }}"><i class="bi-download"></i> Carte</a>{% endif %}
+    </div>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Echéance</th>
+                <th scope="col">Club</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for licence in data.Member.getMemberLicences %}
+            <tr class="table-active" {% if access.check('Member-LicenceEdit') %}onclick="load('{{ path('member-licencesEdit', {'member': data.Member.getMemberId, 'licence': licence.getMemberLicenceId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ licence.getMemberLicenceDeadline()|date("d/m/Y") }}</td>
+                <td>{{ licence.getMemberLicenceClub().getClubId() }} - {{ licence.getMemberLicenceClub().getClubName() }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

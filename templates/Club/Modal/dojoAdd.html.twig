@@ -1,0 +1,21 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">Ajouter un dojo</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_row(form.ClubDojoName) }}
+            {{ form_row(form.ClubDojoStreet) }}
+            {{ form_row(form.ClubDojoZip) }}
+            {{ form_row(form.ClubDojoCity) }}
+            {{ form_row(form.ClubDojoTatamis) }}
+            {{ form_row(form.ClubDojoDEA) }}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

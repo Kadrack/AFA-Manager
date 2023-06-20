@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">{{ data.Training.getTrainingName()|title }} {% if access.check('Training-TrainingEdit') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('training-trainingEdit', {'training': data.Training.getTrainingId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}</h1>
+
+    {% if access.check('Training-FullAccess') or ((data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7) and access.check('Training-AttendanceAdd')) %}
+        <div class="container col col-lg-3 text-center">
+            {{ form_start(form) }}
+            {{ form_row(form.Search) }}
+            <div class="visually-hidden">{{ form_row(form.Submit) }}</div>
+            {{ form_end(form) }}
+        </div>
+        {% if data.SearchForeign is defined %}
+            <h4 class="text-center">Résultats recherche non membre déjà inscrit</h4>
+            <div class="container col col-lg-8">
+                <table class="table table-sm table-hover user-select-none col col-lg-8">
+                    <tbody>
+                        <tr class="table-active" {% if access.check('Training-AttendanceAdd') %}onclick="load('{{ path('training-attendance', {'training': data.Training.trainingId, 'attendance': 'null', 'Name': data.Search, }) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <td class="align-middle text-center"><button class="btn btn-sm btn-light" onmouseover="this.style.cursor='pointer'">Ajouter</button></td>
+                        </tr>
+                    {% if data.SearchForeign.0 is defined %}
+                        {% for foreign in data.SearchForeign %}
+                            <tr class="table-active" {% if access.check('Training-AttendanceAdd') %}onclick="load('{{ path('training-attendance', {'training': data.Training.trainingId, 'attendance': foreign.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                                <td class="align-middle text-center">{{ foreign.Name|title }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if data.SearchMember.0 is defined %}
+            <h4 class="text-center">Résultats recherche membre AFA</h4>
+            <div class="container col col-lg-8">
+                <table class="table table-sm table-hover user-select-none">
+                    <thead>
+                        <tr>
+                            <th scope="col">Photo</th>
+                            <th scope="col"># Licence</th>
+                            <th scope="col">Prénom</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Club</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in data.SearchMember %}
+                            <tr class="table-active" {% if access.check('Training-AttendanceAdd') %}onclick="load('{{ path('training-attendance', {'training': data.Training.trainingId, 'attendance': 'null', 'Member': member.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                                <td class="align-middle"><img alt="" src="{{ member.Photo }}" /></td>
+                                <td class="align-middle">{{ member.Id }} {% if member.Deadline > date() %}<img alt="" src=" {{ asset('images/pass.png') }}" />{% else %}<img alt="" src=" {{ asset('images/fail.png') }}" />{% endif %}</td>
+                                <td class="align-middle">{{ member.FirstName|title }}</td>
+                                <td class="align-middle">{{ member.Name|title }}</td>
+                                <td class="align-middle">{{ member.ClubId }} - {{ member.Club|title }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div id="session" class="container col col-lg-6 text-center">
+        <h2 class="text-center p-3">Détails des cours {% if access.check('Training-FullAccess') or ((data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7) and access.check('Training-AttendanceAdd')) %}<button class="btn btn-sm btn-light" onclick="show('money')" onmouseover="this.style.cursor='pointer'">Voir les détails de caisse</button>{% endif %} {% if data.Training.getTrainingAttendances|length == 0 %}<button class="btn btn-sm btn-light" onclick="load('{{ path('training-sessionAdd', {'training': data.Training.getTrainingId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h2>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="align-middle text-center" scope="col">Date</th>
+                    <th class="align-middle text-center" scope="col">Jour</th>
+                    <th class="align-middle text-center" scope="col">Début</th>
+                    <th class="align-middle text-center" scope="col">Fin</th>
+                    {% if access.check('Training-FullAccess') or ((data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7) and access.check('Training-AttendanceAdd')) %}<th class="align-middle text-center" scope="col"># Pratiquants</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in data.Training.getTrainingSessions %}
+                    <tr class="table-active" {% if access.check('Training-SessionEdit') %}{% if data.Training.getTrainingAttendances|length == 0 %}onclick="load('{{ path('training-sessionEdit', {'training': data.Training.trainingId, 'session': session.getTrainingSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}{% endif %}>
+                        <td class="align-middle text-center">{{ session.getTrainingSessionDate|date("d/m/Y") }}</td>
+                        <td class="align-middle text-center">{{ listData.day(session.getTrainingSessionDate|date("N")) }}</td>
+                        <td class="align-middle text-center">{{ session.getTrainingSessionStartingHour|date("H:i") }}</td>
+                        <td class="align-middle text-center">{{ session.getTrainingSessionEndingHour|date("H:i") }}</td>
+                        {% if access.check('Training-FullAccess') or ((data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7) and access.check('Training-AttendanceAdd')) %}<td class="align-middle text-center">{{ session.getTrainingSessionAttendances|length }}</td>{% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% if access.check('Training-FullAccess') or ((data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7) and access.check('Training-AttendanceAdd')) %}
+            {% if data.Training.getTrainingSessions|length > 1 %}
+                <thead>
+                    <tr>
+                        <th class="align-middle text-center" scope="col" colspan="4">Total des pratiquants</th>
+                        <th class="align-middle text-center" scope="col">{{ data.Training.getTrainingAttendances|length }}</th>
+                    </tr>
+                </thead>
+            {% endif %}
+            {% endif %}
+        </table>
+    </div>
+
+    {% if access.check('Training-FullAccess') or ((data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7) and access.check('Training-AttendanceAdd')) %}
+        <div id="money" class="container col col-lg-4 visually-hidden">
+            <h2 class="text-center p-3">Détails de caisse <button class="btn btn-sm btn-light" onclick="show('session')" onmouseover="this.style.cursor='pointer'">Voir le détail des cours</button></h2>
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th class="align-middle text-center" scope="col">Cash</th>
+                        <th class="align-middle text-center" scope="col">Carte</th>
+                        <th class="align-middle text-center" scope="col">Payconiq</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-active">
+                        <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Cash / 100)|number_format(2, ',', '.') }} €</td>
+                        <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Card / 100)|number_format(2, ',', '.') }} €</td>
+                        <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Transfert / 100)|number_format(2, ',', '.') }} €</td>
+                    </tr>
+                </tbody>
+                <thead>
+                    <tr>
+                        <th class="align-middle text-center" scope="col" colspan="3">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-active">
+                        <td class="align-middle text-center" colspan="3">{{ ((data.Training.getTrainingPaymentsTotal.Cash + data.Training.getTrainingPaymentsTotal.Card + data.Training.getTrainingPaymentsTotal.Transfert) / 100)|number_format(2, ',', '.') }} €</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <div id="attendancesDetails" class="container col col-lg-8"></div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        load('{{ path('training-attendancesDetails', {'training': data.Training.trainingId}) }}', 'attendancesDetails')
+    </script>
+    <script type="text/javascript">
+        function check()
+        {
+            let x = document.getElementsByClassName("form-check-input");
+            let c = document.getElementById("checkall");
+            let i;
+
+            for (i = 1; i < x.length; i++)
+            {
+                if (x[i].type === "checkbox")
+                {
+                    x[i].checked = c.checked;
+                }
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function show(id)
+        {
+            if (id === "money")
+            {
+                let session = document.getElementById("session");
+
+                session.classList.add("visually-hidden");
+
+                let money = document.getElementById("money");
+
+                money.classList.remove("visually-hidden");
+            }
+            else
+            {
+                let session = document.getElementById("session");
+
+                session.classList.remove("visually-hidden");
+
+                let money = document.getElementById("money");
+
+                money.classList.add("visually-hidden");
+            }
+        }
+    </script>
+{% endblock %}

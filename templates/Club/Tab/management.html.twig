@@ -1,0 +1,120 @@
+<div class="container col col-lg-8">
+    <h4 class="text-center">Gestionnaire(s){% if access.check('Club-ManagerAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('club-managersAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Login</th>
+                <th scope="col">N° Licence</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for manager in data.Club.getClubManagers %}
+            <tr class="table-active"{% if access.check('Club-ManagerEdit') %} onclick="load('{{ path('club-managersEdit', {'club': data.Club.getClubId, 'manager': manager.getClubManagerId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ loop.index }}{% if manager.getClubManagerIsMain %} *{% endif %}</td>
+                <td>{{ manager.getClubManagerLogin }}</td>
+                <td>{{ manager.getClubManagerMemberId }}</td>
+                <td>{{ manager.getClubManagerFirstname|title }}</td>
+                <td>{{ manager.getClubManagerName|title }}</td>
+                <td>{% if manager.getClubManagerEmail is null %}Aucune{% else %}{{ manager.getClubManagerEmail }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-white">* gestionnaire défini comme principal</div>
+
+    <h4 class="text-center">Détails Association</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Nom du club</th>
+                <th scope="col">Type</th>
+                <th scope="col">Adresse</th>
+                <th scope="col">Localité</th>
+                <th scope="col">IBAN</th>
+                <th scope="col">N° BCE</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active"{% if access.check('Club-AssociationEdit') %} onclick="load('{{ path('club-associationEdit', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ data.Club.getClubName|title }}</td>
+                <td>{{ data.Club.getClubTypeName }}</td>
+                <td>{{ data.Club.getClubAddress }}</td>
+                <td>{{ data.Club.getClubZip }} {{ data.Club.getClubCity }}</td>
+                <td>{{ data.Club.getClubIbanDisplay }}</td>
+                <td>{{ data.Club.getClubBceNumberDisplay }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="text-center">Détails du comité</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Président</th>
+                <th scope="col">Secrétaire</th>
+                <th scope="col">Trésorier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active"{% if access.check('Club-CommiteeEdit') %} onclick="load('{{ path('club-committeeEdit', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ data.Club.getClubPresidentDisplay|title }}</td>
+                <td>{{ data.Club.getClubSecretaryDisplay|title }}</td>
+                <td>{{ data.Club.getClubTreasurerDisplay|title }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="text-center">Détails site internet</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Site internet</th>
+                <th scope="col">Nom contact</th>
+                <th scope="col">N° de téléphone</th>
+                <th scope="col">Adresse email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active"{% if access.check('Club-WebsiteEdit') %} onclick="load('{{ path('club-websiteEdit', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ data.Club.getClubUrlDisplay }}</td>
+                <td>{{ data.Club.getClubContactPublicDisplay }}</td>
+                <td>{{ data.Club.getClubPhonePublicDisplay }}</td>
+                <td>{{ data.Club.getClubEmailPublicDisplay }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="text-center">Réseaux sociaux</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Page Facebook</th>
+                <th scope="col">Page Instagram</th>
+                <th scope="col">Page Youtube</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active"{% if access.check('Club-SocialEdit') %} onclick="load('{{ path('club-socialsEdit', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ data.Club.getClubFacebookDisplay }}</td>
+                <td>{{ data.Club.getClubInstagramDisplay }}</td>
+                <td>{{ data.Club.getClubYoutubeDisplay }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="text-center">Vue du dojo</h4>
+
+    <div class="text-center"{% if access.check('Club-PhotoEdit') %} onclick="load('{{ path('club-photoEdit', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+        <img class="rounded img-fluid user-select-none" alt="" src="{{ asset('uploads/clubs/'~data.Club.getClubId()~'.png') }}" />
+    </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="container col col-lg-8">
+    {% if data.Member.getMemberLastGrade.getGradeRank >=8 %}
+        <div class="text-white text-center" {% if access.check('Member-AikikaiIdEdit') %}onclick="load('{{ path('member-aikikaiIdEdit', {'member': data.Member.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+            <h3><strong>Licence aïkikaï n°</strong> {{ data.Member.getMemberAikikaiId }}</h3>
+        </div>
+    {% endif %}
+
+    {% set fail = 0 %}
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Grade</th>
+                <th scope="col">Date</th>
+                <th scope="col">N° Diplôme</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if access.check('Member-GradeAdd') %}
+                <tr class="table-active" onclick="load('{{ path('member-gradesAdd', {'member': data.Member.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                    <td colspan="4" class="text-center">{% if access.check('Member-GradeAdd') %}<button class="btn btn-sm btn-light">Ajouter</button>{% endif %}</td>
+                </tr>
+            {% endif %}
+            {% for grade in data.Member.getMemberGrades() %}
+            {% if grade.getGradeStatus < 4 %}
+                <tr class="table-active"{% if (access.check('Member-GradeKyuEdit') and grade.getGradeRank <= 6) or (access.check('Member-GradeDanEdit') and grade.getGradeRank > 6) %} onclick="load('{{ path('member-gradesEdit', {'member': data.Member.getMemberId, 'grade': grade.getGradeId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <td>{{ listData.getGradeType(grade.getGradeStatus) }}</td>
+                    <td>{{ listData.getGrade(grade.getGradeRank) }}</td>
+                    <td>{% if grade.getGradeDate is not null %}{{ grade.getGradeDate|date("d/m/Y") }}{% else %}En attente{% endif %}</td>
+                    <td>{{ grade.getGradeCertificate }}</td>
+                </tr>
+            {% else %}{% set fail = 1 %}
+            {% endif %}
+            {% endfor %}
+            <tr class="table-active"{% if access.check('Member-GradeStartEdit') %} onclick="load('{{ path('member-gradesStartEdit', {'member': data.Member.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td colspan="2">Début de pratique</td>
+                <td>{{ data.Member.getMemberStartPractice|date("d/m/Y") }}</td>
+                <td>--</td>
+            </tr>
+        </tbody>
+    </table>
+    {% if fail == 1 %}
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Type</th>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for grade in data.Member.getMemberGrades() %}
+                {% if grade.getGradeStatus == 4 %}
+                    <tr class="table-active">
+                        <td>{{ listData.getGradeType(grade.getGradeStatus) }}</td>
+                        <td>{{ listData.getGrade(grade.getGradeRank) }}</td>
+                        <td>{{ grade.getGradeDate|date("d/m/Y") }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>

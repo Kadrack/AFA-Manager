@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <h2 class="text-center">Liste des licences expirées depuis moins de 6 mois</h2>
+    <div class="container col col-lg-8">
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Licence n°</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Début de pratique</th>
+                    <th scope="col">Club</th>
+                    <th scope="col">Echéance</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in data.List %}
+                <tr class="table-active" onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ member.Id }}</td>
+                    <td class="align-middle">{{ member.FirstName|title }}</td>
+                    <td class="align-middle">{{ member.Name|title }}</td>
+                    <td class="align-middle">{{ member.Start|date('Y-m-d') }}</td>
+                    <td class="align-middle">{{ member.ClubId }} - {{ member.Club|title }} {% if member.Aware > 1 %}<i class="bi-exclamation-triangle text-danger"></i>{% endif %}</td>
+                    <td class="align-middle">{{ member.Deadline|date('Y-m-d') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

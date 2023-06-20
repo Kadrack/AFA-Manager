@@ -1,0 +1,73 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Détails pratiquant</h5>
+        </div>
+        <div class="modal-body">
+            <div class="card text-white bg-primary container col gx-0">
+                <div class="card-header text-center user-select-none">
+                    <h2>{{ candidate.Member.getMemberFirstname|title }} {{ candidate.Member.getMemberName|title }}</h2>
+                </div>
+                <div class="card-body row align-items-center">
+                    <div class="col text-center">
+                        <div class="row">
+                            <div class="col-6 text-end"><strong>N° Licence</strong></div>
+                            <div class="col text-start">{{ candidate.Member.getMemberId }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-end"><strong>Début de pratique</strong></div>
+                            <div class="col text-start">{{ candidate.Member.getMemberStartPractice|date('d/m/Y') }} - {{ date().diff(date(candidate.Member.getMemberStartPractice)).y }} an(s)</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-end"><strong>Grade Actuel</strong></div>
+                            <div class="col text-start">{{ listData.getGrade(candidate.Member.getMemberLastGrade.getGradeRank) }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-end"><strong>Obtenu le</strong></div>
+                            <div class="col text-start">{{ candidate.Member.getMemberLastGrade.getGradeDate|date('d/m/Y') }} - {{ date().diff(date(candidate.Member.getMemberLastGrade.getGradeDate)).y }} an(s)</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-end"><strong>Dernier examen</strong></div>
+                            <div class="col text-start">{% if candidate.OldSession|length > 1 %}{{ listData.getGrade(candidate.OldSession.1.getGradeSessionCandidateRank) }} - {{ listData.getExamResult(candidate.OldSession.1.getGradeSessionCandidateResult) }}{% else %}Non disponible{% endif %}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-end mb-3"><strong>Heure de stages - Total</strong></div>
+                            <div class="col text-start">{{ candidate.TrainingActual.0.Total/60 }} h - {{ candidate.TrainingTotal.0.Total/60 }} h</div>
+                        </div>
+                        <div class="row border-top border-dark p-1">
+                            <div class="col text-center"><strong>Remarque</strong></div>
+                        </div>
+                        <div class="row border-bottom border-dark pb-3">
+                            <div class="col text-start">{% if candidate.Session.GradeSessionCandidateComment is null %}Aucune{% else %}{{ candidate.Session.GradeSessionCandidateComment }}{% endif %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if access.check('Grade-CandidateValidate') %}
+            <div class="d-grid gap-0">
+                {{ form_start(formValidate) }}
+                {{ form_row(formValidate.GradeSessionCandidateRank) }}
+                <div class="d-grid gap-0">{{ form_widget(formValidate.Submit) }}</div>
+                {{ form_end(formValidate) }}
+            </div>
+            <br />
+            <div class="d-grid gap-0">
+                {{ form_start(formReject) }}
+                {{ form_widget(formReject.GradeSessionCandidateStaffComment) }}
+                <div class="d-grid gap-0">{{ form_widget(formReject.Submit) }}</div>
+                {{ form_row(formReject.Delete) }}
+                {{ form_end(formReject) }}
+            </div>
+            <div class="d-grid gap-0">
+                {{ form_start(formDelete) }}
+                <div class="d-grid gap-0">{{ form_widget(formDelete.Submit) }}</div>
+                {{ form_row(formDelete.Delete) }}
+                {{ form_end(formDelete) }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+        </div>
+    </div>
+</div>

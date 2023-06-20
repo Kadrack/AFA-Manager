@@ -1,0 +1,23 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(form) }}
+        <div class="modal-header">
+            <h5 class="modal-title">Ajouter une session</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_row(form.GradeSessionDate) }}
+            {{ form_row(form.GradeSessionType) }}
+            {{ form_row(form.GradeSessionOpen) }}
+            {{ form_row(form.GradeSessionClose) }}
+            {{ form_row(form.GradeSessionPlace) }}
+            {{ form_row(form.GradeSessionStreet) }}
+            {{ form_row(form.GradeSessionZip) }}
+            {{ form_row(form.GradeSessionCity) }}
+        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.Submit) }}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>

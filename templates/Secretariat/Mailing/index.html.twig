@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="form-check form-check-inline">
+        {{ form_widget(form.To) }}
+    </div>
+    {{ form_row(form.Subject) }}
+    {{ form_widget(form.Text) }}
+    {{ form_widget(form.Attachment) }}
+    {{ form_widget(form.Submit) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

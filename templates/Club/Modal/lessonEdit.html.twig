@@ -1,0 +1,28 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Modifier un cours</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_start(formEdit) }}
+            {{ form_row(formEdit.LessonDate) }}
+            {{ form_row(formEdit.LessonStartingHour) }}
+            {{ form_row(formEdit.LessonEndingHour) }}
+            {{ form_row(formEdit.LessonType) }}
+            <div class="d-grid gap-0">{{ form_widget(formEdit.Submit) }}</div>
+            {{ form_end(formEdit) }}
+        </div>
+        <div class="modal-header">
+            <h5 class="modal-title">Suppression</h5>
+        </div>
+        <div class="modal-body">
+            {{ form_start(formDelete) }}
+            <div class="d-grid gap-0">{{ form_widget(formDelete.Submit) }}</div>
+            {{ form_row(formDelete.Delete) }}
+            {{ form_end(formDelete) }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>

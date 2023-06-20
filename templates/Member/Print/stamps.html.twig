@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <title>Timbre à imprimer</title>
+    <style media="print">
+        <!--
+        .noimprime{
+            display:none;
+        }
+        -->
+    </style>
+    <style>
+        h1
+        {
+            font-size:2em;
+        }
+
+        tr
+        {
+            font-size:0.6em;
+        }
+
+        html, body
+        {
+            width:8.5cm;
+            height:5.5cm;
+            margin:0;
+            color:white;
+        }
+
+        @page WordSection1
+        {/*size:1295.3pt 841.9pt;*/
+            width:900px;
+            margin:2cm 1.0cm 2cm 1.0cm;
+        }
+
+        div.WordSection1
+        {
+            page:WordSection1;
+        }
+
+        .conteneurCarte
+        {
+            position:relative;
+            width:8.5cm;
+            height:5.5cm;
+            color:white;
+            padding:0;
+        }
+
+        img.licence
+        {
+            position:absolute;
+            width:8.5cm;
+            height:5.5cm;
+            top:0;
+        }
+
+        .nomPrenom
+        { /*background-color:red;*/
+            position:absolute;
+            top:1.7cm;
+            width:100%;
+            text-align:center;
+            color:black;
+            font-family: verdana, arial, sans-serif;
+            font-size:0.9em;
+        }
+
+        .club
+        { /*background-color:red;*/
+            position:absolute;
+            top:2.25cm;
+            width:100%;
+            text-align:center;
+            color:black;
+            font-family: verdana, arial, sans-serif;
+            font-size:0.9em;
+        }
+
+        .grade
+        { /*background-color:red;*/
+            position:absolute;
+            top:2.8cm;
+            width:100%;
+            text-align:center;
+            color:black;
+            font-family: verdana, arial, sans-serif;
+            font-size:0.9em;
+        }
+
+        .echeance
+        { /*background-color:red;*/
+            position:absolute;
+            top:3.35cm;
+            width:100%;
+            text-align:center;
+            color:black;
+            font-family: verdana, arial, sans-serif;
+            font-size:0.9em;
+        }
+
+        .float_left
+        {
+            float:left;
+        }
+
+        .float_right
+        {
+            float:right;
+        }
+    </style>
+</head>
+<body>
+    <div class="WordSection1" style="width:700px;">
+        {% if data.Member is not defined %}
+        <div class="conteneurCarte float_left" style="width:321px;">
+            <div>$nbsp;</div>
+            <img class="licence" src="{{ asset('images/timbre.jpg') }}" alt="Background" />
+            <div class="nomPrenom">{{ data.Licence.getMemberLicence.getMemberFirstname|title }} {{ data.Licence.getMemberLicence.getMemberName|title }}</div>
+            <div class="club">N° {{ data.Licence.getMemberLicence.getMemberId }} - {{ data.Licence.getMemberLicenceClub.getClubId }}</div>
+            <div class="grade">{{ listData.getGrade(data.Licence.getMemberLicence.getMemberLastGrade.getGradeRank) }}</div>
+            <div class="echeance">Ech.: {{ data.Licence.memberLicenceDeadline|date("d/m/Y") }}</div>
+        </div>
+        {% else %}
+        {% for member in data.Member %}
+        <div {% if (loop.index == 1) or (loop.index == 3) or (loop.index == 5) or (loop.index == 7) or (loop.index == 9) %}class="conteneurCarte float_left" {% else %}class="conteneurCarte float_right"{% endif %} style="width:321px;">
+            <div>$nbsp;</div>
+            <img class="licence" src="{{ asset('images/timbre.jpg') }}" alt="Background" />
+            <div class="nomPrenom">{{ member.getMemberFirstname|title }} {{ member.getMemberName|title }}</div>
+            <div class="club">N° {{ member.getMemberId }} - {{ member.getMemberActualClub.getClubId }}</div>
+            <div class="grade">{{ member.getMemberLastGradeName }}</div>
+            <div class="echeance">Ech.: {{ member.getMemberLastDeadline|date("d/m/Y") }}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</body>
+</html>
