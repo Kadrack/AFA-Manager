@@ -1040,9 +1040,9 @@ class Member
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getMemberLastGradeDate(): DateTime
+    public function getMemberLastGradeDate(): DateTime|null
     {
         return $this->getMemberLastGrade()->getGradeDate();
     }

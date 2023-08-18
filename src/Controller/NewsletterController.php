@@ -206,7 +206,7 @@ class NewsletterController extends AbstractController
             $mailer->send($email);
         }
 
-        return $this->redirectToRoute('newsletter-send', array('newsletter' => $newsletter->getNewsletterId(), 'id' => $id+500));
+        return $this->redirectToRoute('newsletter-send', array('newsletter' => $newsletter->getNewsletterId(), 'id' => $id+100));
     }
 
     /**

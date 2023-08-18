@@ -121,7 +121,7 @@ class SearchMember
             {
                 $searchResults[] = $this->fillArray($result);
             }
-            elseif (($this->access->check('Search-Child')) && ($result->getMemberBirthday() >= new DateTime('-16 year today')))
+            elseif (($this->access->check('Search-Child')) && ($result->getMemberBirthday() > new DateTime('-17 year today')))
             {
                 $searchResults[] = $this->fillArray($result);
             }

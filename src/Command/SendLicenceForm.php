@@ -90,11 +90,11 @@ class SendLicenceForm extends Command
         }
         else
         {
-            $data['MonthStart'] = intval($today->format('n')) + 1;
+            $data['MonthStart'] = intval($today->format('n')) + 2;
 
             $data['YearStart'] = intval($today->format('Y'));
 
-            $data['MonthEnd'] = $data['MonthStart'] + 2;
+            $data['MonthEnd'] = $data['MonthStart'] + 1;
 
             $data['YearEnd'] = $data['YearStart'];
         }
@@ -114,6 +114,17 @@ class SendLicenceForm extends Command
             {
                 $data['NoMail'] = array();
 
+                if (str_contains($club->getClubMainManagerMail(), '@aikido.be'))
+                {
+                    $email['From'] = $club->getClubMainManagerMail(true);
+                }
+                else
+                {
+                    $email['From'] = new Address('afa-manager@aikido.be', $club->getClubMainManagerName() . ' via AFA-Manager');
+                }
+
+                $email['ReplyTo'] = $club->getClubMainManagerMail();
+
                 foreach ($members as $member)
                 {
                     $form['Member'] = $member;
@@ -124,17 +135,7 @@ class SendLicenceForm extends Command
 
                     $pdf = $this->fileGenerator->pdfGenerator($this->parameters->get('kernel.project_dir') . '/private/temp/' . $filename, $licenceForm);
 
-                    if (str_contains($member->getMemberActualClub()->getClubMainManagerMail(), '@aikido.be'))
-                    {
-                        $email['From'] = $member->getMemberActualClub()->getClubMainManagerMail(true);
-                    }
-                    else
-                    {
-                        $email['From'] = new Address('afa-manager@aikido.be', $club->getClubMainManagerName() . ' via AFA-Manager');
-                    }
-
                     $email['Attach']  = [$pdf];
-                    $email['ReplyTo'] = $email['From'];
                     $email['Member']  = $member;
 
                     if (!is_null($member->getMemberEmail()))

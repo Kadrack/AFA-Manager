@@ -410,7 +410,7 @@ class TrainingController extends AbstractController
         $formData['Foreign']   = is_null($member);
         $formData['Choices']   = $doctrine->getRepository(TrainingSession::class)->findBy(['training' => $training->getTrainingId()], ['training_session_date' => 'ASC', 'training_session_starting_hour' => 'ASC', 'training_session_duration' => 'ASC']);
         $formData['Lessons']   = count($formData['Choices']) > 1;
-        $formData['Subscribe'] = new DateTime() >= $training->getTrainingFirstDate();
+        $formData['Subscribe'] = new DateTime('+1 day today') >= $training->getTrainingFirstDate();
 
         $sessionAttendances = array();
 

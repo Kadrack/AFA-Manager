@@ -200,7 +200,7 @@ class EmailSender
         $this->email['To']       = $data['Club']->getClubManagerMail(true);
         $this->email['Cc']       = array();
         $this->email['Bcc']      = array(new Address('afa@aikido.be', 'Secrétariat AFA'));
-        $this->email['Subject']  = 'Renouvellement licences ' . $this->listData->getMonth($data['MonthEnd']);
+        $this->email['Subject']  = 'Renouvellement licences ' . $this->listData->getMonth($data['MonthStart']);
         $this->email['Template'] = 'Mails/autoMailToClub.html.twig';
         $this->email['Context']  = array('subject' => $this->email['Subject'], 'data' => $data);
 

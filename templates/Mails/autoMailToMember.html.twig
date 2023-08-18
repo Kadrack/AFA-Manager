@@ -11,7 +11,8 @@
             <p>{% if data.Member.getMemberSex == 1 %}Cher pratiquant,{% else %}Chère pratiquante,{% endif %}</p>
             <p>Par la présente, nous vous prions de trouver ci-joint votre formulaire de renouvellement de licence fédérale qui vient à échéance le {{ data.Member.getMemberLastDeadline|date('d/m/Y') }}</p>
             <p>Pour votre information, ce dernier a également été envoyé au correspondant de votre club.</p>
-            <p>Afin de vous garantir la continuité de votre "couverture assurance" pour une période de 12 mois, nous vous invitons à retourner ce dernier, dûment complété et signé, à votre gestionnaire de club, et à procéder au paiement de votre affiliation et ce, dans les meilleurs délais.</p>
+            <p>Afin de vous garantir la continuité de votre "couverture assurance" pour une période de 12 mois, nous vous invitons à retourner ce dernier, dûment complété et signé, à votre gestionnaire de club, et à procéder au paiement de votre affiliation via votre club et ce, dans les meilleurs délais.</p>
+            <p>Pour rappel, le montant de celle-ci s'élève à {% if data.Member.getMemberIsChild %}30€{% else %}35€{% endif %}.</p>
             <p>Nous insistons également sur l’exactitude de toutes les données qui figurent dans votre formulaire, notamment vos données personnelles, et sur l’importance de la présence de votre signature ou de votre représentant légal <strong>dans le paragraphe relatif à la déclaration sur l’honneur et en fin de document</strong>.</p>
             <p>Pour rappel, toute donnée manquante/erronée peut être ajoutée/modifiée à tout moment sur le formulaire de renouvellement ou dans l’onglet « Espace membre – Fiche personnelle » de l’outil de gestion.</p>
             <p>Pour rappel, le montant de celle-ci s'élève à {% if data.Member.getMemberIsChild %}30€{% else %}35€{% endif %}.</p>

@@ -34,9 +34,9 @@ class NewsletterSubscriptionRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('n');
 
         return $qb->where($qb->expr()->gte('n.newsletter_subscription_id', $id))
-            ->andWhere($qb->expr()->lt('n.newsletter_subscription_id', $id+500))
+            ->andWhere($qb->expr()->lt('n.newsletter_subscription_id', $id+100))
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 
 }
