@@ -164,11 +164,12 @@ class ClubController extends AbstractController
      * @param Access $access
      * @param Club $club
      * @param ManagerRegistry $doctrine
+     * @param Request $request
      * @param Session $session
      * @return Response
      */
     #[Route('/{club<\d+>}', name:'index')]
-    public function index(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
+    public function index(Access $access, Club $club, ManagerRegistry $doctrine, Request $request, Session $session): Response
     {
         if (!$access->check('Club-Index'))
         {
@@ -178,6 +179,18 @@ class ClubController extends AbstractController
         if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
         {
             die();
+        }
+
+        if ($session->has('activeClubTab') && ($session->get('activeClubTab') == 'attendanceTab'))
+        {
+            if ($request->query->has('season'))
+            {
+                $session->set('season', intval($request->query->get('season')));
+            }
+            else
+            {
+                $session->remove('season');
+            }
         }
 
         $data['Club'] = $club;
@@ -191,12 +204,11 @@ class ClubController extends AbstractController
      * @param Access $access
      * @param Club $club
      * @param ManagerRegistry $doctrine
-     * @param Request $request
      * @param Session $session
      * @return Response
      */
     #[Route('/{club<\d+>}/onglet-presence', name:'attendanceTab')]
-    public function attendanceTab(Access $access, Club $club, ManagerRegistry $doctrine, Request $request, Session $session): Response
+    public function attendanceTab(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
     {
         if (!$access->check('Club-AttendanceTab'))
         {
@@ -210,18 +222,34 @@ class ClubController extends AbstractController
 
         $session->set('activeClubTab', 'attendanceTab');
 
-        if ($request->query->has('date'))
-        {
-            $date = DateTime::createFromFormat("Ymd", (string)$request->query->get('date'));
+        $today = new DateTime();
 
-            $data['Lesson'] = $doctrine->getRepository(Lesson::class)->getLesson($club, $date);
+        if ($session->has('season') && ($session->get('season') >= 2022) && ($session->get('season') < intval($today->format('Y'))))
+        {
+            $data['Season'] = $session->get('season');
         }
         else
         {
-            $data['Lesson'] = $doctrine->getRepository(Lesson::class)->getLesson($club);
+            if (intval($today->format('n')) < 8)
+            {
+                $data['Season'] = intval($today->format('Y')) - 1;
+            }
+            else
+            {
+                $data['Season'] = intval($today->format('Y'));
+            }
         }
 
-        $data['Club'] = $club;
+        $data['SeasonList'] = array();
+
+        for ($i = intval($today->format('Y')) < 8 ? intval($today->format('Y')) - 1 : intval($today->format('Y')); $i >= 2022; $i--)
+        {
+            $data['SeasonList'][] = $i;
+        }
+
+        $data['Club']    = $club;
+        $data['Lesson']  = $doctrine->getRepository(Lesson::class)->getLesson($data['Club'], $data['Season']);
+        $data['Summary'] = $doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']);
 
         return $this->render('Club/Tab/attendance.html.twig', array('data' => $data));
     }
@@ -409,6 +437,20 @@ class ClubController extends AbstractController
         }
 
         $data['Subscription'] = $doctrine->getRepository(Member::class)->getClubActiveMemberList($club, null, $date);
+
+        $ids = array();
+
+        foreach ($data['Subscription'] as $member)
+        {
+            $ids[] = $member->getMemberId();
+        }
+
+        $lastLesson = $doctrine->getRepository(LessonAttendance::class)->getLastLesson($ids);
+
+        foreach ($lastLesson as $id)
+        {
+            $data['LastLesson'][$id['Id']] = $id['Last'];
+        }
 
         return $this->render('Club/Tab/secretariat.html.twig', array('data' => $data));
     }
@@ -1692,7 +1734,7 @@ class ClubController extends AbstractController
 
         if ($formEdit->isSubmitted() && $formEdit->isValid())
         {
-            if (is_null($doctrine->getRepository(Lesson::class)->findOneBy(array('lesson_club' => $club->getClubId(), 'lesson_date' => $lesson->getLessonDate(), 'lesson_starting_hour' => $lesson->getLessonStartingHour()))))
+            if ((($lesson->getLessonDate() == $formEdit->get('LessonDate')->getData()) && ($lesson->getLessonStartingHour() == $formEdit->get('LessonStartingHour')->getData())) || (is_null($doctrine->getRepository(Lesson::class)->findOneBy(array('lesson_club' => $club->getClubId(), 'lesson_date' => $lesson->getLessonDate(), 'lesson_starting_hour' => $lesson->getLessonStartingHour())))))
             {
                 $duration = date_diff($formEdit->get('LessonEndingHour')->getData(), $formEdit->get('LessonStartingHour')->getData());
 
@@ -1711,42 +1753,6 @@ class ClubController extends AbstractController
         }
 
         return $this->render('Club/Modal/lessonEdit.html.twig', array('formEdit' => $formEdit->createView(), 'formDelete' => $formDelete->createView()));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
-     * @param Request $request
-     * @param Session $session
-     * @return Response
-     */
-    #[Route('/{club<\d+>}/recherche-anciens-cours', name:'lessonOld')]
-    public function lessonOld(Access $access, Club $club, Request $request, Session $session): Response
-    {
-        if (!$access->check('Club-LessonOld'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $form = $this->createForm(ClubType::class, null, array('formData' => array('Form' => 'LessonOld'), 'action' => $this->generateUrl('club-lessonOld', array('club' => $club->getClubId()))));
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid())
-        {
-            $date = $form->get('Date')->getData();
-
-            return $this->redirectToRoute('club-index', array('club' => $club->getClubId(), 'date' => $date->format('Ymd')));
-        }
-
-        $data['Club'] = $club;
-
-        return $this->render('Club/Modal/lessonOld.html.twig', array('form' => $form->createView(), 'data' => $data));
     }
 
     /**

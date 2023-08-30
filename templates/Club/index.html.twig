@@ -86,6 +86,53 @@
 
             load('{{ path('club-attendanceTab', {'club': data.Club.getClubId, 'date': app.request.get('date')}) }}', 'attendance');
         </script>
+        <script type="text/javascript">
+            function show(id)
+            {
+                if (id === "lesson")
+                {
+                    let adult = document.getElementById("adult");
+
+                    adult.classList.add("visually-hidden");
+
+                    let child = document.getElementById("child");
+
+                    child.classList.add("visually-hidden");
+
+                    let lesson = document.getElementById("lesson");
+
+                    lesson.classList.remove("visually-hidden");
+                }
+                else if (id === "adult")
+                {
+                    let lesson = document.getElementById("lesson");
+
+                    lesson.classList.add("visually-hidden");
+
+                    let child = document.getElementById("child");
+
+                    child.classList.add("visually-hidden");
+
+                    let adult = document.getElementById("adult");
+
+                    adult.classList.remove("visually-hidden");
+                }
+                else
+                {
+                    let lesson = document.getElementById("lesson");
+
+                    lesson.classList.add("visually-hidden");
+
+                    let adult = document.getElementById("adult");
+
+                    adult.classList.add("visually-hidden");
+
+                    let child = document.getElementById("child");
+
+                    child.classList.remove("visually-hidden");
+                }
+            }
+        </script>
     {% endif %}
     {% if app.session.get('activeClubTab') == 'adultTab' %}
         <script type="text/javascript">

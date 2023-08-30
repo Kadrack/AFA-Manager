@@ -1,15 +1,77 @@
-<h3 class="text-center">Liste des cours</h3>
+<h1 class="text-center">
+    Août
+    <label>
+        <select class="form-select form-select-sm" onchange="window.open('{{ path('club-index', {'club': data.Club.getClubId}) }}' + '?season=' + this.value, '_self')">
+            {% for Season in data.SeasonList %}
+                <option value="{{ Season }}" {% if Season == data.Season %}selected{% endif %}>{{ Season }}</option>
+            {% endfor %}
+        </select>
+    </label>
+     - Juillet {{ data.Season + 1 }}
+</h1>
 
-<div class="text-center mb-1">
-    <button class="btn btn-sm btn-light mb-1" onclick="load('{{ path('club-lessonOld', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Voir les anciennes dates</button><br />
-    {% for lesson in data.Club.getClubClasses %}
-        <button class="btn btn-sm btn-light mb-1" onclick="window.open('{{ path('club-lessonAdd', {'club': data.Club.getClubId, 'number': loop.index}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ lesson.getClubClassDayDisplay }} {{ lesson.getClubClassStartingHour|date('H:i') }}</button>
-    {% endfor %}<br />
-    <button class="btn btn-sm btn-light" onclick="load('{{ path('club-lessonAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Autres jours</button>
+<div id="adult" class="container col col-lg-4 text-center visually-hidden">
+    <button class="btn btn-light" onclick="show('lesson')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('child')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
+    <h3 class="text-center">Bilan des présences adultes</h3>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center">Prénom</th>
+                <th scope="col" class="text-center">Nom</th>
+                <th scope="col" class="text-center">Total (h)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in data.Summary.Adult %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
-<div class="container col col-lg-4">
-    <table id="MembersList" class="table table-sm table-hover user-select-none">
+<div id="child" class="container col col-lg-4 text-center visually-hidden">
+    <button class="btn btn-light" onclick="show('lesson')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('adult')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button>
+    <h3 class="text-center">Bilan des présences enfants</h3>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center">Prénom</th>
+                <th scope="col" class="text-center">Nom</th>
+                <th scope="col" class="text-center">Total (h)</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for member in data.Summary.Child %}
+            <tr class="table-active">
+                <td class="text-center">{{ member.Firstname|title }}</td>
+                <td class="text-center">{{ member.Name|title }}</td>
+                <td class="text-center">{{ member.Total / 60 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="lesson" class="container col col-lg-4 text-center">
+    <button class="btn btn-light" onclick="show('adult')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button> <button class="btn btn-light" onclick="show('child')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
+    <h3 class="text-center">Ajout de cours</h3>
+
+    <div class="text-center mb-1">
+        {% for lesson in data.Club.getClubClasses %}
+            <button class="btn btn-sm btn-light mb-1" onclick="window.open('{{ path('club-lessonAdd', {'club': data.Club.getClubId, 'number': loop.index}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ lesson.getClubClassDayDisplay }} {{ lesson.getClubClassStartingHour|date('H:i') }}</button>
+        {% endfor %}<br />
+        <button class="btn btn-sm btn-light" onclick="load('{{ path('club-lessonAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Autres jours</button>
+    </div>
+
+    <h3 class="text-center">Liste des cours</h3>
+
+    <table class="table table-sm table-hover user-select-none">
         <thead>
             <tr>
                 <th scope="col" class="text-center">Date</th>
@@ -18,9 +80,16 @@
             </tr>
         </thead>
         <tbody>
+        {% set Month = 0 %}
             {% for lesson in data.Lesson %}
+                {% if Month != lesson.getLessonDate|date("n") %}
+                    {% set Month = lesson.getLessonDate|date("n") %}
+                    <tr class="table-primary">
+                        <td class="text-center" colspan="3">{{ listData.getMonth(lesson.getLessonDate|date("n")) }}</td>
+                    </tr>
+                {% endif %}
                 <tr class="table-active" onclick="window.open('{{ path('club-lessonIndex', {'club': data.Club.getClubId, 'lesson': lesson.getLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
-                    <td class="text-center">{{ lesson.getLessonDate|date("d/m/Y") }}</td>
+                    <td class="text-center">{{ listData.getDay(lesson.getLessonDate|date("N")) }} {{ lesson.getLessonDate|date("d") }}</td>
                     <td class="text-center">{{ lesson.getLessonStartingHour|date('H:i') }}</td>
                     <td class="text-center">{{ lesson.getLessonAttendances|length }}</td>
                 </tr>

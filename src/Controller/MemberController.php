@@ -200,7 +200,9 @@ class MemberController extends AbstractController
 
             while (isset($stage_history[$stage_count]))
             {
-                if (($grades[$i]->getGradeDate() > $stage_history[$stage_count]['Date']) && ($i != sizeof($grades) - 1))
+                $date = is_null($grades[$i]->getGradeDate()) ? new DateTime() : $grades[$i]->getGradeDate();
+
+                if (($date > $stage_history[$stage_count]['Date']) && ($i != sizeof($grades) - 1))
                 {
                     break;
                 }
@@ -216,7 +218,7 @@ class MemberController extends AbstractController
             }
         }
 
-        $data['LessonCount'] = $doctrine->getRepository(Lesson::class)->getLessonCount($data['Member'])[0];
+        $data['LessonCount'] = $doctrine->getRepository(Lesson::class)->getLessonCount($data['Member']);
 
         return $this->render('Member/Tab/training.html.twig', array('data' => $data));
     }

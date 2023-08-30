@@ -11,11 +11,15 @@
     <div class="container col col-lg-5">
         <h1 class="text-center">Liste des stages {% if access.check('Training-Add') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('training-trainingAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h1>
 
-        <select class="form-select" onchange="window.open('{{ path('training-list') }}' + '/' + this.value, '_self')">
-            {% for year in data.YearList %}
-            <option value="{{ year }}" {% if year == data.Year %}selected{% endif %}>{{ year }}</option>
-            {% endfor %}
-        </select>
+        <div class="text-center">
+            <label>
+                <select class="form-select form-select-sm" onchange="window.open('{{ path('training-list') }}' + '/' + this.value, '_self')">
+                    {% for year in data.YearList %}
+                        <option value="{{ year }}" {% if year == data.Year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
 
         <table id="stageList" class="table table-sm table-hover">
             <thead>

@@ -1,7 +1,11 @@
 <div class="container col col-lg-8">
-    {# <h4 class="text-center">Nombre d'heure de cours depuis le dernier grade : {{ data.LessonCount.Sum/60 }} h</h4> #}
     {% for grade in data.Stages.History %}
-        <h4 class="text-center">{{ listData.grade(grade.Rank) }} ({{ grade.Total }} h)</h4>
+        {% if loop.index == 1 %}
+            <h3 class="text-center">{{ listData.grade(grade.Rank) }}</h3>
+            <h4 class="text-center">Stage : {{ grade.Total }} h{% if data.LessonCount.Adult.SumAdult != 0 %} | Cours Adulte : {{ data.LessonCount.Adult.SumAdult / 60 }} h{% endif%}{% if data.LessonCount.Child.SumChild != 0%} | Cours Enfants : {{ data.LessonCount.Child.SumChild / 60 }} h{% endif %}</h4>
+        {% else %}
+            <h3 class="text-center">{{ listData.grade(grade.Rank) }} ({{ grade.Total }} h)</h3>
+        {% endif %}
 
         {% if grade.Stage is defined %}
             <table class="table table-sm table-hover">

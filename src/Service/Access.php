@@ -417,17 +417,12 @@ class Access
      */
     public function setClubAccess(Club $club): bool
     {
-        $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-MemberDetail', 'Club-Menu', 'Club-TrainingAdd', 'Club-TrainingOld');
+        $dojo     = array('Club-AttendanceAdd', 'Club-AttendanceDelete', 'Club-AttendanceTab', 'Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-LessonIndex', 'Club-LessonOld', 'Club-MemberDetail', 'Club-Menu', 'Club-SecretariatOld', 'Club-SubscriptionEdit', 'Club-SubscriptionList', 'Club-TrainingAdd', 'Club-TrainingOld');
         $grade    = array('Grade-CandidatesAwaiting', 'Grade-CandidatesRejected', 'Grade-Criteria', 'Grade-Index', 'Grade-List', 'Grade-Menu', 'Grade-Search', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
         $mailing  = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
         $member   = array('Member-EmailTab', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeTab', 'Member-Index', 'Member-Menu', 'Member-TitleTab', 'Member-TrainingTab');
         $search   = array('Search-Member');
         $training = array('Training-AttendancesDetails', 'Training-AttendancesDetailsRestricted', 'Training-Index', 'Training-Menu');
-
-        if ($this->getUser()->getUserMember()?->getMemberId() == 9607 || $this->getUser()->getUserMember()?->getMemberId() == 6438 || $this->getUser()->getUserMember()?->getMemberId() == 11601)
-        {
-            $dojo = array_merge($dojo, array('Club-AttendanceAdd', 'Club-AttendanceDelete', 'Club-AttendanceTab', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-LessonIndex', 'Club-LessonOld', 'Club-SecretariatOld', 'Club-SubscriptionEdit', 'Club-SubscriptionList'));
-        }
 
         if ($this->isManager($club))
         {

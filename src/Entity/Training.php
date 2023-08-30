@@ -300,6 +300,22 @@ class Training
     /**
      * @return array
      */
+    public function getTrainingAttendanceTotalDetail(): array
+    {
+        $total['Member']  = 0;
+        $total['Foreign'] = 0;
+
+        foreach ($this->getTrainingAttendances() as $attendance)
+        {
+            is_null($attendance->getTrainingAttendanceMember()) ? $total['Foreign']++ : $total['Member']++;
+        }
+
+        return $total;
+    }
+
+    /**
+     * @return array
+     */
     public function getTrainingAttendancesTotal(): array
     {
         $count['AFA']     = 0;

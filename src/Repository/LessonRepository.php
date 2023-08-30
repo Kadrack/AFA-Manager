@@ -7,9 +7,6 @@ use App\Entity\Lesson;
 use App\Entity\LessonAttendance;
 use App\Entity\Member;
 
-use DateInterval;
-use DateTime;
-
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,28 +30,64 @@ class LessonRepository extends ServiceEntityRepository
 
     /**
      * @param Club $club
-     * @param DateTime|null $date
+     * @param int $year
      * @return array|null
      */
-    public function getLesson(Club $club, ?DateTime $date = null): ?array
+    public function getLesson(Club $club, int $year): ?array
     {
-        if (is_null($date))
-        {
-            $date = new DateTime();
-        }
-
-        $limitLow  = date_sub(clone $date, DateInterval::createFromDateString('7 day'));
-        $limitHigh = date_add(clone $date, DateInterval::createFromDateString('7 day'));
+        $start = $year     . '-08-01';
+        $end   = $year + 1 . '-07-31';
 
         $qb = $this->createQueryBuilder('l');
 
         return $qb->select('l')
-            ->where($qb->expr()->gte('l.lesson_date', "'".$limitLow->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lte('l.lesson_date', "'".$limitHigh->format('Y-m-d')."'"))
+            ->where($qb->expr()->gte('l.lesson_date', "'".$start."'"))
+            ->andWhere($qb->expr()->lte('l.lesson_date', "'".$end."'"))
             ->andWhere($qb->expr()->eq('l.lesson_club', $club->getClubId()))
             ->orderBy('l.lesson_date', 'DESC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param Club $club
+     * @param int $year
+     * @return array|null
+     */
+    public function getSummary(Club $club, int $year): ?array
+    {
+        $start = $year     . '-08-01';
+        $end   = $year + 1 . '-07-31';
+
+        $qb = $this->createQueryBuilder('l');
+
+        $summary['Adult'] = $qb->select('m.member_id as Id', 'm.member_firstname as Firstname', 'm.member_name as Name', 'sum(l.lesson_duration) as Total')
+            ->innerJoin(LessonAttendance::class, 'la', 'WITH', $qb->expr()->eq('l.lesson_id', 'la.lesson'))
+            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('la.lesson_attendance_member', 'm.member_id'))
+            ->where($qb->expr()->gte('l.lesson_date', "'".$start."'"))
+            ->andWhere($qb->expr()->lte('l.lesson_date', "'".$end."'"))
+            ->andWhere($qb->expr()->eq('l.lesson_club', $club->getClubId()))
+            ->andWhere($qb->expr()->eq('l.lesson_type', 1))
+            ->groupBy('m.member_id')
+            ->orderBy('Total', 'DESC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $qb = $this->createQueryBuilder('l');
+
+        $summary['Child'] = $qb->select('m.member_id as Id', 'm.member_firstname as Firstname', 'm.member_name as Name', 'sum(l.lesson_duration) as Total')
+            ->innerJoin(LessonAttendance::class, 'la', 'WITH', $qb->expr()->eq('l.lesson_id', 'la.lesson'))
+            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('la.lesson_attendance_member', 'm.member_id'))
+            ->where($qb->expr()->gte('l.lesson_date', "'".$start."'"))
+            ->andWhere($qb->expr()->lte('l.lesson_date', "'".$end."'"))
+            ->andWhere($qb->expr()->eq('l.lesson_club', $club->getClubId()))
+            ->andWhere($qb->expr()->eq('l.lesson_type', 2))
+            ->groupBy('m.member_id')
+            ->orderBy('Total', 'DESC')
+            ->getQuery()
+            ->getArrayResult();
+
+        return $summary;
     }
 
     /**
@@ -63,18 +96,28 @@ class LessonRepository extends ServiceEntityRepository
      */
     public function getLessonCount(Member $member): ?array
     {
-        $today = new DateTime();
-
         $grades = $member->getMemberGrades();
 
         $qb = $this->createQueryBuilder('l');
 
-        return $qb->select('sum(l.lesson_duration) As Sum')
+        $sum['Adult'] = $qb->select('sum(l.lesson_duration) As SumAdult')
             ->innerJoin(LessonAttendance::class, 'a', 'WITH', $qb->expr()->eq('l.lesson_id', 'a.lesson'))
-            ->where($qb->expr()->lte('l.lesson_date', "'".$today->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->gte('l.lesson_date', "'".$grades[0]->getGradeDate()->format('Y-m-d')."'"))
+            ->where($qb->expr()->eq('l.lesson_type', 1))
+            ->andWhere($qb->expr()->gte('l.lesson_date', "'".$grades[0]->getGradeDate()?->format('Y-m-d')."'"))
             ->andWhere($qb->expr()->eq('a.lesson_attendance_member', $member->getMemberId()))
             ->getQuery()
-            ->getArrayResult();
+            ->getSingleResult();
+
+        $qb = $this->createQueryBuilder('l');
+
+        $sum['Child'] = $qb->select('sum(l.lesson_duration) As SumChild')
+            ->innerJoin(LessonAttendance::class, 'a', 'WITH', $qb->expr()->eq('l.lesson_id', 'a.lesson'))
+            ->where($qb->expr()->eq('l.lesson_type', 2))
+            ->andWhere($qb->expr()->gte('l.lesson_date', "'".$grades[0]->getGradeDate()?->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->eq('a.lesson_attendance_member', $member->getMemberId()))
+            ->getQuery()
+            ->getSingleResult();
+
+        return $sum;
     }
 }
