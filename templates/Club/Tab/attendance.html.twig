@@ -10,8 +10,8 @@
      - Juillet {{ data.Season + 1 }}
 </h1>
 
-<div id="adult" class="container col col-lg-4 text-center visually-hidden">
-    <button class="btn btn-light" onclick="show('lesson')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('child')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
+<div id="adultSummary" class="container col col-lg-4 text-center visually-hidden">
+    <button class="btn btn-light" onclick="show('lessonSummary')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('childSummary')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
     <h3 class="text-center">Bilan des présences adultes</h3>
 
     <table class="table table-sm table-hover user-select-none">
@@ -34,8 +34,8 @@
     </table>
 </div>
 
-<div id="child" class="container col col-lg-4 text-center visually-hidden">
-    <button class="btn btn-light" onclick="show('lesson')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('adult')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button>
+<div id="childSummary" class="container col col-lg-4 text-center visually-hidden">
+    <button class="btn btn-light" onclick="show('lessonSummary')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('adultSummary')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button>
     <h3 class="text-center">Bilan des présences enfants</h3>
 
     <table class="table table-sm table-hover user-select-none">
@@ -58,8 +58,8 @@
     </table>
 </div>
 
-<div id="lesson" class="container col col-lg-4 text-center">
-    <button class="btn btn-light" onclick="show('adult')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button> <button class="btn btn-light" onclick="show('child')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
+<div id="lessonSummary" class="container col col-lg-4 text-center">
+    <button class="btn btn-light" onclick="show('adultSummary')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button> <button class="btn btn-light" onclick="show('childSummary')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
     <h3 class="text-center">Ajout de cours</h3>
 
     <div class="text-center mb-1">

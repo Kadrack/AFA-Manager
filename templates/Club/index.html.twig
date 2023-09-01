@@ -76,6 +76,53 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script type="text/javascript">
+        function show(id)
+        {
+            if (id === "lessonSummary")
+            {
+                let adult = document.getElementById("adultSummary");
+
+                adult.classList.add("visually-hidden");
+
+                let child = document.getElementById("childSummary");
+
+                child.classList.add("visually-hidden");
+
+                let lesson = document.getElementById("lessonSummary");
+
+                lesson.classList.remove("visually-hidden");
+            }
+            else if (id === "adultSummary")
+            {
+                let lesson = document.getElementById("lessonSummary");
+
+                lesson.classList.add("visually-hidden");
+
+                let child = document.getElementById("childSummary");
+
+                child.classList.add("visually-hidden");
+
+                let adult = document.getElementById("adultSummary");
+
+                adult.classList.remove("visually-hidden");
+            }
+            else
+            {
+                let lesson = document.getElementById("lessonSummary");
+
+                lesson.classList.add("visually-hidden");
+
+                let adult = document.getElementById("adultSummary");
+
+                adult.classList.add("visually-hidden");
+
+                let child = document.getElementById("childSummary");
+
+                child.classList.remove("visually-hidden");
+            }
+        }
+    </script>
     {% if app.session.get('activeClubTab') == 'attendanceTab' %}
         <script type="text/javascript">
             let tab = document.getElementById('attendanceTab');
@@ -84,54 +131,7 @@
             let pane = document.getElementById('attendance');
             pane.classList.add("active");
 
-            load('{{ path('club-attendanceTab', {'club': data.Club.getClubId, 'date': app.request.get('date')}) }}', 'attendance');
-        </script>
-        <script type="text/javascript">
-            function show(id)
-            {
-                if (id === "lesson")
-                {
-                    let adult = document.getElementById("adult");
-
-                    adult.classList.add("visually-hidden");
-
-                    let child = document.getElementById("child");
-
-                    child.classList.add("visually-hidden");
-
-                    let lesson = document.getElementById("lesson");
-
-                    lesson.classList.remove("visually-hidden");
-                }
-                else if (id === "adult")
-                {
-                    let lesson = document.getElementById("lesson");
-
-                    lesson.classList.add("visually-hidden");
-
-                    let child = document.getElementById("child");
-
-                    child.classList.add("visually-hidden");
-
-                    let adult = document.getElementById("adult");
-
-                    adult.classList.remove("visually-hidden");
-                }
-                else
-                {
-                    let lesson = document.getElementById("lesson");
-
-                    lesson.classList.add("visually-hidden");
-
-                    let adult = document.getElementById("adult");
-
-                    adult.classList.add("visually-hidden");
-
-                    let child = document.getElementById("child");
-
-                    child.classList.remove("visually-hidden");
-                }
-            }
+            load('{{ path('club-attendanceTab', {'club': data.Club.getClubId}) }}', 'attendance');
         </script>
     {% endif %}
     {% if app.session.get('activeClubTab') == 'adultTab' %}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Club;
 use App\Entity\ClubDojo;
 use App\Entity\ClubClass;
+use App\Entity\ClubHistory;
 use App\Entity\ClubManager;
 use App\Entity\ClubTeacher;
 use App\Entity\Grade;
@@ -144,9 +145,16 @@ class ClubController extends AbstractController
         {
             if (is_null($doctrine->getRepository(Club::class)->findOneBy(array('club_id' => $club->getClubId()))))
             {
+                $history = new ClubHistory();
+
+                $history->setClubHistory($club);
+                $history->setClubHistoryStatus(2);
+                $history->setClubHistoryUpdate(new DateTime());
+
                 $entityManager = $doctrine->getManager();
 
                 $entityManager->persist($club);
+                $entityManager->persist($history);
                 $entityManager->flush();
             }
             else
@@ -1151,6 +1159,112 @@ class ClubController extends AbstractController
         }
 
         return $this->render('Club/Modal/classEdit.html.twig', array('formEdit' => $formEdit->createView(), 'formDelete' => $formDelete->createView()));
+    }
+
+    /**
+     * @param Access $access
+     * @param Club $club
+     * @param ManagerRegistry $doctrine
+     * @param Request $request
+     * @param Session $session
+     * @return RedirectResponse|Response
+     */
+    #[Route('/{club<\d+>}/modifier-historique', name:'historyEdit')]
+    public function historyEdit(Access $access, Club $club, ManagerRegistry $doctrine, Request $request, Session $session): RedirectResponse|Response
+    {
+        if (!$access->check('Club-HistoryEdit'))
+        {
+            die();
+        }
+
+        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
+        {
+            die();
+        }
+
+        $form = $this->createForm(ClubType::class, null, array('formData' => array('Form' => 'History'), 'action' => $this->generateUrl('club-historyEdit', array('club' => $club->getClubId()))));
+
+        $form->get('CreationDate')->setData($club->getClubCreation());
+
+        if ($club->getClubHistories()[0]->getClubHistoryStatus() == 3)
+        {
+            $form->get('MembershipDate')->setData($club->getClubHistories()[1]->getClubHistoryUpdate());
+        }
+        else if ($club->getClubHistories()[0]->getClubHistoryStatus() == 1)
+        {
+            $form->get('MembershipDate')->setData($club->getClubHistories()[0]->getClubHistoryUpdate());
+        }
+
+        if ($club->getClubHistories()[0]->getClubHistoryStatus() == 3)
+        {
+            $form->get('RetireDate')->setData($club->getClubHistories()[0]->getClubHistoryUpdate());
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $entityManager = $doctrine->getManager();
+
+            $club->setClubCreation($form->get('CreationDate')->getData());
+
+            if (!is_null($form->get('RetireDate')->getData()))
+            {
+                if (($club->getClubHistories()[0]->getClubHistoryStatus() == 1) || ($club->getClubHistories()[0]->getClubHistoryStatus() == 2))
+                {
+                    $history = new ClubHistory();
+
+                    $history->setClubHistory($club);
+                    $history->setClubHistoryStatus(3);
+                    $history->setClubHistoryUpdate($form->get('RetireDate')->getData());
+
+                    $entityManager->persist($history);
+                }
+                else if ($club->getClubHistories()[0]->getClubHistoryStatus() == 3)
+                {
+                    $club->getClubHistories()[0]->setClubHistoryUpdate($form->get('RetireDate')->getData());
+                }
+            }
+
+            $entityManager->flush();
+
+            if (!is_null($form->get('MembershipDate')->getData()))
+            {
+                if ($club->getClubHistories()[0]->getClubHistoryStatus() == 1)
+                {
+                    $club->getClubHistories()[0]->setClubHistoryUpdate($form->get('MembershipDate')->getData());
+                }
+                else if ($club->getClubHistories()[0]->getClubHistoryStatus() == 2)
+                {
+                    $club->getClubHistories()[0]->setClubHistoryStatus(1);
+                    $club->getClubHistories()[0]->setClubHistoryUpdate($form->get('MembershipDate')->getData());
+                }
+                else if ($club->getClubHistories()[0]->getClubHistoryStatus() == 3)
+                {
+                    $club->getClubHistories()[1]->setClubHistoryStatus(1);
+                    $club->getClubHistories()[1]->setClubHistoryUpdate($form->get('MembershipDate')->getData());
+                }
+            }
+            else
+            {
+                if ($club->getClubHistories()[0]->getClubHistoryStatus() == 1)
+                {
+                    $club->getClubHistories()[0]->setClubHistoryStatus(2);
+                }
+                else if ($club->getClubHistories()[0]->getClubHistoryStatus() == 3)
+                {
+                    $club->getClubHistories()[1]->setClubHistoryStatus(2);
+
+                    $entityManager->remove($club->getClubHistories()[0]);
+                }
+            }
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
+        }
+
+        return $this->render('Club/Modal/historyEdit.html.twig', array('form' => $form->createView()));
     }
 
     /**

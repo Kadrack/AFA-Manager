@@ -1,4 +1,23 @@
 <div class="container col col-lg-8">
+    <h4 class="text-center">Historique</h4>
+
+    <table class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr>
+                <th scope="col">Création</th>
+                <th scope="col">Affiliation</th>
+                <th scope="col">Retrait</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active"{% if access.check('Club-HistoryEdit') %} onclick="load('{{ path('club-historyEdit', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td>{{ data.Club.getClubCreation|date("d/m/Y") }}</td>
+                <td>{{ data.Club.getClubMembershipDate }}</td>
+                <td>{{ data.Club.getClubRetireDate }}</td>
+            </tr>
+        </tbody>
+    </table>
+
     <h4 class="text-center">Gestionnaire(s){% if access.check('Club-ManagerAdd') %} <button class="btn btn-sm btn-light" onclick="load('{{ path('club-managersAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h4>
 
     <table class="table table-sm table-hover user-select-none">

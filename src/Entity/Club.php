@@ -1117,6 +1117,44 @@ class Club
     }
 
     /**
+     * @return string
+     */
+    public function getClubMembershipDate(): string
+    {
+        if (sizeof($this->getClubHistories()) == 2)
+        {
+            return $this->getClubHistories()[1]->getClubHistoryUpdate()->format('d/m/Y');
+        }
+        else if($this->getClubHistories()[0]->getClubHistoryStatus() == 1)
+        {
+            return $this->getClubHistories()[0]->getClubHistoryUpdate()->format('d/m/Y');
+        }
+        else
+        {
+            return 'En attente';
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getClubRetireDate(): string
+    {
+        if (sizeof($this->getClubHistories()) == 2)
+        {
+            return $this->getClubHistories()[0]->getClubHistoryUpdate()->format('d/m/Y');
+        }
+        else if($this->getClubHistories()[0]->getClubHistoryStatus() == 3)
+        {
+            return $this->getClubHistories()[0]->getClubHistoryUpdate()->format('d/m/Y');
+        }
+        else
+        {
+            return 'Aucune';
+        }
+    }
+
+    /**
      * @return array
      */
     public function getClubDojoCho(): array

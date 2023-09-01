@@ -417,7 +417,7 @@ class Access
      */
     public function setClubAccess(Club $club): bool
     {
-        $dojo     = array('Club-AttendanceAdd', 'Club-AttendanceDelete', 'Club-AttendanceTab', 'Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-LessonIndex', 'Club-LessonOld', 'Club-MemberDetail', 'Club-Menu', 'Club-SecretariatOld', 'Club-SubscriptionEdit', 'Club-SubscriptionList', 'Club-TrainingAdd', 'Club-TrainingOld');
+        $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-LessonIndex', 'Club-LessonOld', 'Club-MemberDetail', 'Club-Menu', 'Club-SecretariatOld', 'Club-SubscriptionEdit', 'Club-SubscriptionList', 'Club-TrainingAdd', 'Club-TrainingOld');
         $grade    = array('Grade-CandidatesAwaiting', 'Grade-CandidatesRejected', 'Grade-Criteria', 'Grade-Index', 'Grade-List', 'Grade-Menu', 'Grade-Search', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
         $mailing  = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
         $member   = array('Member-EmailTab', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeTab', 'Member-Index', 'Member-Menu', 'Member-TitleTab', 'Member-TrainingTab');
@@ -426,7 +426,7 @@ class Access
 
         if ($this->isManager($club))
         {
-            $dojo     = array_merge($dojo, array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClassAdd', 'Club-ClassEdit', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-FormDownload', 'Club-FormRenew', 'Club-ManagementTab', 'Club-ManagerEdit', 'Club-PhotoEdit', 'Club-SecretariatTab', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-WebsiteEdit'));
+            $dojo     = array_merge($dojo, array('Club-AdultTab', 'Club-AttendanceAdd', 'Club-AttendanceDelete', 'Club-AttendanceTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClassAdd', 'Club-ClassEdit', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-FormDownload', 'Club-FormRenew', 'Club-ManagementTab', 'Club-ManagerEdit', 'Club-PhotoEdit', 'Club-SecretariatTab', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-WebsiteEdit'));
             $grade    = array_merge($grade, array('Grade-PaymentView'));
             $mailing  = array_merge($mailing, array('Mailing-ClubAdult', 'Mailing-ClubChild', 'Mailing-OtherClubs'));
             $member   = array_merge($member, array('Member-LicenceFormPrint', 'Member-LicenceStampPrint', 'Member-LicenceTab', 'Member-PersonalEdit', 'Member-PersonalTab'));
@@ -436,7 +436,7 @@ class Access
 
         if ($this->isTeacher($club))
         {
-            $dojo     = array_merge($dojo, array());
+            $dojo     = array_merge($dojo, array('Club-AttendanceAdd', 'Club-AttendanceDelete', 'Club-AttendanceTab'));
             $grade    = array_merge($grade, array());
             $mailing  = array_merge($mailing, array());
             $member   = array_merge($member, array());
@@ -550,7 +550,7 @@ class Access
         elseif ($cluster->getCluster()->getClusterId() == 8)
         {
             $admin    = array('Admin-Cluster', 'Admin-List', 'Admin-Login', 'Admin-Mailing', 'Admin-Menu');
-            $dojo     = array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClubAdd', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-DojoTab', 'Club-EmailTab', 'Club-FormDownload', 'Club-FormRenew', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-ListClose', 'Club-ListOpen', 'Club-ManagementTab', 'Club-ManagerAdd', 'Club-ManagerEdit', 'Club-MemberAdd', 'Club-MemberDetail', 'Club-Menu', 'Club-PaymentAdd', 'Club-PhotoEdit', 'Club-PrintStamp', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-SecretariatTab', 'Club-WebsiteEdit');
+            $dojo     = array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClubAdd', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-DojoTab', 'Club-EmailTab', 'Club-FormDownload', 'Club-FormRenew', 'Club-HistoryEdit', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-ListClose', 'Club-ListOpen', 'Club-ManagementTab', 'Club-ManagerAdd', 'Club-ManagerEdit', 'Club-MemberAdd', 'Club-MemberDetail', 'Club-Menu', 'Club-PaymentAdd', 'Club-PhotoEdit', 'Club-PrintStamp', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-SecretariatTab', 'Club-WebsiteEdit');
             $grade    = array('Grade-AikikaiList', 'Grade-Assignment', 'Grade-CandidateEmail', 'Grade-CandidateForms', 'Grade-CandidateList', 'Grade-CandidatesAwaiting', 'Grade-CandidatesRejected', 'Grade-Index', 'Grade-List', 'Grade-Menu', 'Grade-PaymentEdit', 'Grade-PaymentView', 'Grade-Search', 'Grade-SessionAdd', 'Grade-SessionEdit', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
             $list     = array('List-Licence', 'List-Menu', 'List-Various');
             $mailing  = array('Mailing-CA', 'Mailing-CJ', 'Mailing-CP', 'Mailing-CT', 'Mailing-ClubManager', 'Mailing-ClubTeacher', 'Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Menu', 'Mailing-Preview', 'Mailing-Teacher');

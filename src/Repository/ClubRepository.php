@@ -39,10 +39,10 @@ class ClubRepository extends ServiceEntityRepository
     /**
      * @param Member|null $member
      * @param User|null $user
-     * @param bool $active
+     * @param bool|null $active
      * @return array|null
      */
-    public function getClubList(?Member $member, ?User $user, bool $active): ?array
+    public function getClubList(?Member $member, ?User $user, ?bool $active): ?array
     {
         $qb = $this->createQueryBuilder('c');
 
@@ -60,8 +60,16 @@ class ClubRepository extends ServiceEntityRepository
             $qb->where($qb->expr()->eq('m.club_manager_user', $user->getId()));
         }
 
-        return $qb->having($qb->expr()->eq('max(h.club_history_status)', $active ? 1 : 2))
-            ->groupBy('c.club_id')
+        if ($active)
+        {
+            $qb->having($qb->expr()->lte('max(h.club_history_status)', 2));
+        }
+        else
+        {
+            $qb->having($qb->expr()->eq('max(h.club_history_status)', 3));
+        }
+
+        return $qb->groupBy('c.club_id')
             ->orderBy('c.club_id', 'ASC')
             ->getQuery()
             ->getResult();

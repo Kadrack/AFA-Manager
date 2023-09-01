@@ -61,6 +61,9 @@ class ClubType extends AbstractType
             case 'Class':
                 $this->class($builder, $options['formData']);
                 break;
+            case 'History':
+                $this->history($builder);
+                break;
             case 'Manager':
                 $this->manager($builder, $options['formData']);
                 break;
@@ -298,6 +301,19 @@ class ClubType extends AbstractType
             ->add('ClubClassType', ChoiceType::class, array('label' => 'Type de cours : ', 'placeholder' => 'Choississez un type de cours', 'choices' => $list->getClassType(0)))
             ->add('ClubClassDojo', EntityType::class, array ('label' => 'Adresse : ', 'class' => ClubDojo::class, 'choices' => $data['Choices'], 'choice_label' => 'club_dojo_street'))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
+        ;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function history(FormBuilderInterface $builder): void
+    {
+        $builder
+            ->add('CreationDate', DateType::class, array('label' => 'Date de création du club', 'widget' => 'single_text', 'mapped' => false, 'attr' => array('placeholder' => 'PaymentDate'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('MembershipDate', DateType::class, array('label' => 'Date d\'affiliation', 'widget' => 'single_text', 'required' => false, 'mapped' => false, 'attr' => array('placeholder' => 'PaymentDate'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('RetireDate', DateType::class, array('label' => 'Date de retrait', 'widget' => 'single_text', 'required' => false, 'mapped' => false, 'attr' => array('placeholder' => 'PaymentDate'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('Submit', SubmitType::class, array('label' => 'Modifier'))
         ;
     }
 
