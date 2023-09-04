@@ -257,7 +257,31 @@ class ClubController extends AbstractController
 
         $data['Club']    = $club;
         $data['Lesson']  = $doctrine->getRepository(Lesson::class)->getLesson($data['Club'], $data['Season']);
-        $data['Summary'] = $doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']);
+
+        foreach ($doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']) as $lesson)
+        {
+            $licence = $lesson['Id'];
+            $month   = intval($lesson['Date']->format('m'));
+            $type    = $lesson['Type'] == 1 ? 'Adult' : 'Child';
+
+            if (!isset($data['Summary'][$type][$month][$licence]['Total']))
+            {
+                $data['Summary'][$type][$month][$licence]['Firstname'] = $lesson['Firstname'];
+                $data['Summary'][$type][$month][$licence]['Name']      = $lesson['Name'];
+                $data['Summary'][$type][$month][$licence]['Total']     = 0;
+            }
+
+            if (!isset($data['Summary'][$type]['Season'][$licence]['Total']))
+            {
+                $data['Summary'][$type]['Season'][$licence]['Firstname'] = $lesson['Firstname'];
+                $data['Summary'][$type]['Season'][$licence]['Name']      = $lesson['Name'];
+                $data['Summary'][$type]['Season'][$licence]['Total']     = 0;
+            }
+
+            $data['Summary'][$type][$month][$licence]['Total'] = $data['Summary'][$type][$month][$licence]['Total'] + $lesson['Duration'];
+
+            $data['Summary'][$type]['Season'][$licence]['Total'] = $data['Summary'][$type]['Season'][$licence]['Total'] + $lesson['Duration'];
+        }
 
         return $this->render('Club/Tab/attendance.html.twig', array('data' => $data));
     }
@@ -295,6 +319,32 @@ class ClubController extends AbstractController
 
         $data['AttendanceTotal'] = $total;
 
+        $today = new DateTime();
+
+        if (intval($today->format('n')) < 8)
+        {
+            $data['Season'] = intval($today->format('Y')) - 1;
+        }
+        else
+        {
+            $data['Season'] = intval($today->format('Y'));
+        }
+
+        foreach ($doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']) as $lesson)
+        {
+            if ($lesson['Type'] == 2)
+            {
+                continue;
+            }
+
+            if (!isset($data['LessonTotal'][$lesson['Id']]))
+            {
+                $data['LessonTotal'][$lesson['Id']] = 0;
+            }
+
+            $data['LessonTotal'][$lesson['Id']] = $data['LessonTotal'][$lesson['Id']] + $lesson['Duration'];
+        }
+
         return $this->render('Club/Tab/memberList.html.twig', array('data' => $data));
     }
 
@@ -330,6 +380,32 @@ class ClubController extends AbstractController
         }
 
         $data['AttendanceTotal'] = $total;
+
+        $today = new DateTime();
+
+        if (intval($today->format('n')) < 8)
+        {
+            $data['Season'] = intval($today->format('Y')) - 1;
+        }
+        else
+        {
+            $data['Season'] = intval($today->format('Y'));
+        }
+
+        foreach ($doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']) as $lesson)
+        {
+            if ($lesson['Type'] == 1)
+            {
+                continue;
+            }
+
+            if (!isset($data['LessonTotal'][$lesson['Id']]))
+            {
+                $data['LessonTotal'][$lesson['Id']] = 0;
+            }
+
+            $data['LessonTotal'][$lesson['Id']] = $data['LessonTotal'][$lesson['Id']] + $lesson['Duration'];
+        }
 
         return $this->render('Club/Tab/memberList.html.twig', array('data' => $data));
     }

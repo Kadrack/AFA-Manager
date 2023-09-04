@@ -37,7 +37,7 @@
         <ul class="nav nav-tabs nav-justified">
             {% if access.check('Member-LicenceTab') %}
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#licence" id="licenceTab" onclick="load('{{ path('member-licenceTab', {'member': data.Member.getMemberId}) }}', 'licence')"><strong>Licence {% if data.Member.getMemberLastLicence.getMemberLicenceDeadline < date() %}<i class="bi-exclamation-triangle text-danger"></i>{% elseif data.Member.getMemberLicences.0.getMemberLicenceDeadline.diff(date()).days <= 90 %}<i class="bi-exclamation-triangle text-warning"></i>{% endif %}</strong></a>
+                <a class="nav-link" data-bs-toggle="tab" href="#licence" id="licenceTab" onclick="load('{{ path('member-licenceTab', {'member': data.Member.getMemberId}) }}', 'licence')"><strong>Licence {% if data.Member.getMemberLastLicence.getMemberLicenceDeadline < date() %}<i class="bi-exclamation-triangle text-danger"></i>{% elseif data.Member.getMemberLicences.0.getMemberLicenceDeadline.diff(date()).days <= 90 %}<i class="bi bi-exclamation-triangle text-warning"></i>{% endif %}</strong></a>
             </li>
             {% endif %}
             {% if access.check('Member-GradeTab') %}

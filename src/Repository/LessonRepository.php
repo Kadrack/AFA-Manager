@@ -61,33 +61,15 @@ class LessonRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('l');
 
-        $summary['Adult'] = $qb->select('m.member_id as Id', 'm.member_firstname as Firstname', 'm.member_name as Name', 'sum(l.lesson_duration) as Total')
+        return $qb->select('m.member_id as Id', 'm.member_firstname as Firstname', 'm.member_name as Name', 'l.lesson_date as Date', 'l.lesson_duration as Duration', 'l.lesson_type as Type')
             ->innerJoin(LessonAttendance::class, 'la', 'WITH', $qb->expr()->eq('l.lesson_id', 'la.lesson'))
             ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('la.lesson_attendance_member', 'm.member_id'))
             ->where($qb->expr()->gte('l.lesson_date', "'".$start."'"))
             ->andWhere($qb->expr()->lte('l.lesson_date', "'".$end."'"))
             ->andWhere($qb->expr()->eq('l.lesson_club', $club->getClubId()))
-            ->andWhere($qb->expr()->eq('l.lesson_type', 1))
-            ->groupBy('m.member_id')
-            ->orderBy('Total', 'DESC')
+            ->orderBy('Firstname', 'ASC')
             ->getQuery()
             ->getArrayResult();
-
-        $qb = $this->createQueryBuilder('l');
-
-        $summary['Child'] = $qb->select('m.member_id as Id', 'm.member_firstname as Firstname', 'm.member_name as Name', 'sum(l.lesson_duration) as Total')
-            ->innerJoin(LessonAttendance::class, 'la', 'WITH', $qb->expr()->eq('l.lesson_id', 'la.lesson'))
-            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('la.lesson_attendance_member', 'm.member_id'))
-            ->where($qb->expr()->gte('l.lesson_date', "'".$start."'"))
-            ->andWhere($qb->expr()->lte('l.lesson_date', "'".$end."'"))
-            ->andWhere($qb->expr()->eq('l.lesson_club', $club->getClubId()))
-            ->andWhere($qb->expr()->eq('l.lesson_type', 2))
-            ->groupBy('m.member_id')
-            ->orderBy('Total', 'DESC')
-            ->getQuery()
-            ->getArrayResult();
-
-        return $summary;
     }
 
     /**

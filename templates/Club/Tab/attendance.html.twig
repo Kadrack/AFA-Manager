@@ -23,13 +23,162 @@
             </tr>
         </thead>
         <tbody>
-            {% for member in data.Summary.Adult %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
-                    <td class="text-center">{{ member.Total / 60 }}</td>
+            {% if data.Summary.Adult.Season is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Total de la saison</td>
                 </tr>
-            {% endfor %}
+                {% for member in data.Summary.Adult.Season %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.7 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Juillet</td>
+                </tr>
+                {% for member in data.Summary.Adult.7 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.6 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Juin</td>
+                </tr>
+                {% for member in data.Summary.Adult.6 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.5 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Mai</td>
+                </tr>
+                {% for member in data.Summary.Adult.5 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.4 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Avril</td>
+                </tr>
+                {% for member in data.Summary.Adult.4 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.3 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Mars</td>
+                </tr>
+                {% for member in data.Summary.Adult.3 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.2 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Février</td>
+                </tr>
+                {% for member in data.Summary.Adult.2 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.1 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Janvier</td>
+                </tr>
+                {% for member in data.Summary.Adult.1 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.12 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Décembre</td>
+                </tr>
+                {% for member in data.Summary.Adult.12 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.11 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Novembre</td>
+                </tr>
+                {% for member in data.Summary.Adult.11 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.10 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Octobre</td>
+                </tr>
+                {% for member in data.Summary.Adult.10 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.9 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Septembre</td>
+                </tr>
+                {% for member in data.Summary.Adult.9 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if data.Summary.Adult.8 is defined %}
+                <tr class="table-primary">
+                    <td class="text-center" colspan="3">Août</td>
+                </tr>
+                {% for member in data.Summary.Adult.8 %}
+                    <tr class="table-active">
+                        <td class="text-center">{{ member.Firstname|title }}</td>
+                        <td class="text-center">{{ member.Name|title }}</td>
+                        <td class="text-center">{{ member.Total / 60 }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 </div>
@@ -47,13 +196,162 @@
             </tr>
         </thead>
         <tbody>
-        {% for member in data.Summary.Child %}
-            <tr class="table-active">
-                <td class="text-center">{{ member.Firstname|title }}</td>
-                <td class="text-center">{{ member.Name|title }}</td>
-                <td class="text-center">{{ member.Total / 60 }}</td>
+        {% if data.Summary.Child.Season is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Total de la saison</td>
             </tr>
-        {% endfor %}
+            {% for member in data.Summary.Child.Season %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.7 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Juillet</td>
+            </tr>
+            {% for member in data.Summary.Child.7 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.6 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Juin</td>
+            </tr>
+            {% for member in data.Summary.Child.6 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.5 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Mai</td>
+            </tr>
+            {% for member in data.Summary.Child.5 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.4 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Avril</td>
+            </tr>
+            {% for member in data.Summary.Child.4 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.3 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Mars</td>
+            </tr>
+            {% for member in data.Summary.Child.3 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.2 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Février</td>
+            </tr>
+            {% for member in data.Summary.Child.2 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.1 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Janvier</td>
+            </tr>
+            {% for member in data.Summary.Child.1 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.12 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Décembre</td>
+            </tr>
+            {% for member in data.Summary.Child.12 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.11 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Novembre</td>
+            </tr>
+            {% for member in data.Summary.Child.11 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.10 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Octobre</td>
+            </tr>
+            {% for member in data.Summary.Child.10 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.9 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Septembre</td>
+            </tr>
+            {% for member in data.Summary.Child.9 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if data.Summary.Child.8 is defined %}
+            <tr class="table-primary">
+                <td class="text-center" colspan="3">Août</td>
+            </tr>
+            {% for member in data.Summary.Child.8 %}
+                <tr class="table-active">
+                    <td class="text-center">{{ member.Firstname|title }}</td>
+                    <td class="text-center">{{ member.Name|title }}</td>
+                    <td class="text-center">{{ member.Total / 60 }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
         </tbody>
     </table>
 </div>

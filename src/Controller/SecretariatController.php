@@ -493,7 +493,6 @@ class SecretariatController extends AbstractController
                 !$access->check('List-Various') ?: $data['List'][11] = 'Liste des Shihan';
                 !$access->check('List-Various') ?: $data['List'][12] = 'Listes pour IAF';
                 !$access->check('List-Various') ?: $data['List'][13] = 'Professeurs enfants';
-                !$access->check('List-Kagami')  ?: $data['List'][14] = 'Potentiel candidat Kagami 2024';
 
                 break;
             case 1  : return $this->redirectToRoute('secretariat-paymentOnGoing');
@@ -509,7 +508,6 @@ class SecretariatController extends AbstractController
             case 11 : return $this->redirectToRoute('secretariat-shihanList');
             case 12 : return $this->redirectToRoute('secretariat-iafList');
             case 13 : return $this->redirectToRoute('secretariat-childTeacherList');
-            case 14 : return $this->redirectToRoute('secretariat-kagamiList');
         }
 
         return $this->render('Secretariat/List/index.html.twig', array('data' => $data));
@@ -899,23 +897,5 @@ class SecretariatController extends AbstractController
         $data['List'] = $doctrine->getRepository(Member::class)->getLastExpiredList();
 
         return $this->render('Secretariat/Lists/lastExpired.html.twig', array('data' => $data));
-    }
-
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param Access $access
-     * @return Response
-     */
-    #[Route('/liste-kagami-biraki', name:'kagamiList')]
-    public function kagamiList(ManagerRegistry $doctrine, Access $access): Response
-    {
-        if (!$access->check('List-Kagami'))
-        {
-            return $this->redirectToRoute('grade-list');
-        }
-
-        $list = $doctrine->getRepository(Member::class)->getKagamiList();
-
-        return $this->render('/Secretariat/Lists/kagami.html.twig', array('list' => $list));
     }
 }

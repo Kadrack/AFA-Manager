@@ -4,6 +4,8 @@
 </div>
 {% endif %}
 <div class="container col col-lg-8">
+    <p><strong>Cours (h)</strong> Nombre total d'heures dans la saison en cours, pour plus de détails voir la fiche du membre.</p>
+
     <table id="MembersList" class="table table-sm table-hover user-select-none">
         <thead>
             <tr>
@@ -11,9 +13,10 @@
                 <th scope="col" onclick="sortTable('MembersList', 1)" onmouseover="this.style.cursor='pointer'">N° Licence</th>
                 <th scope="col" onclick="sortTable('MembersList', 2)" onmouseover="this.style.cursor='pointer'">Prénom</th>
                 <th scope="col" onclick="sortTable('MembersList', 3)" onmouseover="this.style.cursor='pointer'">Nom</th>
-                <th scope="col" onclick="sortTable('MembersList', 4)" onmouseover="this.style.cursor='pointer'">Stage (h)</th>
-                <th scope="col" onclick="sortTable('MembersList', 5)" onmouseover="this.style.cursor='pointer'">Grade</th>
-                <th scope="col" onclick="sortTable('MembersList', 6)" onmouseover="this.style.cursor='pointer'">Date de passage</th>
+                <th scope="col" onclick="sortTable('MembersList', 4)" onmouseover="this.style.cursor='pointer'">Cours (h)</th>
+                <th scope="col" onclick="sortTable('MembersList', 5)" onmouseover="this.style.cursor='pointer'">Stage (h)</th>
+                <th scope="col" onclick="sortTable('MembersList', 6)" onmouseover="this.style.cursor='pointer'">Grade</th>
+                <th scope="col" onclick="sortTable('MembersList', 7)" onmouseover="this.style.cursor='pointer'">Date de passage</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +26,7 @@
                 <td>{{ member.getMemberId }}</td>
                 <td>{{ member.getMemberFirstname|title }}</td>
                 <td>{{ member.getMemberName|title }}</td>
+                <td>{% if data.LessonTotal[member.getMemberId] is defined %}{{ data.LessonTotal[member.getMemberId] / 60 }}{% else %}Aucune{% endif %}</td>
                 <td>{% if data.AttendanceTotal[member.getMemberId] is defined %}{{ data.AttendanceTotal[member.getMemberId] / 60 }}{% else %}Aucune{% endif %}</td>
                 <td>{{ member.getMemberLastGradeName }}</td>
                 <td>{% if member.getMemberLastGradeDate is null %}En Attente{% else %}{{ member.getMemberLastGradeDate|date("d/m/Y") }}{% endif %}</td>

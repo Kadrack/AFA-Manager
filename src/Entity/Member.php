@@ -133,6 +133,12 @@ class Member
     private ?int $member_subscription_list = 1;
 
     /**
+     * @var int
+     */
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private int $member_last_kagami;
+
+    /**
      * @var ArrayCollection|Collection|null
      */
     #[ORM\OneToMany(mappedBy: 'cluster_member', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
@@ -535,6 +541,25 @@ class Member
     public function setMemberSubscriptionList(?int $member_subscription_list): self
     {
         $this->member_subscription_list = $member_subscription_list;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMemberLastKagami(): bool
+    {
+        return $this->member_last_kagami;
+    }
+
+    /**
+     * @param bool $member_last_kagami
+     * @return $this
+     */
+    public function setMemberLastKagami(bool $member_last_kagami): self
+    {
+        $this->member_last_kagami = $member_last_kagami;
 
         return $this;
     }
@@ -1000,7 +1025,7 @@ class Member
     /**
      * @return Grade|null
      */
-    public function getMemberLastExam(): ?GradeSessionCandidate
+    public function getMemberLastExamSession(): ?GradeSessionCandidate
     {
         return $this->member_exams[0];
     }
@@ -1091,6 +1116,22 @@ class Member
             }
 
             if ($grade->getGradeRank() % 2 != 0)
+            {
+                return $grade;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Grade|null
+     */
+    public function getMemberLastExam(): ?Grade
+    {
+        foreach ($this->member_grades as $grade)
+        {
+            if ($grade->getGradeStatus() == 1)
             {
                 return $grade;
             }

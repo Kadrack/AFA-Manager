@@ -55,6 +55,9 @@ class GradeType extends AbstractType
             case 'GradeValidate':
                 $this->gradeValidate($builder, $options['formData']);
                 break;
+            case 'Cancel':
+                $this->cancel($builder);
+                break;
             case 'Delete':
                 $this->delete($builder);
                 break;
@@ -147,9 +150,20 @@ class GradeType extends AbstractType
     private function reject(FormBuilderInterface $builder): void
     {
         $builder
-            ->add('GradeSessionCandidateStaffComment', TextareaType::class, array('label' => 'Motif(s) du refus', 'required' => true, 'attr' => array('placeholder' => 'Motif(s) du refus', 'rows' => '3'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('GradeSessionCandidateStaffComment', TextareaType::class, array('label' => 'Motif(s) du refus', 'required' => false, 'attr' => array('placeholder' => 'Motif(s) du refus', 'rows' => '3'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Delete', CheckboxType::class, array('label' => 'Activer refus', 'mapped' => false, 'required' => true, 'label_attr' => array('class' => 'checkbox-switch')))
             ->add('Submit', SubmitType::class, array('label' => 'Refuser la candidature', 'attr' => array('class' => 'btn btn-danger')))
+        ;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function cancel(FormBuilderInterface $builder): void
+    {
+        $builder
+            ->add('Delete', CheckboxType::class, array('label' => 'Activer retrais', 'mapped' => false, 'required' => true, 'label_attr' => array('class' => 'checkbox-switch')))
+            ->add('Submit', SubmitType::class, array('label' => 'Retirer des candidatures automatique', 'attr' => array('class' => 'btn btn-danger')))
         ;
     }
 

@@ -153,7 +153,7 @@ class MemberController extends AbstractController
             die();
         }
 
-        $session->set('activeMemberTab', 'trainingTab');
+        $session->set('activeMemberTab', 'gradeTab');
 
         $data['Member'] = $member;
 

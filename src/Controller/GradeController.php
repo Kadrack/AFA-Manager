@@ -125,15 +125,16 @@ class GradeController extends AbstractController
     /**
      * @param Access $access
      * @param GradeSession $gradeSession
+     * @param ManagerRegistry $doctrine
      * @param Request $request
      * @param SearchMember $search
      * @param Session $session
      * @return Response
      */
     #[Route('/details-de-la-session/{gradeSession<\d+>}', name:'index')]
-    public function index(Access $access, GradeSession $gradeSession, Request $request, SearchMember $search, Session $session): Response
+    public function index(Access $access, GradeSession $gradeSession, ManagerRegistry $doctrine, Request $request, SearchMember $search, Session $session): Response
     {
-        if (!$access->check('Grade-Index'))
+        if (!$access->check('Grade-Index') || $session->has('Club'))
         {
             die();
         }
@@ -141,11 +142,23 @@ class GradeController extends AbstractController
         $data['Candidates'] = array();
         $data['Session']    = $gradeSession;
 
+        $data['Kagami'] = $doctrine->getRepository(Member::class)->getKagamiList();
+
         foreach ($gradeSession->getGradeSessionCandidates() as $candidate)
         {
+            if (isset($data['Kagami']['Candidate'][$candidate->getGradeSessionCandidateRank()][$candidate->getGradeSessionCandidateMember()->getMemberId()]))
+            {
+                unset($data['Kagami']['Candidate'][$candidate->getGradeSessionCandidateRank()][$candidate->getGradeSessionCandidateMember()->getMemberId()]);
+            }
+
             if ($session->has('Club'))
             {
                 if ($candidate->getGradeSessionCandidateMember()->getMemberActualClub()->getClubId() != $session->get('Club')->getClubId())
+                {
+                    continue;
+                }
+
+                if (($candidate->getGradeSessionCandidateRank > 14 ) && ($gradeSession->getGradeSessionType() == 2))
                 {
                     continue;
                 }
@@ -329,12 +342,12 @@ class GradeController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @param Member $member
      * @param Request $request
-     * @param int|null $action
+     * @param int $action
      * @return Response
      * @throws TransportExceptionInterface
      */
-    #[Route('/details-de-la-session/{gradeSession<\d+>}/details-du-membre/{member<\d+>}/{action<\d+>}', name:'candidateDetails')]
-    public function candidateDetails(Access $access, EmailSender $emailSender, GradeSession $gradeSession, ManagerRegistry $doctrine, Member $member, Request $request, ?int $action = null): Response
+    #[Route('/details-de-la-session/{gradeSession<\d+>}/details-du-membre/{member<\d+>}/{action<\d+>}/', name:'candidateDetails')]
+    public function candidateDetails(Access $access, EmailSender $emailSender, GradeSession $gradeSession, ManagerRegistry $doctrine, Member $member, Request $request, int $action = 0): Response
     {
         if (!$access->check('Grade-CandidatesAwaitingAction'))
         {
@@ -345,13 +358,37 @@ class GradeController extends AbstractController
 
         $candidate['Session'] = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('grade_session_candidate_exam' => $gradeSession->getGradeSessionId(), 'grade_session_candidate_member' => $member->getMemberId()));
 
-        $candidate['OldSession'] = $doctrine->getRepository(GradeSessionCandidate::class)->findBy(array('grade_session_candidate_member' => $member->getMemberId()), array('grade_session_candidate_date' => 'DESC'));
+        $candidate['New'] = false;
+
+        if (is_null($candidate['Session']))
+        {
+            $candidate['Session'] = new GradeSessionCandidate();
+
+            $candidate['Session']->setGradeSessionCandidateMember($member);
+            $candidate['Session']->setGradeSessionCandidateExam($gradeSession);
+            $candidate['Session']->setGradeSessionCandidateDate(new DateTime());
+            $candidate['Session']->setGradeSessionCandidatePaymentDate(new DateTime());
+            $candidate['Session']->setGradeSessionCandidateResult(1);
+            $candidate['Session']->setGradeSessionCandidateComment(null);
+            $candidate['Session']->setGradeSessionCandidateRank($member->getMemberLastGrade()->getGradeRank() % 2 == 0 ? $member->getMemberLastGrade()->getGradeRank() + 2 : $member->getMemberLastGrade()->getGradeRank() + 3);
+
+            $candidate['New'] = true;
+        }
+
+        if ($gradeSession->getGradeSessionType() == 1)
+        {
+            $candidate['OldSession'] = $doctrine->getRepository(GradeSessionCandidate::class)->findBy(array('grade_session_candidate_member' => $member->getMemberId()), array('grade_session_candidate_date' => 'DESC'));
+        }
+        else
+        {
+            $candidate['OldSession'] = $member->getMemberLastExam();
+        }
 
         if ($member->getMemberLastGrade()->getGradeRank() == 6)
         {
             $start = '1900-01-01';
         }
-        elseif (sizeof($candidate['OldSession']) > 1)
+        elseif (($gradeSession->getGradeSessionType() == 1) && (sizeof($candidate['OldSession']) > 1))
         {
             $start = date('Y-m-d', strtotime('-1 month', strtotime($candidate['OldSession'][1]->getGradeSessionCandidateExam()->getGradeSessionDate()->format('Y-m-d'))));
         }
@@ -370,13 +407,9 @@ class GradeController extends AbstractController
         {
             $formValidate = $this->createForm(GradeType::class, $candidate['Session'], array('formData' => array('Form' => 'Rank'), 'data_class' => GradeSessionCandidate::class, 'action' => $this->generateUrl('grade-candidateDetails', array('gradeSession' => $gradeSession->getGradeSessionId(), 'member' => $member->getMemberId(), 'action' => 1))));
 
-            $formReject = $this->createForm(GradeType::class, $candidate['Session'], array('formData' => array('Form' => 'Reject'), 'data_class' => GradeSessionCandidate::class, 'action' => $this->generateUrl('grade-candidateDetails', array('gradeSession' => $gradeSession->getGradeSessionId(), 'member' => $member->getMemberId(), 'action' => 2))));
-
-            $formDelete = $this->createForm(GradeType::class, $candidate['Session'], array('formData' => array('Form' => 'Delete'), 'data_class' => GradeSessionCandidate::class, 'action' => $this->generateUrl('grade-candidateDetails', array('gradeSession' => $gradeSession->getGradeSessionId(), 'member' => $member->getMemberId(), 'action' => 3))));
-
             $formValidate->handleRequest($request);
 
-            if ($formValidate->isSubmitted() && $formValidate->isValid())
+            if ($action == 1 && $formValidate->isSubmitted() && $formValidate->isValid())
             {
                 $candidate['Session']->setGradeSessionCandidateStatus(1);
 
@@ -387,26 +420,21 @@ class GradeController extends AbstractController
                     $emailSender->examApplicationValidated($member, $gradeSession);
                 }
 
+                if ($candidate['New'])
+                {
+                    $entityManager->persist($candidate['Session']);
+                }
+
                 $entityManager->flush();
 
                 return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
             }
 
-            $formDelete->handleRequest($request);
-
-            if ($formDelete->isSubmitted() && $formDelete->isValid())
-            {
-                $entityManager = $doctrine->getManager();
-
-                $entityManager->remove($candidate['Session']);
-                $entityManager->flush();
-
-                return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
-            }
+            $formReject = $this->createForm(GradeType::class, $candidate['Session'], array('formData' => array('Form' => 'Reject'), 'data_class' => GradeSessionCandidate::class, 'action' => $this->generateUrl('grade-candidateDetails', array('gradeSession' => $gradeSession->getGradeSessionId(), 'member' => $member->getMemberId(), 'action' => 2))));
 
             $formReject->handleRequest($request);
 
-            if ($formReject->isSubmitted() && $formReject->isValid())
+            if ($action == 2 && $formReject->isSubmitted() && $formReject->isValid())
             {
                 $candidate['Session']->setGradeSessionCandidateStatus(2);
 
@@ -417,12 +445,47 @@ class GradeController extends AbstractController
                     $emailSender->examApplicationRejected($member, $candidate['Session']);
                 }
 
+                if ($candidate['New'])
+                {
+                    $entityManager->persist($candidate['Session']);
+                }
+
                 $entityManager->flush();
 
                 return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
             }
 
-            return $this->render('Grade/Modal/candidatesDetails.html.twig', array('formValidate' => $formValidate->createView(), 'formReject' => $formReject->createView(), 'formDelete' => $formDelete->createView(), 'candidate' => $candidate, 'gradeSession' => $gradeSession));
+            $formDelete = $this->createForm(GradeType::class, $candidate['Session'], array('formData' => array('Form' => 'Delete'), 'data_class' => GradeSessionCandidate::class, 'action' => $this->generateUrl('grade-candidateDetails', array('gradeSession' => $gradeSession->getGradeSessionId(), 'member' => $member->getMemberId(), 'action' => 3))));
+
+            $formDelete->handleRequest($request);
+
+            if ($action == 3 && $formDelete->isSubmitted() && $formDelete->isValid())
+            {
+                $entityManager = $doctrine->getManager();
+
+                $entityManager->remove($candidate['Session']);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
+            }
+
+            $formCancel = $this->createForm(GradeType::class, $candidate['Session'], array('formData' => array('Form' => 'Cancel'), 'data_class' => GradeSessionCandidate::class, 'action' => $this->generateUrl('grade-candidateDetails', array('gradeSession' => $gradeSession->getGradeSessionId(), 'member' => $member->getMemberId(), 'action' => 4))));
+
+            $formCancel->handleRequest($request);
+
+            if ($action == 4 && $formCancel->isSubmitted() && $formCancel->isValid())
+            {
+                $entityManager = $doctrine->getManager();
+
+                $member->setMemberLastKagami(1);
+
+                $entityManager->remove($candidate['Session']);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
+            }
+
+            return $this->render('Grade/Modal/candidatesDetails.html.twig', array('formValidate' => $formValidate->createView(), 'formReject' => $formReject->createView(), 'formDelete' => $formDelete->createView(), 'formCancel' => $formCancel->createView(), 'candidate' => $candidate, 'gradeSession' => $gradeSession));
         }
 
         return $this->render('Grade/Modal/candidatesDetails.html.twig', array('candidate' => $candidate, 'gradeSession' => $gradeSession));

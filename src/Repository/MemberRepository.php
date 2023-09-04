@@ -224,7 +224,7 @@ class MemberRepository extends ServiceEntityRepository
     {
         if (is_null($start))
         {
-            $start = date_create('1900-01-01', 'Y-m-d');
+            $start = '1900-01-01';
         }
 
         if (is_null($end))
@@ -398,107 +398,152 @@ class MemberRepository extends ServiceEntityRepository
      */
     public function getKagamiList(): ?array
     {
-        $limit = DateTime::createFromFormat('j-M-Y', '30-Jun-2023');
+        $today = new DateTime();
 
-        $deadline = $limit->format('Y-m-d');
+        $list['Year'] = $today->format('Y');
 
-        $qb = $this->createQueryBuilder('m');
+        $deadline = $list['Year'] . '-06-30';
 
-        $list['Shodan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('Grade', 6))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2022-01-31'"))
-            ->groupBy('Id')
-            ->orderBy('FirstName', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
+        $limitShodan  = $list['Year'] - 1 . '-01-31';
+        $limitNidan   = $list['Year'] - 3 . '-01-31';
+        $limitSandan  = $list['Year'] - 5 . '-01-31';
+        $limitYondan  = $list['Year'] - 7 . '-01-31';
+        $limitGodan   = $list['Year'] - 5 . '-01-31';
+        $limitRokudan = $list['Year'] - 6 . '-01-31';
+        $limitNanadan = $list['Year'] - 11 . '-01-31';
 
         $qb = $this->createQueryBuilder('m');
 
-        $list['Nidan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
             ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
             ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('Grade', 8))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2020-01-31'"))
-            ->groupBy('Id')
-            ->orderBy('FirstName', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
-
-        $qb = $this->createQueryBuilder('m');
-
-        $list['Sandan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('Grade', 10))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2018-01-31'"))
-            ->groupBy('Id')
-            ->orderBy('FirstName', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
-
-        $qb = $this->createQueryBuilder('m');
-
-        $list['Yondan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('Grade', 12))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2016-01-31'"))
-            ->groupBy('Id')
-            ->orderBy('FirstName', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
-
-        $qb = $this->createQueryBuilder('m');
-
-        $list['Godan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('Grade', 14))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2018-01-31'"))
-            ->groupBy('Id')
-            ->orderBy('FirstName', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
-
-        $qb = $this->createQueryBuilder('m');
-
-        $list['Rokudan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('Grade', 16))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2017-01-31'"))
-            ->groupBy('Id')
-            ->orderBy('FirstName', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
-
-        $qb = $this->createQueryBuilder('m');
-
-        $list['Nanadan'] = $qb->select('m.member_id AS Id', 'm.member_photo AS Photo', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade',  18))
-            ->andHaving($qb->expr()->lt('GradeDate', "'2012-01-31'"))
+            ->andHaving($qb->expr()->lt('GradeDate', "'".$limitNanadan."'"))
             ->groupBy('Id')
             ->orderBy('FirstName', 'ASC')
             ->getQuery()
             ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][20][$candidate['Id']] = $candidate;
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->andHaving($qb->expr()->eq('Grade', 16))
+            ->andHaving($qb->expr()->lt('GradeDate', "'".$limitRokudan."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][18][$candidate['Id']] = $candidate;
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->andHaving($qb->expr()->eq('Grade', 14))
+            ->andHaving($qb->expr()->lt('GradeDate', "'".$limitGodan."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][16][$candidate['Id']] = $candidate;
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->andHaving($qb->expr()->eq('Grade', 12))
+            ->andHaving($qb->expr()->lt('GradeDate', "'".$limitYondan."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][14][$candidate['Id']] = $candidate;
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->andHaving($qb->expr()->eq('Grade', 10))
+            ->andHaving($qb->expr()->lt('GradeDate', "'".$limitSandan."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][12][$candidate['Id']] = $candidate;
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->andHaving($qb->expr()->eq('Grade', 8))
+            ->andHaving($qb->expr()->lt('GradeDate', "'".$limitNidan."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][10][$candidate['Id']] = $candidate;
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
+            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+            ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->andHaving($qb->expr()->eq('max(g.grade_rank)', 6))
+            ->andHaving($qb->expr()->lt('max(g.grade_date)', "'".$limitShodan."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($result as $candidate)
+        {
+            $list['Candidate'][8][$candidate['Id']] = $candidate;
+        }
 
         return $list;
     }

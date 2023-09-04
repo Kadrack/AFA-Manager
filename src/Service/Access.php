@@ -565,7 +565,7 @@ class Access
         {
             $admin    = array('Admin-List', 'Admin-Menu');
             $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-MemberDetail', 'Club-Menu');
-            $grade    = array('Grade-CandidatesAwaiting', 'Grade-CandidatesAwaitingAction', 'Grade-CandidatesRejected', 'Grade-Index', 'Grade-List', 'Grade-Menu', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
+            $grade    = array('Grade-CandidatesAwaiting', 'Grade-CandidatesAwaitingAction', 'Grade-CandidatesRejected', 'Grade-Index', 'Grade-Kagami', 'Grade-List', 'Grade-Menu', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
             $list     = array('List-Menu', 'List-Various');
             $mailing  = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
             $member   = array('Member-EmailTab', 'Member-GradeTab', 'Member-Index', 'Member-ListGradeDan', 'Member-Menu', 'Member-TitleTab', 'Member-TrainingTab');

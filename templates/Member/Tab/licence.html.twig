@@ -17,7 +17,7 @@
         {% for licence in data.Member.getMemberLicences %}
             <tr class="table-active" {% if access.check('Member-LicenceEdit') %}onclick="load('{{ path('member-licencesEdit', {'member': data.Member.getMemberId, 'licence': licence.getMemberLicenceId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                 <td>{{ licence.getMemberLicenceDeadline()|date("d/m/Y") }}</td>
-                <td>{{ licence.getMemberLicenceClub().getClubId() }} - {{ licence.getMemberLicenceClub().getClubName() }}</td>
+                <td>{{ licence.getMemberLicenceClub().getClubId() }} - {{ licence.getMemberLicenceClub().getClubName()|title }}</td>
             </tr>
         {% endfor %}
         </tbody>
