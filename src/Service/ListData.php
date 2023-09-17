@@ -241,6 +241,28 @@ class ListData
      * @param int $type
      * @return array|bool|int|string
      */
+    public function getFormationType(int $type): array|bool|int|string
+    {
+        $types = array('Moniteur Animateur' => 4, 'Moniteur Initiateur' => 5, 'Moniteur Educateur' => 6);
+
+        if ($type == 0)
+        {
+            return $types;
+        }
+        else if ($type < 4 || $type > 6)
+        {
+            return "Autre";
+        }
+        else
+        {
+            return array_search($type, $types);
+        }
+    }
+
+    /**
+     * @param int $type
+     * @return array|bool|int|string
+     */
     public function getPaymentType(int $type): array|bool|int|string
     {
         $types = array('Cash' => 1, 'Carte' => 2, 'Payconiq' => 3);

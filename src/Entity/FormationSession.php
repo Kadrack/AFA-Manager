@@ -28,11 +28,10 @@ class FormationSession
     private int $formation_session_id;
 
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
-    #[ORM\Column(type: 'date')]
-    #[Assert\NotBlank]
-    private DateTime $formation_session_date;
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?DateTime $formation_session_date = null;
 
     /**
      * @var int
@@ -41,29 +40,30 @@ class FormationSession
     private int $formation_session_type;
 
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
-    #[ORM\Column(type: 'date')]
-    private DateTime $formation_session_candidate_open;
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?DateTime $formation_session_open = null;
 
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
-    #[ORM\Column(type: 'date')]
-    private DateTime $formation_session_candidate_close;
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?DateTime $formation_session_close = null;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'formation_session', targetEntity: Formation::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $formation_session_formations;
+    #[ORM\OneToMany(mappedBy: 'formation_session_candidate_session', targetEntity: FormationSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['formation_session_candidate_firstname' => 'ASC', 'formation_session_candidate_name' => 'ASC'])]
+    private ArrayCollection|Collection|null $formation_session_candidates;
 
     /**
      * FormationSession constructor.
      */
     public function __construct()
     {
-        $this->formation_session_formations = new ArrayCollection();
+        $this->formation_session_candidates = new ArrayCollection();
     }
 
     /**
@@ -86,18 +86,18 @@ class FormationSession
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getFormationSessionDate(): DateTime
+    public function getFormationSessionDate(): ?DateTime
     {
         return $this->formation_session_date;
     }
 
     /**
-     * @param DateTime $formation_session_date
+     * @param DateTime|null $formation_session_date
      * @return $this
      */
-    public function setFormationSessionDate(DateTime $formation_session_date): self
+    public function setFormationSessionDate(?DateTime $formation_session_date): self
     {
         $this->formation_session_date = $formation_session_date;
 
@@ -124,39 +124,39 @@ class FormationSession
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getFormationSessionCandidateOpen(): DateTime
+    public function getFormationSessionOpen(): ?DateTime
     {
-        return $this->formation_session_candidate_open;
+        return $this->formation_session_open;
     }
 
     /**
-     * @param DateTime $formation_session_candidate_open
+     * @param DateTime|null $formation_session_open
      * @return $this
      */
-    public function setFormationSessionCandidateOpen(DateTime $formation_session_candidate_open): self
+    public function setFormationSessionOpen(?DateTime $formation_session_open): self
     {
-        $this->formation_session_candidate_open = $formation_session_candidate_open;
+        $this->formation_session_open = $formation_session_open;
 
         return $this;
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getFormationSessionCandidateClose(): DateTime
+    public function getFormationSessionClose(): ?DateTime
     {
-        return $this->formation_session_candidate_close;
+        return $this->formation_session_close;
     }
 
     /**
-     * @param DateTime $formation_session_candidate_close
+     * @param DateTime|null $formation_session_close
      * @return $this
      */
-    public function setFormationSessionCandidateClose(DateTime $formation_session_candidate_close): self
+    public function setFormationSessionClose(?DateTime $formation_session_close): self
     {
-        $this->formation_session_candidate_close = $formation_session_candidate_close;
+        $this->formation_session_close = $formation_session_close;
 
         return $this;
     }
@@ -164,39 +164,58 @@ class FormationSession
     /**
      * @return Collection
      */
-    public function getFormationSessionFormations(): Collection
+    public function getFormationSessionCandidates(): Collection
     {
-        return $this->formation_session_formations;
+        return $this->formation_session_candidates;
     }
 
     /**
-     * @param Formation $formation
+     * @param FormationSessionCandidate $formationSessionCandidate
      * @return $this
      */
-    public function addFormationSessionFormations(Formation $formation): self
+    public function addFormationSessionCandidates(FormationSessionCandidate $formationSessionCandidate): self
     {
-        if (!$this->formation_session_formations->contains($formation)) {
-            $this->formation_session_formations[] = $formation;
-            $formation->setFormationSession($this);
+        if (!$this->formation_session_candidates->contains($formationSessionCandidate)) {
+            $this->formation_session_candidates[] = $formationSessionCandidate;
+            $formationSessionCandidate->setFormationSessionCandidateSession($this);
         }
 
         return $this;
     }
 
     /**
-     * @param Formation $formation
+     * @param FormationSessionCandidate $formationSessionCandidate
      * @return $this
      */
-    public function removeFormationSessionFormations(Formation $formation): self
+    public function removeFormationSessionCandidates(FormationSessionCandidate $formationSessionCandidate): self
     {
-        if ($this->formation_session_formations->contains($formation)) {
-            $this->formation_session_formations->removeElement($formation);
+        if ($this->formation_session_candidates->contains($formationSessionCandidate)) {
+            $this->formation_session_candidates->removeElement($formationSessionCandidate);
             // set the owning side to null (unless already changed)
-            if ($formation->getFormationSession() === $this) {
-                $formation->setFormationSession(null);
+            if ($formationSessionCandidate->getFormationSessionCandidateSession() === $this) {
+                $formationSessionCandidate->setFormationSessionCandidateSession(null);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Custom function
+     */
+
+    /**
+     * @return bool
+     */
+    public function getFormationSessionIsOpen(): bool
+    {
+        $today = new DateTime();
+
+        if ($today >= $this->getFormationSessionOpen() && $today <= $this->getFormationSessionClose())
+        {
+            return true;
+        }
+
+        return false;
     }
 }

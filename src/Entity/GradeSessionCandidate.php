@@ -353,7 +353,7 @@ class GradeSessionCandidate
     {
         if (!$this->grade_session_candidate_grades->contains($grade)) {
             $this->grade_session_candidate_grades[] = $grade;
-            $grade->setGradeExam($this);
+            $grade->setGradeSession($this);
         }
 
         return $this;
@@ -368,8 +368,8 @@ class GradeSessionCandidate
         if ($this->grade_session_candidate_grades->contains($grade)) {
             $this->grade_session_candidate_grades->removeElement($grade);
             // set the owning side to null (unless already changed)
-            if ($grade->getGradeExam() === $this) {
-                $grade->setGradeExam(null);
+            if ($grade->getGradeSession() === $this) {
+                $grade->setGradeSession(null);
             }
         }
 

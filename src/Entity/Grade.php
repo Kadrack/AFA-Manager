@@ -187,7 +187,7 @@ class Grade
     /**
      * @return GradeSessionCandidate|null
      */
-    public function getGradeExam(): ?GradeSessionCandidate
+    public function getGradeSession(): ?GradeSessionCandidate
     {
         return $this->grade_session;
     }
@@ -196,7 +196,7 @@ class Grade
      * @param GradeSessionCandidate|null $grade_session
      * @return $this
      */
-    public function setGradeExam(?GradeSessionCandidate $grade_session): self
+    public function setGradeSession(?GradeSessionCandidate $grade_session): self
     {
         $this->grade_session = $grade_session;
 
@@ -218,25 +218,6 @@ class Grade
     public function setGradeMember(Member $grade_member): self
     {
         $this->grade_member = $grade_member;
-
-        return $this;
-    }
-
-    /**
-     * @return GradeSessionCandidate
-     */
-    public function getGradeSession(): GradeSessionCandidate
-    {
-        return $this->grade_session;
-    }
-
-    /**
-     * @param GradeSessionCandidate $grade_session
-     * @return $this
-     */
-    public function setGradeSession(GradeSessionCandidate $grade_session): self
-    {
-        $this->grade_session = $grade_session;
 
         return $this;
     }

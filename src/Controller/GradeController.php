@@ -739,16 +739,16 @@ class GradeController extends AbstractController
                         $grade->setGradeClub($club);
                         $grade->setGradeMember($member);
                         $grade->setGradeStatus($result);
-                        $grade->setGradeExam($candidate);
+                        $grade->setGradeSession($candidate);
                         $grade->setGradeDate($candidate->getGradeSessionCandidateExam()->getGradeSessionDate());
                         $grade->setGradeRank($candidate->getGradeSessionCandidateRank() - 1);
 
                         $entityManager->persist($grade);
                     }
-                    elseif (is_null($grade->getGradeExam()) || $grade->getGradeExam() === $candidate->getGradeSessionCandidateExam())
+                    elseif (is_null($grade->getGradeSession()) || $grade->getGradeSession() === $candidate->getGradeSessionCandidateExam())
                     {
                         $grade->setGradeStatus($result);
-                        $grade->setGradeExam($candidate);
+                        $grade->setGradeSession($candidate);
                         $grade->setGradeDate($candidate->getGradeSessionCandidateExam()->getGradeSessionDate());
                     }
                 }
@@ -760,7 +760,7 @@ class GradeController extends AbstractController
                     $grade->setGradeClub($club);
                     $grade->setGradeMember($member);
                     $grade->setGradeStatus($result);
-                    $grade->setGradeExam($candidate);
+                    $grade->setGradeSession($candidate);
                     $grade->setGradeRank($candidate->getGradeSessionCandidateRank());
 
                     if (($candidate->getGradeSessionCandidateResult() == 2) || ($candidate->getGradeSessionCandidateRank() % 2 != 0))
@@ -774,10 +774,10 @@ class GradeController extends AbstractController
                 {
                     $grade = $doctrine->getRepository(Grade::class)->findOneBy(array('grade_member' => $candidate->getCandidateMemberId(), 'grade_rank' => $candidate->getGradeSessionCandidateRank()));
 
-                    if (is_null($grade->getGradeExam()) || $grade->getGradeExam() === $candidate->getGradeSessionCandidateExam())
+                    if (is_null($grade->getGradeSession()) || $grade->getGradeSession() === $candidate->getGradeSessionCandidateExam())
                     {
                         $grade->setGradeStatus($result);
-                        $grade->setGradeExam($candidate->getGradeSessionCandidateExam());
+                        $grade->setGradeSession($candidate->getGradeSessionCandidateExam());
 
                         $candidate->getGradeSessionCandidateRank() % 2 == 0 ?: $grade->setGradeDate($candidate->getGradeSessionCandidateExam()->getGradeSessionDate());
                     }

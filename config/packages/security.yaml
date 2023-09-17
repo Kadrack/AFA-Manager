@@ -51,6 +51,7 @@ security:
         - { path: ^/login$, roles: PUBLIC_ACCESS }
         - { path: ^/recuperation-mot-de-passe$, roles: PUBLIC_ACCESS }
         - { path: ^/newsletter$, roles: PUBLIC_ACCESS }
+        - { path: ^/formation$, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

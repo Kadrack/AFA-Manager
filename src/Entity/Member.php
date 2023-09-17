@@ -136,7 +136,7 @@ class Member
      * @var int
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $member_last_kagami;
+    private int $member_last_kagami = 0;
 
     /**
      * @var ArrayCollection|Collection|null
@@ -157,6 +157,12 @@ class Member
     #[ORM\OneToMany(mappedBy: 'formation_member', targetEntity: Formation::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['formation_date' => 'DESC'])]
     private ArrayCollection|Collection|null $member_formations;
+
+    /**
+     * @var ArrayCollection|Collection|null
+     */
+    #[ORM\OneToMany(mappedBy: 'formation_session_candidate_member', targetEntity: FormationSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $member_candidate_formations;
 
     /**
      * @var ArrayCollection|Collection|null
@@ -214,6 +220,7 @@ class Member
      */
     public function __construct()
     {
+        $this->member_candidate_formations = new ArrayCollection();
         $this->member_clusters             = new ArrayCollection();
         $this->member_exams                = new ArrayCollection();
         $this->member_formations           = new ArrayCollection();
@@ -560,6 +567,45 @@ class Member
     public function setMemberLastKagami(bool $member_last_kagami): self
     {
         $this->member_last_kagami = $member_last_kagami;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberCandidateFormations(): Collection
+    {
+        return $this->member_candidate_formations;
+    }
+
+    /**
+     * @param FormationSessionCandidate $formationSessionCandidate
+     * @return $this
+     */
+    public function addMemberCandidateFormations(FormationSessionCandidate $formationSessionCandidate): self
+    {
+        if (!$this->member_candidate_formations->contains($formationSessionCandidate)) {
+            $this->member_candidate_formations[] = $formationSessionCandidate;
+            $formationSessionCandidate->setFormationSessionCandidateMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param FormationSessionCandidate $formationSessionCandidate
+     * @return $this
+     */
+    public function removeMemberCandidateFormations(FormationSessionCandidate $formationSessionCandidate): self
+    {
+        if ($this->member_candidate_formations->contains($formationSessionCandidate)) {
+            $this->member_candidate_formations->removeElement($formationSessionCandidate);
+            // set the owning side to null (unless already changed)
+            if ($formationSessionCandidate->getFormationSessionCandidateMember() === $this) {
+                $formationSessionCandidate->setFormationSessionCandidateMember(null);
+            }
+        }
 
         return $this;
     }

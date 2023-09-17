@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="container col col-lg-5">
+        <h1 class="text-center">Inscription à la session {{ listData.getFormationType(data.Session.getFormationSessionType) }}</h1>
+        {% if data.Session.getFormationSessionIsOpen and data.FormType == 0 %}
+            <div class="text-center mb-3">
+                <a class="btn btn-light" href="{{ path('formation-subscription', {'type': data.Session.getFormationSessionType, 'formType': 1}) }}" onmouseover="this.style.cursor='pointer'">Membre AFA</a>
+                <a class="btn btn-light" href="{{ path('formation-subscription', {'type': data.Session.getFormationSessionType, 'formType': 2}) }}" onmouseover="this.style.cursor='pointer'">Autre fédération</a>
+            </div>
+        {% elseif data.Session.getFormationSessionOpen > date() %}
+            <div class="text-center mb-3">
+                <p>Ouverture des inscriptions le {{ data.Session.getFormationSessionOpen|date('d/m/Y') }}</p>
+            </div>
+        {% elseif data.Session.getFormationSessionDate is null %}
+            <div class="text-center mb-3">
+                <p>Aucune session ouverte et prévue pour le moment, vous pouvez nous laisser votre adresse mail nous vous préviendrons dès la mise en place d'une prochaine session.</p>
+                {{ form_start(form) }}
+                {{ form_row(form.FormationSessionCandidateFirstname) }}
+                {{ form_row(form.FormationSessionCandidateName) }}
+                {{ form_row(form.FormationSessionCandidateEmail) }}
+                {{ form_row(form.Captcha) }}
+                <div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>
+                {{ form_end(form) }}
+            </div>
+        {% elseif data.Session.getFormationSessionIsOpen and data.FormType == 1 %}
+            <div class="text-center mb-3">
+                {{ form_start(form) }}
+                {{ form_row(form.FormationSessionCandidateFirstname) }}
+                {{ form_row(form.FormationSessionCandidateName) }}
+                {{ form_row(form.FormationSessionCandidateMember) }}
+                {{ form_row(form.FormationSessionCandidateEmail) }}
+                {{ form_row(form.Captcha) }}
+                <div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>
+                {{ form_end(form) }}
+            </div>
+        {% elseif data.Session.getFormationSessionIsOpen and data.FormType == 2 %}
+            <div class="text-center mb-3">
+                {{ form_start(form) }}
+                {{ form_row(form.FormationSessionCandidateFirstname) }}
+                {{ form_row(form.FormationSessionCandidateName) }}
+                {{ form_row(form.FormationSessionCandidateBirthday) }}
+                {{ form_row(form.FormationSessionCandidateSex) }}
+                {{ form_row(form.FormationSessionCandidateAddress) }}
+                {{ form_row(form.FormationSessionCandidateZip) }}
+                {{ form_row(form.FormationSessionCandidateCity) }}
+                {{ form_row(form.FormationSessionCandidateCountry) }}
+                {{ form_row(form.FormationSessionCandidatePhone) }}
+                {{ form_row(form.FormationSessionCandidateEmail) }}
+                {{ form_row(form.Captcha) }}
+                <div class="d-grid gap-0">{{ form_widget(form.Submit) }}</div>
+                {{ form_end(form) }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

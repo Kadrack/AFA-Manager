@@ -255,7 +255,7 @@
         </div>
     {% endif %}
 
-    {% if data.Session.getGradeSessionType == 2 %}
+    {% if data.Session.getGradeSessionType == 2 and data.Session.getGradeSessionIsOpen %}
         <h1 class="text-center">Liste potentiel candidat Kagami {{ data.Kagami.Year + 1 }}</h1>
 
         <div class="container col col-lg-4">
@@ -265,90 +265,98 @@
                         <th scope="col">#</th>
                         <th scope="col">Prénom</th>
                         <th scope="col">Nom</th>
+                        <th scope="col">Dernier grade</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if data.Kagami.Candidate.20 is defined and data.Kagami.Candidate.20|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Nanadan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Nanadan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.20 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
                     {% if data.Kagami.Candidate.18 is defined and data.Kagami.Candidate.18|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Rokudan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Rokudan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.18 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
                     {% if data.Kagami.Candidate.16 is defined and data.Kagami.Candidate.16|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Godan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Godan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.16 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
                     {% if data.Kagami.Candidate.14 is defined and data.Kagami.Candidate.14|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Yondan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Yondan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.14 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
                     {% if data.Kagami.Candidate.12 is defined and data.Kagami.Candidate.12|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Sandan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Sandan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.12 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
                     {% if data.Kagami.Candidate.10 is defined and data.Kagami.Candidate.10|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Nidan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Nidan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.10 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
                     {% if data.Kagami.Candidate.8 is defined and data.Kagami.Candidate.8|length > 0 %}
                         <tr class="table-primary">
-                            <td class="text-center" colspan="3"><strong>Shodan</strong></td>
+                            <td class="text-center" colspan="4"><strong>Shodan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.8 %}
                             <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
+                                <td class="table-active align-middle">{{ candidate.GradeDate|date('d/m/Y') }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}

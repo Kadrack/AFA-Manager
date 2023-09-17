@@ -625,7 +625,7 @@ class MemberController extends AbstractController
             $choices = $listData->getGradeDan();
         }
 
-        if (!is_null($grade->getGradeExam()))
+        if (!is_null($grade->getGradeSession()))
         {
             $formDelete = null;
         }
@@ -646,7 +646,7 @@ class MemberController extends AbstractController
             }
         }
 
-        $formEdit = $this->createForm(MemberType::class, $grade, array('formData' => array('Form' => 'Grade', 'Action' => 'Edit', 'IsFromExamSession' => !is_null($grade->getGradeExam()), 'Choices' => $choices), 'data_class' => Grade::class, 'action' => $this->generateUrl('member-gradesEdit', array('member' => $member->getMemberId(), 'grade' => $grade->getGradeId()))));
+        $formEdit = $this->createForm(MemberType::class, $grade, array('formData' => array('Form' => 'Grade', 'Action' => 'Edit', 'IsFromExamSession' => !is_null($grade->getGradeSession()), 'Choices' => $choices), 'data_class' => Grade::class, 'action' => $this->generateUrl('member-gradesEdit', array('member' => $member->getMemberId(), 'grade' => $grade->getGradeId()))));
 
         $formEdit->handleRequest($request);
 

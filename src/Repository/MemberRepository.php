@@ -408,8 +408,8 @@ class MemberRepository extends ServiceEntityRepository
         $limitNidan   = $list['Year'] - 3 . '-01-31';
         $limitSandan  = $list['Year'] - 5 . '-01-31';
         $limitYondan  = $list['Year'] - 7 . '-01-31';
-        $limitGodan   = $list['Year'] - 5 . '-01-31';
-        $limitRokudan = $list['Year'] - 6 . '-01-31';
+        $limitGodan   = $list['Year'] - 4 . '-01-31';
+        $limitRokudan = $list['Year'] - 5 . '-01-31';
         $limitNanadan = $list['Year'] - 11 . '-01-31';
 
         $qb = $this->createQueryBuilder('m');

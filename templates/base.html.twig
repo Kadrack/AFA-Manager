@@ -56,6 +56,11 @@
                             <a class="nav-link" href="{{ path('grade-list') }}">Grades</a>
                         </li>
                         {% endif %}
+                        {% if access.check('Formation-Menu') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('formation-list') }}">Formations</a>
+                            </li>
+                        {% endif %}
                         {% if is_granted('ROLE_USER') %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="{{ path('statistics-index') }}">Statistiques</a>

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="container col col-lg-5">
+        <h1 class="text-center">Liste des candidats à la session</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col"># Licence</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidate in data.Subscription %}
+                <tr class="table-active">
+                    <td class="align-middle">{{ candidate.getFormationSessionCandidateFirstname|title }}</td>
+                    <td class="align-middle">{{ candidate.getFormationSessionCandidateName|title }}</td>
+                    <td class="align-middle">{% if candidate.getFormationSessionCandidateMember is null %}Aucun{% else %}{{ candidate.getFormationSessionCandidateMember.getMemberId }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

@@ -57,11 +57,11 @@ class Formation
     private Member $formation_member;
 
     /**
-     * @var FormationSession|null
+     * @var FormationSessionCandidate|null
      */
-    #[ORM\ManyToOne(targetEntity: FormationSession::class, cascade: ['persist'], inversedBy: 'formation_session_formations')]
-    #[ORM\JoinColumn(name: 'formation_join_formation_session', referencedColumnName: 'formation_session_id', nullable: true)]
-    private ?FormationSession $formation_session;
+    #[ORM\ManyToOne(targetEntity: FormationSessionCandidate::class, cascade: ['persist'], inversedBy: 'formation_session_candidate_formations')]
+    #[ORM\JoinColumn(name: 'formation_join_formation_session_candidate', referencedColumnName: 'formation_session_candidate_id', nullable: true)]
+    private ?FormationSessionCandidate $formation_session;
 
     /**
      * @return int
@@ -159,6 +159,25 @@ class Formation
     }
 
     /**
+     * @return FormationSessionCandidate|null
+     */
+    public function getFormationSession(): ?GradeSessionCandidate
+    {
+        return $this->formation_session;
+    }
+
+    /**
+     * @param FormationSessionCandidate|null $formation_session
+     * @return $this
+     */
+    public function setFormationSession(?FormationSessionCandidate $formation_session): self
+    {
+        $this->formation_session = $formation_session;
+
+        return $this;
+    }
+
+    /**
      * @return Member
      */
     public function getFormationMember(): Member
@@ -173,25 +192,6 @@ class Formation
     public function setFormationMember(Member $formation_member): self
     {
         $this->formation_member = $formation_member;
-
-        return $this;
-    }
-
-    /**
-     * @return FormationSession|null
-     */
-    public function getFormationSession(): ?FormationSession
-    {
-        return $this->formation_session;
-    }
-
-    /**
-     * @param FormationSession|null $formation_session
-     * @return $this
-     */
-    public function setFormationSession(?FormationSession $formation_session): self
-    {
-        $this->formation_session = $formation_session;
 
         return $this;
     }

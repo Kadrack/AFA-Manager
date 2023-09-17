@@ -69,6 +69,6 @@ class CommonController extends AbstractController
 
         $access->setListAccess($club, $cluster);
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirectToRoute('common-index');
     }
 }

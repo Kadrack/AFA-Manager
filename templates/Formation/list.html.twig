@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    AFA-Manager
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="container col col-lg-5">
+        <h1 class="text-center">File d'attente</h1>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center" scope="col">{{ listData.getFormationType(4) }}</th>
+                    <th class="text-center" scope="col">{{ listData.getFormationType(5) }}</th>
+                    <th class="text-center" scope="col">{{ listData.getFormationType(6) }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="table-active">
+                    <td class="align-middle text-center" onclick="window.open('{{ path('formation-index', {'formationSession': 1}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ data.Waiting.0.getFormationSessionCandidates|length }}</td>
+                    <td class="align-middle text-center" onclick="window.open('{{ path('formation-index', {'formationSession': 2}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ data.Waiting.1.getFormationSessionCandidates|length }}</td>
+                    <td class="align-middle text-center" onclick="window.open('{{ path('formation-index', {'formationSession': 3}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ data.Waiting.2.getFormationSessionCandidates|length }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h1 class="text-center">Liste des sessions de formation</h1>
+        {% if access.check('Formation-SessionAdd') %}
+            <div class="text-center mb-3">
+                <button class="btn btn-sm btn-light" onclick="load('{{ path('formation-sessionAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+            </div>
+        {% endif %}
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Type</th>
+                    <th scope="col"># Candidats</th>
+                    <th scope="col">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for session in data.Sessions %}
+                {% if session.getFormationSessionDate is not null %}
+                    <tr class="table-active" {% if date() < session.getFormationSessionOpen or access.check('Formation-SessionManagement') %}onclick="window.open('{{ path('formation-index', {'formationSession': session.getFormationSessionId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                        <td class="align-middle">{{ session.getFormationSessionDate|date("d/m/Y") }}</td>
+                        <td class="align-middle">{{ listData.getFormationType(session.getFormationSessionType) }}</td>
+                        <td class="align-middle">{{ session.getFormationSessionCandidates|length }}</td>
+                        <td class="align-middle">{% if date() < session.getFormationSessionOpen %}Ouverture le {{ session.getFormationSessionOpen|date("d/m/Y") }}{% elseif session.getFormationSessionIsOpen %}Ouvert jusqu'au {{ session.getFormationSessionClose|date("d/m/Y") }}{% else %}Session Clôturée{% endif %}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
