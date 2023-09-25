@@ -86,6 +86,24 @@ class FormationSessionCandidate
     private ?DateTime $formation_session_candidate_birthday;
 
     /**
+     * @var int|null
+     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $formation_session_candidate_grade;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $formation_session_candidate_club;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $formation_session_candidate_licence;
+
+    /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
@@ -343,6 +361,63 @@ class FormationSessionCandidate
     public function setFormationSessionCandidateBirthday(?DateTime $formation_session_candidate_birthday): self
     {
         $this->formation_session_candidate_birthday = $formation_session_candidate_birthday;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getFormationSessionCandidateGrade(): ?int
+    {
+        return $this->formation_session_candidate_grade;
+    }
+
+    /**
+     * @param int|null $formation_session_candidate_grade
+     * @return $this
+     */
+    public function setFormationSessionCandidateGrade(?int $formation_session_candidate_grade): self
+    {
+        $this->formation_session_candidate_grade = $formation_session_candidate_grade;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFormationSessionCandidateClub(): ?string
+    {
+        return $this->formation_session_candidate_club;
+    }
+
+    /**
+     * @param string|null $formation_session_candidate_club
+     * @return $this
+     */
+    public function setFormationSessionCandidateClub(?string $formation_session_candidate_club): self
+    {
+        $this->formation_session_candidate_club = $formation_session_candidate_club;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFormationSessionCandidateLicence(): ?string
+    {
+        return $this->formation_session_candidate_licence;
+    }
+
+    /**
+     * @param string|null $formation_session_candidate_licence
+     * @return $this
+     */
+    public function setFormationSessionCandidateLicence(?string $formation_session_candidate_licence): self
+    {
+        $this->formation_session_candidate_licence = $formation_session_candidate_licence;
 
         return $this;
     }

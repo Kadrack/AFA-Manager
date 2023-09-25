@@ -9,7 +9,8 @@
 
 {% block body %}
     <div class="container col col-lg-5">
-        <h1 class="text-center">Liste des candidats à la session</h1>
+        <h1 class="text-center">Session {{ listData.getFormationtype(data.Session.getFormationSessionType) }} du {{ data.Session.getFormationSessionDate|date('d/m/Y') }} {% if access.check('Formation-SessionEdit') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('formation-sessionEdit', {'formationSession': data.Session.getFormationSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}</h1>
+        <h2 class="text-center">Liste des candidats à la session</h2>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>
@@ -19,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for candidate in data.Subscription %}
+            {% for candidate in data.Session.getFormationSessionCandidates %}
                 <tr class="table-active">
                     <td class="align-middle">{{ candidate.getFormationSessionCandidateFirstname|title }}</td>
                     <td class="align-middle">{{ candidate.getFormationSessionCandidateName|title }}</td>

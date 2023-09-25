@@ -194,6 +194,29 @@ class ListData
     }
 
     /**
+     * @param int $grade
+     *
+     * @return array|bool|int|string
+     */
+    public function getGradeFormation(int $grade): array|bool|int|string
+    {
+        $grades = array('1er kyu'  => 1, 'Shodan' => 2, 'Nidan' => 3, 'Sandan' => 4, 'Yondan' => 5, 'Godan' => 6, 'Rokudan' => 7, 'Nanadan' => 8);
+
+        if ($grade == 0)
+        {
+            return $grades;
+        }
+        else if ($grade > sizeof($grades))
+        {
+            return "Autre";
+        }
+        else
+        {
+            return array_search($grade, $grades);
+        }
+    }
+
+    /**
      * @param int $title
      * @return array|bool|int|string
      */

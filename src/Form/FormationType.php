@@ -109,7 +109,10 @@ class FormationType extends AbstractType
                 ->add('FormationSessionCandidateZip', IntegerType::class, array('label' => 'Code postal', 'attr' => array('placeholder' => 'FormationSessionCandidateZip'), 'row_attr' => array('class' => 'form-floating')))
                 ->add('FormationSessionCandidateCity', TextType::class, array('label' => 'Localité', 'attr' => array('placeholder' => 'FormationSessionCandidateCity'), 'row_attr' => array('class' => 'form-floating')))
                 ->add('FormationSessionCandidateCountry', CountryType::class, array('label' => 'Pays', 'choice_translation_locale' => 'fr', 'preferred_choices' => array('BE', 'FR'), 'attr' => array('placeholder' => 'FormationSessionCandidateCountry'), 'row_attr' => array('class' => 'form-floating')))
-                ->add('FormationSessionCandidatePhone', TextType::class, array('label' => 'Numéro de téléphone', 'required' => false, 'attr' => array('placeholder' => 'FormationSessionCandidatePhone'), 'row_attr' => array('class' => 'form-floating')));
+                ->add('FormationSessionCandidatePhone', TextType::class, array('label' => 'Numéro de téléphone', 'required' => false, 'attr' => array('placeholder' => 'FormationSessionCandidatePhone'), 'row_attr' => array('class' => 'form-floating')))
+                ->add('FormationSessionCandidateGrade', ChoiceType::class, array('label' => 'Grade', 'required' => true, 'multiple' => false, 'expanded' => false, 'choices' => $list->getGradeFormation(0), 'attr' => array('placeholder' => 'FormationSessionCandidateGrade'), 'row_attr' => array('class' => 'form-floating')))
+                ->add('FormationSessionCandidateClub', TextType::class, array('label' => 'Nom du club actuel', 'required' => true, 'attr' => array('placeholder' => 'FormationSessionCandidateClub'), 'row_attr' => array('class' => 'form-floating')))
+                ->add('FormationSessionCandidateLicence', TextType::class, array('label' => 'N° de licence', 'required' => true, 'attr' => array('placeholder' => 'FormationSessionCandidateLicence'), 'row_attr' => array('class' => 'form-floating')));
         }
 
         $builder

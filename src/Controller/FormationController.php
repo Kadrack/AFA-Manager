@@ -215,7 +215,7 @@ class FormationController extends AbstractController
             die();
         }
 
-        $data['Subscription'] = $formationSession->getFormationSessionCandidates();
+        $data['Session'] = $formationSession;
 
         return $this->render('Formation/index.html.twig', array('data' => $data));
     }

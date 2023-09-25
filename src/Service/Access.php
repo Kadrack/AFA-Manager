@@ -551,7 +551,7 @@ class Access
         {
             $admin     = array('Admin-List', 'Admin-Menu');
             $dojo      = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-ListOpen', 'Club-MemberDetail', 'Club-Menu');
-            $formation = array('Formation-Menu', 'Formation-SessionAdd', 'Formation-SessionList', 'Formation-SessionManagement');
+            $formation = array('Formation-Menu', 'Formation-SessionAdd', 'Formation-SessionEdit', 'Formation-SessionList', 'Formation-SessionManagement');
             $list      = array('List-Various');
             $mailing   = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
 
