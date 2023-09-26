@@ -134,7 +134,7 @@ class GradeController extends AbstractController
     #[Route('/details-de-la-session/{gradeSession<\d+>}', name:'index')]
     public function index(Access $access, GradeSession $gradeSession, ManagerRegistry $doctrine, Request $request, SearchMember $search, Session $session): Response
     {
-        if (!$access->check('Grade-Index') || !$session->has('Club'))
+        if (!$access->check('Grade-Index') && !$session->has('Club'))
         {
             die();
         }

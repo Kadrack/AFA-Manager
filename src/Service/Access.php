@@ -178,6 +178,22 @@ class Access
     /**
      * @return bool
      */
+    public function isCATreasurer(): bool
+    {
+        foreach ($this->clusters as $cluster)
+        {
+            if (($cluster->getCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 4))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function isCTPresident(): bool
     {
         foreach ($this->clusters as $cluster)
@@ -199,6 +215,22 @@ class Access
         foreach ($this->clusters as $cluster)
         {
             if (($cluster->getCluster()->getClusterId() == 1) && ($cluster->getClusterMemberTitle() == 10))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCPSecretary(): bool
+    {
+        foreach ($this->clusters as $cluster)
+        {
+            if (($cluster->getCluster()->getClusterId() == 4) && ($cluster->getClusterMemberTitle() == 10))
             {
                 return true;
             }
@@ -302,22 +334,6 @@ class Access
         foreach ($this->teachers as $teacher)
         {
             if (($teacher->getClubTeacher()->getClubId() === $club->getClubId()) && ($teacher->getClubTeacherType() != 1))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCATreasurer(): bool
-    {
-        foreach ($this->clusters as $cluster)
-        {
-            if (($cluster->getCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 4))
             {
                 return true;
             }
@@ -554,6 +570,12 @@ class Access
             $formation = array('Formation-Menu', 'Formation-SessionAdd', 'Formation-SessionEdit', 'Formation-SessionList', 'Formation-SessionManagement');
             $list      = array('List-Various');
             $mailing   = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
+
+            if ($this->isCPSecretary())
+            {
+                $admin    = array_merge($admin, array('Admin-Mailing'));
+                $mailing  = array_merge($mailing, array('Mailing-CPAnimateur'));
+            }
 
             $this->access = array_merge($admin, $dojo, $formation, $list, $mailing);
         }

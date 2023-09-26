@@ -532,8 +532,10 @@ class SecretariatController extends AbstractController
 
         foreach ($licences as $licence)
         {
-            $list[$licence->getMemberLicenceClub()->getClubId()][]= $licence;
+            $list[$licence->getMemberLicenceClub()->getClubId()][] = $licence;
         }
+
+        ksort($list);
 
         return $this->render('Secretariat/Lists/ongoingLicences.html.twig', array('list' => $list));
     }
@@ -590,7 +592,7 @@ class SecretariatController extends AbstractController
                 $entityManager->flush();
             }
 
-            return $this->redirectToRoute('secretariat-paymentList');
+            return $this->redirectToRoute('secretariat-paymentLast');
         }
 
         $formDelete = $this->createForm(SecretariatType::class, null, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('secretariat-paymentEdit', array('licence' => $licence->getMemberLicenceId()))));
@@ -608,7 +610,7 @@ class SecretariatController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('secretariat-paymentList');
+            return $this->redirectToRoute('secretariat-paymentLast');
         }
 
         return $this->render('Secretariat/Payment/modalPaymentEdit.html.twig', array('formEdit' => $formEdit->createView(), 'formDelete' => $formDelete->createView()));
@@ -671,6 +673,8 @@ class SecretariatController extends AbstractController
         {
             $list[$stamp->getMemberLicenceClub()->getClubId()][]= $stamp;
         }
+
+        ksort($list);
 
         return $this->render('Secretariat/Lists/stampsToPrint.html.twig', array('list' => $list));
     }

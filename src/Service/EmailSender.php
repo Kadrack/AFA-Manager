@@ -57,6 +57,9 @@ class EmailSender
      */
     private Security $security;
 
+    /**
+     * @var ParameterBagInterface
+     */
     private ParameterBagInterface $parameters;
 
     /**
@@ -348,14 +351,15 @@ class EmailSender
     {
         $list = array();
 
-        !$this->access->check('Mailing-DojoCho') ?: $list = array_merge($list, array('Dojo-Cho' => 1));
-        !$this->access->check('Mailing-Manager') ?: $list = array_merge($list, array('Gestionnaires de club' => 2));
-        !$this->access->check('Mailing-Teacher') ?: $list = array_merge($list, array('Professeur(s) et Assistant(s)' => 3));
-        !$this->access->check('Mailing-CA')      ?: $list = array_merge($list, array('Conseil d\'administration' => 4));
-        !$this->access->check('Mailing-CT')      ?: $list = array_merge($list, array('Commission technique' => 5));
-        !$this->access->check('Mailing-CJ')      ?: $list = array_merge($list, array('Commission junior' => 6));
-        !$this->access->check('Mailing-CP')      ?: $list = array_merge($list, array('Commission pédagogique' => 7));
-        !$this->access->check('Mailing-Preview') ?: $list = array_merge($list, array('Secrétariat' => 8));
+        !$this->access->check('Mailing-DojoCho')     ?: $list = array_merge($list, array('Dojo-Cho' => 1));
+        !$this->access->check('Mailing-Manager')     ?: $list = array_merge($list, array('Gestionnaires de club' => 2));
+        !$this->access->check('Mailing-Teacher')     ?: $list = array_merge($list, array('Professeur(s) et Assistant(s)' => 3));
+        !$this->access->check('Mailing-CA')          ?: $list = array_merge($list, array('Conseil d\'administration' => 4));
+        !$this->access->check('Mailing-CT')          ?: $list = array_merge($list, array('Commission technique' => 5));
+        !$this->access->check('Mailing-CJ')          ?: $list = array_merge($list, array('Commission junior' => 6));
+        !$this->access->check('Mailing-CP')          ?: $list = array_merge($list, array('Commission pédagogique' => 7));
+        !$this->access->check('Mailing-CPAnimateur') ?: $list = array_merge($list, array('Candidats Animateur' => 8));
+        !$this->access->check('Mailing-Preview')     ?: $list = array_merge($list, array('Secrétariat' => 100));
 
         return $list;
     }
@@ -440,6 +444,13 @@ class EmailSender
 
                     break;
                 case 8:
+                    foreach ($this->doctrine->getRepository(Member::class)->getCPAnimateurCandidate() as $member)
+                    {
+                        !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
+                    }
+
+                    break;
+                case 100:
                     $this->email['Bcc'] = array();
 
                     break;

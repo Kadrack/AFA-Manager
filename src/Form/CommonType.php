@@ -54,7 +54,7 @@ class CommonType extends AbstractType
         $data = $data['Data'];
 
         $builder
-            ->add('To', ChoiceType::class, array('label' => 'Destinataire', 'multiple' => true, 'expanded' => true, 'placeholder' => 'Choississez les destinataires', 'choices' => $data['List'], 'required' => false, 'attr' => array('placeholder' => 'To'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('To', ChoiceType::class, array('label' => 'Destinataire', 'multiple' => true, 'expanded' => true, 'placeholder' => 'Choississez les destinataires', 'choices' => $data['List'], 'required' => true, 'attr' => array('placeholder' => 'To'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Subject', TextType::class, array('label' => 'Sujet', 'attr' => array('placeholder' => 'Subject'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Text', TextareaType::class, array('attr' => array('class' => 'tinymce form-floating'), 'required' => false))
             ->add('Attachment', FileType::class, array('label' => 'Fichier attaché', 'mapped' => false, 'required' => false, 'multiple' => true, 'data_class' => null, 'empty_data' => ''))

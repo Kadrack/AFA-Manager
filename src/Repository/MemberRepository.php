@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Club;
 use App\Entity\ClubDojo;
+use App\Entity\Formation;
 use App\Entity\Grade;
 use App\Entity\GradeSessionCandidate;
 use App\Entity\Member;
@@ -546,5 +547,30 @@ class MemberRepository extends ServiceEntityRepository
         }
 
         return $list;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCPAnimateurCandidate(): array
+    {
+        $limitLicence = new DateTime('-3 month today');
+
+        $limitBirthday = new DateTime('-17 year today');
+
+        $qb = $this->createQueryBuilder('m');
+
+        return $qb->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
+            ->innerJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.member_id', 'g.grade_member'))
+            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.member_id', 'f.formation_member'))
+            ->where($qb->expr()->gte('l.member_licence_deadline', "'".$limitLicence->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('m.member_birthday', "'".$limitBirthday->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->isNotNull('m.member_email'))
+            ->groupBy('m.member_id')
+            ->having($qb->expr()->lt('max(f.formation_rank)', 4))
+            ->orHaving($qb->expr()->isNull('max(f.formation_rank)'))
+            ->andHaving($qb->expr()->gte('max(g.grade_rank)', 5))
+            ->getQuery()
+            ->getResult();
     }
 }
