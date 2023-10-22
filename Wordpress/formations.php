@@ -2,46 +2,16 @@
 /* Template Name: Formations */
 get_header();
 
-/*Début rêquete */
+//Remplacement de toutes les requêtes
+$base_url = ABSPATH."wp-content/uploads/json/composition.json";
+$request = file_get_contents($base_url);
 
-/* Fin récupération information */
+//On décode le JSON
+$pedagogiques = json_decode($request,true)[4]['Members'];
 
-$servername = "";
-$username = "";
-$password = "";
-$dbname = "";
-
-try {
-    $db = new pdo("mysql:host=$servername;dbname=$dbname", $username, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
-} catch (Exception $e) {
-    die('Erreur : ' . $e->getMessage());
-}
-/* Liste commission pedagogique */
-$sqlPedagogique = "SELECT m.member_firstname, m.member_name, m.member_phone, c.cluster_member_email, c.cluster_member_title, max(g.grade_rank), max(f.formation_rank)
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-INNER JOIN grade g ON (g.grade_join_member = m.member_id)
-LEFT JOIN formation f ON (f.formation_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 4 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE)
-GROUP BY m.member_id ORDER BY c.cluster_member_title ASC";
-/* Fin liste */
-$pedagogiques = $db->query($sqlPedagogique)->fetchAll(); ?>
-<?php
-$commissionMemberTitle = array(
-    1 => "Président(e)",
-    2 => "Vice-président(e)",
-    3 => "Secrétaire général(e)",
-    4 => "Trésorier(ère) général(e)",
-    5 => "Délégué(e) technique",
-    6 => "Délégué(e) au relations interfédérales sportives",
-    7 => "Responsable communication",
-    8 => "Community manager",
-    9 => "Administrateur(trice)",
-    10 => "Secrétaire",
-    11 => "Membre",
-    12 => "Procureur",
-    13 => "Juge",
-) ?>
+// Plus besoin de convertir les titres en texte, le texte est directement fourni dans le fichier
+// Exactement la même chose que dans le fichiers des commissions
+?>
 
 <section class="section-banner">
     <?php $imageBannerFormation = get_field('intro_formation_image_banner') ?>
@@ -128,14 +98,16 @@ $commissionMemberTitle = array(
             </div>
             <div class="contact-personne">
                 <?php foreach ($pedagogiques as $pedagogique) : ?>
-                    <?php if ($pedagogique['cluster_member_title'] == 1 || $pedagogique['cluster_member_title'] == 10) :
+                    <?php if ($pedagogique['TitleNumber'] == 1 || $pedagogique['TitleNumber'] == 3) :
+                        //  Le nombres de titres dans la DB a éét simplifié donc Secrétaire n'est plus le dixième titre mais le troisième
+                        //  Les modifications en dessous sont identiques à celle faites dans le fichier des commissions
                     ?>
                         <div class="single-contact">
                             <p>
-                                <strong><?php echo $pedagogique['member_firstname'] ?> <?php echo $pedagogique['member_name'] ?></strong> <br>
-                                <?php echo $commissionMemberTitle[$pedagogique['cluster_member_title']] ?> de la commission pédagogique <br>
-                                <a href="mailto:<?php echo $pedagogique['cluster_member_email'] ?>"><?php echo $pedagogique['cluster_member_email'] ?></a><br>
-                                GSM : <a href="tel:<?php echo $pedagogique['member_phone'] ?>"> <?php echo $pedagogique['member_phone'] ?></a </p>
+                                <strong><?php echo $pedagogique['Firstname'] ?> <?php echo $pedagogique['Name'] ?></strong> <br>
+                                <?php echo $pedagogique['Title'] ?> de la commission pédagogique <br>
+                                <a href="mailto:<?php echo $pedagogique['Email'] ?>"><?php echo $pedagogique['Email'] ?></a><br>
+                                GSM : <a href="tel:<?php echo $pedagogique['Phone'] ?>"> <?php echo $pedagogique['Phone'] ?></a </p>
                         </div>
                     <?php endif;
                     ?>
