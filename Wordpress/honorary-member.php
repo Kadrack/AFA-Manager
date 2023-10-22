@@ -2,11 +2,11 @@
 /* Template Name: Page de texte */
 
 /*Utilisation de fichier JSON importés dans le repertoire 'uploads/json' */
-$base_url = ABSPATH."wp-content/uploads/json/honnor.json";
+$base_url = ABSPATH."wp-content/uploads/json/composition.json";
 $request = file_get_contents($base_url);
 
 //On décode le JSON
-$membres = json_decode($request,true);
+$membres = json_decode($request,true)[9]['Members'];
 
 get_header();
 ?>
