@@ -1,81 +1,19 @@
 <?php
-/*Début rêquete */
-$servername = "";
-$username = "";
-$password = "";
-$dbname = "";
+//Remplacement de toutes les requêtes
+$base_url = ABSPATH."wp-content/uploads/json/composition.json";
+$request = file_get_contents($base_url);
 
-try {
-           $db = new pdo("mysql:host=$servername;dbname=$dbname", $username, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
-} catch (Exception $e) {
-           die('Erreur : ' . $e->getMessage());
-}
-/* Liste conseil d'administration */
-$sqlAdministration = "SELECT m.member_firstname, m.member_name, m.member_phone, c.cluster_member_email, c.cluster_member_title
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 3 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE) ORDER BY c.cluster_member_title ASC";
-/* Fin liste */
-/* Liste commission technique */
-$sqlTechnique = "SELECT m.member_firstname, m.member_name, m.member_phone, c.cluster_member_email, c.cluster_member_title, max(g.grade_rank) , max(t.title_rank), max(f.formation_rank)
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-INNER JOIN grade g ON (g.grade_join_member = m.member_id)
-LEFT JOIN title t ON (t.title_join_member = m.member_id)
-LEFT JOIN formation f ON (f.formation_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 1 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE)
-GROUP BY m.member_id ORDER BY c.cluster_member_title ASC";
-/* Fin liste */
-/* Liste commission pedagogique */
-$sqlPedagogique = "SELECT m.member_firstname, m.member_name, m.member_phone, c.cluster_member_email, c.cluster_member_title, max(g.grade_rank), max(f.formation_rank)
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-INNER JOIN grade g ON (g.grade_join_member = m.member_id)
-LEFT JOIN formation f ON (f.formation_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 4 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE)
-GROUP BY m.member_id ORDER BY c.cluster_member_title ASC";
-/* Fin liste */
-/* Liste commission junior */
-$sqlJunior = "SELECT m.member_firstname, m.member_name, m.member_phone, c.cluster_member_email, c.cluster_member_title
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 2 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE) ORDER BY c.cluster_member_title ASC";
-/* Fin liste */
-/* Liste commission discipline */
-$sqlDiscipline = "SELECT m.member_firstname, m.member_name, m.member_phone, c.cluster_member_email, c.cluster_member_title
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 5 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE) ORDER BY c.cluster_member_title ASC";
-/* Fin liste */
-$sqlEthique = "SELECT m.member_firstname, m.member_name
-FROM cluster_member c
-INNER JOIN member m ON (c.cluster_member_join_member = m.member_id)
-WHERE c.cluster_member_join_cluster = 6 AND (c.cluster_member_date_out IS null OR c.cluster_member_date_out > CURRENT_DATE)";
+//On décode le JSON
+$admninisrations = json_decode($request,true)[3]['Members'];
+$techniques = json_decode($request,true)[1]['Members'];
+$pedagogiques = json_decode($request,true)[4]['Members'];
+$juniors = json_decode($request,true)[2]['Members'];
+$disciplines = json_decode($request,true)[5]['Members'];
+$ethiques = json_decode($request,true)[6]['Members'];
 
-$admninisrations = $db->query($sqlAdministration)->fetchAll();
-$techniques = $db->query($sqlTechnique)->fetchAll();
-$pedagogiques = $db->query($sqlPedagogique)->fetchAll();
-$juniors = $db->query($sqlJunior)->fetchAll();
-$disciplines = $db->query($sqlDiscipline)->fetchAll();
-$ethiques = $db->query($sqlEthique)->fetchAll();
+// Plus besoin de convertir les titres en texte, le texte est directement fourni dans le fichier
 ?>
 
-<?php
-$commissionMemberTitle = array(
-           1 => "Président(e)",
-           2 => "Vice-président(e)",
-           3 => "Secrétaire général(e)",
-           4 => "Trésorier(ère) général(e)",
-           5 => "Délégué(e) technique",
-           6 => "Délégué(e) au relations interfédérales sportives",
-           7 => "Responsable communication",
-           8 => "Community manager",
-           9 => "Administrateur(trice)",
-           10 => "Secrétaire",
-           11 => "Membre",
-           12 => "Procureur",
-           13 => "Juge",
-) ?>
 
 <?php if (have_rows('toggles')) : ?>
     <div class="container-tabs">
@@ -129,16 +67,21 @@ $commissionMemberTitle = array(
                         <?php echo 'active' ?>
                     <?php endif; ?>">
                     <div class="member-details">
-                        <?php if ($admninisration) ?>
-                        <p class="rank"><strong><?php echo $commissionMemberTitle[$admninisration['cluster_member_title']] ?></strong></p>
-                        <p><?php echo $admninisration['member_firstname'] ?>
-                            <?php echo $admninisration['member_name'] ?></p>
+                        <?php if ($admninisration)
+                            // $commissionMemberTitle permet de convertir le titre en chiffre vers le titre en texte, inutile maintenant le texte est directememnt fourni
+                            // cluster_member_title = titre en chiffre dans la DB, Title = Texte du titre dans le fichier fourni
+                            // member_firstname, member_name, member_phone, cluster_member_email = Prénom, Nom, Téléphone et Email dans la DB dans le fichier c'est Firstname, Name, Phone et Email
+                            // Les modif dans les commissions suivantes sont exactement les mêmes que celle-ci
+                        ?>
+                        <p class="rank"><strong><?php echo $admninisration['Title'] ?></strong></p>
+                        <p><?php echo $admninisration['Firstname'] ?>
+                            <?php echo $admninisration['Name'] ?></p>
                         </div>
                         <div class="member-contact-details">
-                            <a href="tel:<?php echo $admninisration['member_phone'] ?>">
-                                T. 0032 <?php echo $admninisration['member_phone'] ?>
+                            <a href="tel:<?php echo $admninisration['Phone'] ?>">
+                                T. 0032 <?php echo $admninisration['Phone'] ?>
                             </a>
-                            <a href="mailto:<?php echo $admninisration['cluster_member_email'] ?>">Contacter par mail</a>
+                            <a href="mailto:<?php echo $admninisration['Email'] ?>">Contacter par mail</a>
                         </div>
                     </div>
                     <?php $i++; ?>
@@ -169,17 +112,17 @@ $commissionMemberTitle = array(
 
                     <div class="member">
                         <div class="member-details">
-                            <?php if (isset($commissionMemberTitle[$technique['cluster_member_title']])) : ?>
-                                <p class="rank"><strong><?php echo $commissionMemberTitle[$technique['cluster_member_title']] ?></strong></p>
+                            <?php if (isset($technique['Title'])) : // Test inutile tout les membres de commissions ont un titre, même commentaire pour les commissions suivantes ?>
+                                <p class="rank"><strong><?php echo $technique['Title'] ?></strong></p>
                             <?php endif; ?>
-                            <p><?php echo $technique['member_firstname'] ?>
-                                <?php echo $technique['member_name'] ?></p>
+                            <p><?php echo $technique['Firstname'] ?>
+                                <?php echo $technique['Name'] ?></p>
                             </div>
                             <div class="member-contact-details">
-                                <a href="tel:<?php echo $technique['member_phone'] ?>">
-                                    T. 0032 <?php echo $technique['member_phone'] ?>
+                                <a href="tel:<?php echo $technique['Phone'] ?>">
+                                    T. 0032 <?php echo $technique['Phone'] ?>
                                 </a>
-                                <a href="mailto:<?php echo $technique['cluster_member_email'] ?>">Contacter par mail</a>
+                                <a href="mailto:<?php echo $technique['Email'] ?>">Contacter par mail</a>
                             </div>
                         </div>
                         <?php $i++; ?>
@@ -204,17 +147,17 @@ $commissionMemberTitle = array(
                         <?php endif; ?>
                         <div class="member">
                             <div class="member-details">
-                                <?php if (isset($commissionMemberTitle[$pedagogique['cluster_member_title']])) : ?>
-                                    <p class="rank"><strong><?php echo $commissionMemberTitle[$pedagogique['cluster_member_title']] ?></strong></p>
+                                <?php if (isset($pedagogique['Title'])) : ?>
+                                    <p class="rank"><strong><?php echo $pedagogique['Title'] ?></strong></p>
                                 <?php endif; ?>
-                                <p><?php echo $pedagogique['member_firstname'] ?>
-                                    <?php echo $pedagogique['member_name'] ?></p>
+                                <p><?php echo $pedagogique['Firstname'] ?>
+                                    <?php echo $pedagogique['Name'] ?></p>
                                 </div>
                                 <div class="member-contact-details">
-                                    <a href="tel:<?php echo $pedagogique['member_phone'] ?>">
-                                        T. 0032 <?php echo $pedagogique['member_phone'] ?>
+                                    <a href="tel:<?php echo $pedagogique['Phone'] ?>">
+                                        T. 0032 <?php echo $pedagogique['Phone'] ?>
                                     </a>
-                                    <a href="mailto:<?php echo $pedagogique['cluster_member_email'] ?>">Contacter par mail</a>
+                                    <a href="mailto:<?php echo $pedagogique['Email'] ?>">Contacter par mail</a>
                                 </div>
                             </div>
                             <?php $i++; ?>
@@ -236,18 +179,18 @@ $commissionMemberTitle = array(
                             <div class="member">
                                 <div class="member-details">
 
-                                    <?php if (isset($commissionMemberTitle[$junior['cluster_member_title']])) : ?>
-                                        <p class="rank"><strong><?php echo $commissionMemberTitle[$junior['cluster_member_title']] ?></strong></p>
+                                    <?php if (isset($junior['Title'])) : ?>
+                                        <p class="rank"><strong><?php echo $junior['Title'] ?></strong></p>
 
                                     <?php endif; ?>
-                                    <p><?php echo $junior['member_firstname'] ?>
-                                        <?php echo $junior['member_name'] ?></p>
+                                    <p><?php echo $junior['Firstname'] ?>
+                                        <?php echo $junior['Name'] ?></p>
                                     </div>
                                     <div class="member-contact-details">
-                                        <a href="tel:<?php echo $junior['member_phone'] ?>">
-                                            T. 0032 <?php echo $junior['member_phone'] ?>
+                                        <a href="tel:<?php echo $junior['Phone'] ?>">
+                                            T. 0032 <?php echo $junior['Phone'] ?>
                                         </a>
-                                        <a href="mailto:<?php echo $junior['cluster_member_email'] ?>">Contacter par mail</a>
+                                        <a href="mailto:<?php echo $junior['Email'] ?>">Contacter par mail</a>
                                     </div>
                                 </div>
                                 <?php $i++; ?>
@@ -272,17 +215,17 @@ $commissionMemberTitle = array(
                                 <?php endif; ?>
                                 <div class="member">
                                     <div class="member-details">
-                                        <?php if (isset($commissionMemberTitle[$discipline['cluster_member_title']])) : ?>
-                                            <p class="rank"><strong><?php echo $commissionMemberTitle[$discipline['cluster_member_title']] ?></strong></p>
+                                        <?php if (isset($discipline['Title'])) : ?>
+                                            <p class="rank"><strong><?php echo $discipline['Title'] ?></strong></p>
                                         <?php endif; ?>
-                                        <p><?php echo $discipline['member_firstname'] ?>
-                                            <?php echo $discipline['member_name'] ?></p>
+                                        <p><?php echo $discipline['Firstname'] ?>
+                                            <?php echo $discipline['Name'] ?></p>
                                         </div>
                                         <div class="member-contact-details">
-                                            <a href="tel:<?php echo $discipline['member_phone'] ?>">
-                                                T. 0032 <?php echo $discipline['member_phone'] ?>
+                                            <a href="tel:<?php echo $discipline['Phone'] ?>">
+                                                T. 0032 <?php echo $discipline['Phone'] ?>
                                             </a>
-                                            <a href="mailto:<?php echo $discipline['cluster_member_email'] ?>">Contacter par mail</a>
+                                            <a href="mailto:<?php echo $discipline['Email'] ?>">Contacter par mail</a>
                                         </div>
                                     </div>
                                     <?php $i++; ?>
@@ -309,7 +252,7 @@ $commissionMemberTitle = array(
                                     <div class="member">
                                         <div class="member-details">
                                             <p class="rank"><strong>Relais</strong></p>
-                                            <p><?php echo $ethique['member_firstname'] ?> <?php echo $ethique['member_name'] ?></p>
+                                            <p><?php echo $ethique['Firstname'] ?> <?php echo $ethique['Name'] // Pourquoi pas de téléphone ni d'adresse mail ?></p>
                                         </div>
                                     </div>
                                 <?php endforeach ?>
