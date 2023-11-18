@@ -38,6 +38,9 @@ class SecretariatType extends AbstractType
             case 'Payment':
                 $this->payment($builder, $options['formData']);
                 break;
+            case 'PaymentLicence':
+                $this->paymentLicence($builder, $options['formData']);
+                break;
             case 'Email':
                 $this->email($builder);
                 break;
@@ -82,9 +85,9 @@ class SecretariatType extends AbstractType
         }
 
         $builder
-            ->add('UserFirstname', TextType::class, array('label' => 'Prénom', 'attr' => array('placeholder' => 'Firstname'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('UserRealName', TextType::class, array('label' => 'Nom', 'attr' => array('placeholder' => 'Name'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('UserEmail', EmailType::class, array('label' => 'Adresse mail', 'attr' => array('placeholder' => 'Email'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('Firstname', TextType::class, array('label' => 'Prénom', 'attr' => array('placeholder' => 'Firstname'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('Name', TextType::class, array('label' => 'Nom', 'attr' => array('placeholder' => 'Name'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('Email', EmailType::class, array('label' => 'Adresse mail', 'attr' => array('placeholder' => 'Email'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
         ;
     }
@@ -107,6 +110,28 @@ class SecretariatType extends AbstractType
         $builder
             ->add('MemberId', IntegerType::class, array('label' => 'N° Licence', 'mapped' => false, 'attr' => array('placeholder' => 'ClubTeacherMember'), 'row_attr' => array('class' => 'form-floating')))
             ->add('MemberLicencePaymentDate', DateType::class, array('label' => 'Date de paiment', 'widget' => 'single_text', 'attr' => array('placeholder' => 'MemberLicencePaymentDate'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('Submit', SubmitType::class, array('label' => $submitLabel))
+        ;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $data
+     */
+    private function paymentLicence(FormBuilderInterface $builder, array $data): void
+    {
+        if ($data['Action'] == 'Add')
+        {
+            $submitLabel = 'Ajouter';
+        }
+        elseif ($data['Action'] == 'Edit')
+        {
+            $submitLabel = 'Modifier';
+        }
+
+        $builder
+            ->add('LicenceNumber', TextType::class, array('label' => 'N° de licence (séparé par un virgule)', 'mapped' => false, 'attr' => array('placeholder' => 'LicenceNumber'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('PaymentDate', DateType::class, array('label' => 'Date de paiment', 'widget' => 'single_text', 'mapped' => false, 'attr' => array('placeholder' => 'PaymentDate'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
         ;
     }

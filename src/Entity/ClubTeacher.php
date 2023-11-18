@@ -4,17 +4,16 @@ namespace App\Entity;
 
 use App\Repository\ClubTeacherRepository;
 
-use App\Service\ListData;
-
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Mime\Address;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class ClubTeacher
  */
-#[ORM\Table(name: 'club_teacher')]
+#[ORM\Table(name: 'clubTeacher')]
 #[ORM\Entity(repositoryClass: ClubTeacherRepository::class)]
 class ClubTeacher
 {
@@ -23,81 +22,82 @@ class ClubTeacher
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $club_teacher_id;
+    private int $clubTeacherId;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $club_teacher_firstname;
+    private string|null $clubTeacherFirstname = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $club_teacher_name;
+    private string|null $clubTeacherName = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $club_teacher_grade;
+    private int|null $clubTeacherGrade = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $club_teacher_title_aikikai;
+    private int|null $clubTeacherTitleAikikai = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $club_teacher_title_adeps;
+    private int|null $clubTeacherTitleAdeps = null;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
     #[Assert\NotBlank]
-    private int $club_teacher_title;
+    private int $clubTeacherTitle;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
     #[Assert\NotBlank]
-    private int $club_teacher_type;
+    private int $clubTeacherType;
 
     /**
      * @var Club
      */
-    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'club_teachers')]
-    #[ORM\JoinColumn(name: 'club_teacher_join_club', referencedColumnName: 'club_id', nullable: false)]
-    private Club $club_teacher;
+    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'clubTeachers')]
+    #[ORM\JoinColumn(name: 'clubTeacher_join_club', referencedColumnName: 'clubId', nullable: false)]
+    private Club $clubTeacherClub;
 
     /**
      * @var Member|null
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_teachers')]
-    #[ORM\JoinColumn(name: 'club_teacher_join_member', referencedColumnName: 'member_id', nullable: true)]
-    private ?Member $club_teacher_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberClubTeachers')]
+    #[ORM\JoinColumn(name: 'clubTeacher_join_member', referencedColumnName: 'memberId', nullable: true)]
+    private Member|null $clubTeacherMember = null;
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getClubTeacherId(): ?int
+    public function getClubTeacherId(): int
     {
-        return $this->club_teacher_id;
+        return $this->clubTeacherId;
     }
 
     /**
-     * @param int $club_teacher_id
+     * @param int $clubTeacherId
+     *
      * @return $this
      */
-    public function setClubTeacherId(int $club_teacher_id): self
+    public function setClubTeacherId(int $clubTeacherId): self
     {
-        $this->club_teacher_id = $club_teacher_id;
+        $this->clubTeacherId = $clubTeacherId;
 
         return $this;
     }
@@ -105,18 +105,24 @@ class ClubTeacher
     /**
      * @return string|null
      */
-    public function getClubTeacherFirstname(): ?string
+    public function getClubTeacherFirstname(): string|null
     {
-        return $this->club_teacher_firstname;
+        if (is_null($this->clubTeacherFirstname))
+        {
+            return ucwords(strtolower($this->clubTeacherMember?->getMemberFirstname()));
+        }
+
+        return ucwords(strtolower($this->clubTeacherFirstname));
     }
 
     /**
-     * @param string|null $club_teacher_firstname
+     * @param string|null $set
+     *
      * @return $this
      */
-    public function setClubTeacherFirstname(?string $club_teacher_firstname): self
+    public function setClubTeacherFirstname(string|null $set = null): self
     {
-        $this->club_teacher_firstname = $club_teacher_firstname;
+        $this->clubTeacherFirstname = is_null($set) ? null : ucwords(strtolower($set));
 
         return $this;
     }
@@ -124,113 +130,338 @@ class ClubTeacher
     /**
      * @return string|null
      */
-    public function getClubTeacherName(): ?string
+    public function getClubTeacherName(): string|null
     {
-        return $this->club_teacher_name;
+        if (is_null($this->clubTeacherName))
+        {
+            return ucwords(strtolower($this->clubTeacherMember?->getMemberName()));
+        }
+
+        return ucwords(strtolower($this->clubTeacherName));
     }
 
     /**
-     * @param string|null $club_teacher_name
+     * @param string|null $set
+     *
      * @return $this
      */
-    public function setClubTeacherName(?string $club_teacher_name): self
+    public function setClubTeacherName(string|null $set = null): self
     {
-        $this->club_teacher_name = $club_teacher_name;
+        $this->clubTeacherName = is_null($set) ? null : ucwords(strtolower($set));
 
         return $this;
     }
 
     /**
-     * @return int|null
+     * @param bool|null $format
+     *
+     * @return int|string|null
      */
-    public function getClubTeacherGrade(): ?int
+    public function getClubTeacherGrade(bool $format = false): int|string|null
     {
-        return $this->club_teacher_grade;
+        if ($format)
+        {
+            if (is_null($this->clubTeacherMember))
+            {
+                if (is_null($this->clubTeacherGrade))
+                {
+                    return 'Inconnu';
+                }
+
+                return $this->getClubTeacherGradeText($this->clubTeacherGrade);
+            }
+
+            return $this->getClubTeacherGradeText($this->clubTeacherMember->getMemberLastGrade()->getGradeRank());
+        }
+        else
+        {
+            return $this->clubTeacherGrade;
+        }
     }
 
     /**
-     * @param int|null $club_teacher_grade
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getClubTeacherGradeText(int $id = 0): array|string
+    {
+        $keys = array('6ème kyu' => 1, '5ème kyu' => 2, '4ème kyu' => 3, '3ème kyu' => 4, '2ème kyu' => 5, '1er kyu' => 6, '1er Dan National' => 7, '1er Dan Aïkikaï' => 8, '2ème Dan National' => 9, '2ème Dan Aïkikaï' => 10, '3ème Dan National' => 11, '3ème Dan Aïkikaï' => 12, '4ème Dan National' => 13, '4ème Dan Aïkikaï' => 14, '5ème Dan National' => 15, '5ème Dan Aïkikaï' => 16, '6ème Dan National' => 17, '6ème Dan Aïkikaï' => 18, '7ème Dan National' => 19, '7ème Dan Aïkikaï' => 20);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        else if ($id > sizeof($keys))
+        {
+            return 'Autre';
+        }
+        else
+        {
+            return array_search($id, $keys);
+        }
+    }
+
+    /**
+     * @param int|null $set
+     *
      * @return $this
      */
-    public function setClubTeacherGrade(?int $club_teacher_grade): self
+    public function setClubTeacherGrade(int|null $set = null): self
     {
-        $this->club_teacher_grade = $club_teacher_grade;
+        $this->clubTeacherGrade = $set;
 
         return $this;
     }
 
     /**
-     * @return int|null
+     * @param bool $format
+     * @param bool $null
+     *
+     * @return int|string|null
      */
-    public function getClubTeacherTitleAikikai(): ?int
+    public function getClubTeacherTitleAikikai(bool $format = false, bool $null = false): int|string|null
     {
-        return $this->club_teacher_title_aikikai;
+        if ($format)
+        {
+            if (is_null($this->clubTeacherMember))
+            {
+                if (is_null($this->clubTeacherTitleAikikai))
+                {
+                    return $null ? null : 'Aucun';
+                }
+                else
+                {
+                    return $this->getClubTeacherTitleAikikaiText($this->clubTeacherTitleAikikai);
+                }
+            }
+            else
+            {
+                if (is_null($this->clubTeacherMember->getMemberLastTitle()?->getTitleRank()))
+                {
+                    return $null ? null : 'Aucun';
+                }
+                else
+                {
+                    return $this->getClubTeacherTitleAikikaiText($this->clubTeacherMember->getMemberLastTitle()->getTitleRank());
+                }
+            }
+        }
+        else
+        {
+            return $this->clubTeacherTitleAikikai;
+        }
     }
 
     /**
-     * @param int|null $club_teacher_title_aikikai
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getClubTeacherTitleAikikaiText(int $id = 0): array|string
+    {
+        $keys = array('Fuku Shidoïn' => 1, 'Shidoïn' => 2, 'Shihan' => 3);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        else if ($id > sizeof($keys))
+        {
+            return 'Autre';
+        }
+        else
+        {
+            return array_search($id, $keys);
+        }
+    }
+
+    /**
+     * @param int|null $set
+     *
      * @return $this
      */
-    public function setClubTeacherTitleAikikai(?int $club_teacher_title_aikikai): self
+    public function setClubTeacherTitleAikikai(int|null $set = null): self
     {
-        $this->club_teacher_title_aikikai = $club_teacher_title_aikikai;
+        $this->clubTeacherTitleAikikai = $set;
 
         return $this;
     }
 
     /**
-     * @return int|null
+     * @param bool $format
+     * @param bool $null
+     *
+     * @return int|string|null
      */
-    public function getClubTeacherTitleAdeps(): ?int
+    public function getClubTeacherTitleAdeps(bool $format = false, bool $null = false): int|string|null
     {
-        return $this->club_teacher_title_adeps;
+        if ($format)
+        {
+            if (is_null($this->clubTeacherMember))
+            {
+                if (is_null($this->clubTeacherTitleAdeps))
+                {
+                    return $null ? null : 'Aucun';
+                }
+                else
+                {
+                    return $this->getClubTeacherTitleAdepsText($this->clubTeacherTitleAdeps);
+                }
+            }
+            else
+            {
+                if (is_null($this->clubTeacherMember->getMemberLastFormation()?->getFormationRank()))
+                {
+                    return $null ? null : 'Aucun';
+                }
+                else
+                {
+                    return $this->getClubTeacherTitleAdepsText($this->clubTeacherMember->getMemberLastFormation()->getFormationRank());
+                }
+            }
+        }
+        else
+        {
+            return $this->clubTeacherTitleAdeps;
+        }
     }
 
     /**
-     * @param int|null $club_teacher_title_adeps
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getClubTeacherTitleAdepsText(int $id = 0): array|string
+    {
+        $keys = array('Initiateur' => 1, 'Aide-Moniteur' => 2, 'Moniteur' => 3, 'Moniteur Animateur' => 4, 'Moniteur Initiateur' => 5, 'Moniteur Educateur' => 6);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        else if ($id > sizeof($keys))
+        {
+            return 'Autre';
+        }
+        else
+        {
+            return array_search($id, $keys);
+        }
+    }
+
+    /**
+     * @param int|null $set
+     *
      * @return $this
      */
-    public function setClubTeacherTitleAdeps(?int $club_teacher_title_adeps): self
+    public function setClubTeacherTitleAdeps(int|null $set = null): self
     {
-        $this->club_teacher_title_adeps = $club_teacher_title_adeps;
+        $this->clubTeacherTitleAdeps = $set;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @param bool|null $format
+     *
+     * @return int|string
      */
-    public function getClubTeacherTitle(): int
+    public function getClubTeacherTitle(bool $format = false): int|string
     {
-        return $this->club_teacher_title;
+        if ($format)
+        {
+            return $this->getClubTeacherTitleText($this->clubTeacherTitle);
+        }
+        else
+        {
+            return $this->clubTeacherTitle;
+        }
     }
 
     /**
-     * @param int $club_teacher_title
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getClubTeacherTitleText(int $id = 0): array|string
+    {
+        $keys = array('Dojo Cho' => 1, 'Professeur' => 2, 'Assistant' => 3);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        else if ($id > sizeof($keys))
+        {
+            return 'Autre';
+        }
+        else
+        {
+            return array_search($id, $keys);
+        }
+    }
+
+    /**
+     * @param int $set
+     *
      * @return $this
      */
-    public function setClubTeacherTitle(int $club_teacher_title): self
+    public function setClubTeacherTitle(int $set): self
     {
-        $this->club_teacher_title = $club_teacher_title;
+        $this->clubTeacherTitle = $set;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @param bool|null $format
+     *
+     * @return int|string
      */
-    public function getClubTeacherType(): int
+    public function getClubTeacherType(bool $format = false): int|string
     {
-        return $this->club_teacher_type;
+        if ($format)
+        {
+            return $this->getClubTeacherTypeText($this->clubTeacherType);
+        }
+        else
+        {
+            return $this->clubTeacherType;
+        }
     }
 
     /**
-     * @param int $club_teacher_type
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getClubTeacherTypeText(int $id = 0): array|string
+    {
+        $keys = array('Adultes' => 1, 'Enfants' => 2, 'Adultes/Enfants' => 3);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        else if ($id > sizeof($keys))
+        {
+            return 'Autre';
+        }
+        else
+        {
+            return array_search($id, $keys);
+        }
+    }
+
+    /**
+     * @param int $set
+     *
      * @return $this
      */
-    public function setClubTeacherType(int $club_teacher_type): self
+    public function setClubTeacherType(int $set): self
     {
-        $this->club_teacher_type = $club_teacher_type;
+        $this->clubTeacherType = $set;
 
         return $this;
     }
@@ -238,18 +469,19 @@ class ClubTeacher
     /**
      * @return Club
      */
-    public function getClubTeacher(): Club
+    public function getClubTeacherClub(): Club
     {
-        return $this->club_teacher;
+        return $this->clubTeacherClub;
     }
 
     /**
-     * @param Club $club_teacher
+     * @param Club $set
+     *
      * @return $this
      */
-    public function setClubTeacher(Club $club_teacher): self
+    public function setClubTeacherClub(Club $set): self
     {
-        $this->club_teacher = $club_teacher;
+        $this->clubTeacherClub = $set;
 
         return $this;
     }
@@ -257,159 +489,44 @@ class ClubTeacher
     /**
      * @return Member|null
      */
-    public function getClubTeacherMember(): ?Member
+    public function getClubTeacherMember(): Member|null
     {
-        return $this->club_teacher_member;
+        return $this->clubTeacherMember;
     }
 
     /**
-     * @param Member|null $club_teacher_member
+     * @param Member|null $clubTeacherMember
+     *
      * @return $this
      */
-    public function setClubTeacherMember(?Member $club_teacher_member): self
+    public function setClubTeacherMember(Member|null $clubTeacherMember = null): self
     {
-        $this->club_teacher_member = $club_teacher_member;
+        $this->clubTeacherMember = $clubTeacherMember;
 
         return $this;
     }
 
     /**
-     * Custom function
-     */
-
-    /**
      * @param bool $format
-     * @return string|Address|null
+     *
+     * @return Address|string|null
      */
-    public function getClubTeacherEmail(bool $format = false): string|Address|null
+    public function getClubTeacherEmail(bool $format = false): Address|string|null
     {
         if (!is_null($this->getClubTeacherMember()))
         {
             if ($format)
             {
-                $email = new Address($this->club_teacher_member->getMemberEmail(), ucwords($this->club_teacher_member->getMemberFirstname()) . ' ' . ucwords($this->club_teacher_member->getMemberName()));
+                return new Address($this->clubTeacherMember->getMemberEmail(), ucwords($this->clubTeacherMember->getMemberFirstname()) . ' ' . ucwords($this->clubTeacherMember->getMemberName()));
             }
             else
             {
-                $email = $this->club_teacher_member->getMemberEmail();
+                return $this->clubTeacherMember->getMemberEmail();
             }
-
-            return $email;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getClubTeacherFirstnameDisplay(): ?string
-    {
-        if (is_null($this->getClubTeacherFirstname()))
-        {
-            return $this->club_teacher_member?->getMemberFirstname();
         }
         else
         {
-            return $this->club_teacher_firstname;
-        }
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getClubTeacherNameDisplay(): ?string
-    {
-        if (is_null($this->getClubTeacherName()))
-        {
-            return $this->club_teacher_member?->getMemberName();
-        }
-        else
-        {
-            return $this->club_teacher_name;
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getClubTeacherTitleDisplay(): string
-    {
-        $listData = new ListData();
-
-        return $listData->getTeacherTitle($this->club_teacher_title);
-    }
-
-    /**
-     * @return string
-     */
-    public function getClubTeacherTypeDisplay(): string
-    {
-        $listData = new ListData();
-
-        return $listData->getTeacherType($this->club_teacher_type);
-    }
-
-    /**
-     * @return string
-     */
-    public function getClubTeacherGradeDisplay(): string
-    {
-        $listData = new ListData();
-
-        if (!is_null($this->getClubTeacherMember()))
-        {
-            return $listData->getGrade($this->club_teacher_member->getMemberLastGrade()->getGradeRank());
-        }
-        elseif (!is_null($this->getClubTeacherGrade()))
-        {
-            return $listData->getGrade($this->club_teacher_grade);
-        }
-        else
-        {
-            return 'Aucun';
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getClubTeacherTitleAikikaiDisplay(): string
-    {
-        $listData = new ListData();
-
-        if (!is_null($this->club_teacher_member?->getMemberLastTitle()?->getTitleRank()))
-        {
-            return $listData->getTitleAikikai($this->club_teacher_member->getMemberLastTitle()->getTitleRank());
-        }
-        elseif (!is_null($this->club_teacher_title_aikikai))
-        {
-            return $listData->getTitleAikikai($this->club_teacher_title_aikikai);
-        }
-        else
-        {
-            return 'Aucun';
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getClubTeacherTitleAdepsDisplay(): string
-    {
-        $listData = new ListData();
-
-        if (!is_null($this->club_teacher_member?->getMemberLastFormation()?->getFormationRank()))
-        {
-            return $listData->getFormation($this->club_teacher_member->getMemberLastFormation()->getFormationRank());
-        }
-        elseif (!is_null($this->club_teacher_title_adeps))
-        {
-            return $listData->getFormation($this->club_teacher_title_adeps);
-        }
-        else
-        {
-            return 'Aucun';
+            return null;
         }
     }
 }

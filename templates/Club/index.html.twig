@@ -4,8 +4,8 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card text-white bg-primary container col col-lg-3 gx-0">
-        <div class="card-header text-center"><h2>{{ data.Club.getClubName|title }}</h2></div>
+    <div class="card container col col-lg-3 gx-0">
+        <div class="card-header bg-primary text-white text-center"><h2 class="m-0">{{ data.Club.getClubName }}</h2></div>
         <div class="card-body row align-items-center">
             <div class="col text-center">
                 <div class="row">
@@ -14,7 +14,7 @@
                 </div>
                 <div class="row">
                     <div class="col text-end px-1"><strong>Gestionnaire(s)</strong></div>
-                    <div class="col text-start px-1">{{ data.Club.getClubManagers|length }}</div>
+                    <div class="col text-start px-1">{{ data.Club.getClubManagersCount }}</div>
                 </div>
                 <div class="row">
                     <div class="col text-end px-1"><strong>Nbre membres</strong></div>
@@ -33,12 +33,12 @@
             {% endif %}
             {% if access.check('Club-AdultTab') and data.ActiveMemberCount.Adult > 0 %}
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" id="adultTab" href="#adult" onclick="load('{{ path('club-adultTab', {'club': data.Club.getClubId}) }}', 'adult')"><strong>Adultes ({{ data.ActiveMemberCount.Adult }})</strong></a>
+                    <a class="nav-link" data-bs-toggle="tab" id="adultTab" href="#adult" onclick="load('{{ path('club-memberTab', {'club': data.Club.getClubId, 'type': 1}) }}', 'adult')"><strong>Cours Adultes ({{ data.ActiveMemberCount.Adult }})</strong></a>
                 </li>
             {% endif %}
             {% if access.check('Club-ChildTab') and data.ActiveMemberCount.Child > 0 %}
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" id="childTab" href="#child" onclick="load('{{ path('club-childTab', {'club': data.Club.getClubId}) }}', 'child')"><strong>Enfants ({{ data.ActiveMemberCount.Child }})</strong></a>
+                    <a class="nav-link" data-bs-toggle="tab" id="childTab" href="#child" onclick="load('{{ path('club-memberTab', {'club': data.Club.getClubId, 'type': 2}) }}', 'child')"><strong>Cours Enfants ({{ data.ActiveMemberCount.Child }})</strong></a>
                 </li>
             {% endif %}
             {% if access.check('Club-EmailTab') %}
@@ -142,7 +142,7 @@
             let pane = document.getElementById('adult');
             pane.classList.add("active");
 
-            load('{{ path('club-adultTab', {'club': data.Club.getClubId}) }}', 'adult');
+            load('{{ path('club-memberTab', {'club': data.Club.getClubId, 'type': 1}) }}', 'adult');
         </script>
     {% endif %}
     {% if app.session.get('activeClubTab') == 'childTab' %}
@@ -153,7 +153,7 @@
             let pane = document.getElementById('child');
             pane.classList.add("active");
 
-            load('{{ path('club-childTab', {'club': data.Club.getClubId}) }}', 'child');
+            load('{{ path('club-memberTab', {'club': data.Club.getClubId, 'type': 2}) }}', 'child');
         </script>
     {% endif %}
     {% if app.session.get('activeClubTab') == 'emailTab' %}

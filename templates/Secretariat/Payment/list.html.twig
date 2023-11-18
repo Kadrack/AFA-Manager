@@ -23,7 +23,7 @@
         </thead>
         <tbody>
         {% for member in data.List %}
-            <tr class="table-active" onclick="load('{{ path('secretariat-paymentEdit', {'licence': member.RenewId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+            <tr onclick="load('{{ path('secretariat-paymentEdit', {'licence': member.RenewId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
                 <td class="align-middle">{{ loop.index }}</td>
                 <td class="align-middle">{{ member.Id }}</td>
                 <td class="align-middle">{{ member.FirstName|title }}</td>

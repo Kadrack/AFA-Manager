@@ -20,47 +20,48 @@ class Newsletter
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $newsletter_id;
+    private int $newsletterId;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $newsletter_date;
+    private ?DateTime $newsletterDate;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
-    private string $newsletter_title;
+    private string $newsletterTitle;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'text')]
-    private string $newsletter_text;
+    private string $newsletterText;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $newsletter_view;
+    private ?string $newsletterView;
 
     /**
      * @return int
      */
     public function getNewsletterId(): int
     {
-        return $this->newsletter_id;
+        return $this->newsletterId;
     }
 
     /**
-     * @param int $newsletter_id
+     * @param int $newsletterId
+     *
      * @return $this
      */
-    public function setNewsletterId(int $newsletter_id): self
+    public function setNewsletterId(int $newsletterId): self
     {
-        $this->newsletter_id = $newsletter_id;
+        $this->newsletterId = $newsletterId;
 
         return $this;
     }
@@ -70,16 +71,17 @@ class Newsletter
      */
     public function getNewsletterDate(): ?DateTime
     {
-        return $this->newsletter_date;
+        return $this->newsletterDate;
     }
 
     /**
-     * @param ?DateTime $newsletter_date
+     * @param ?DateTime $newsletterDate
+     *
      * @return $this
      */
-    public function setNewsletterDate(?DateTime $newsletter_date): self
+    public function setNewsletterDate(?DateTime $newsletterDate): self
     {
-        $this->newsletter_date = $newsletter_date;
+        $this->newsletterDate = $newsletterDate;
 
         return $this;
     }
@@ -89,16 +91,17 @@ class Newsletter
      */
     public function getNewsletterTitle(): string
     {
-        return $this->newsletter_title;
+        return $this->newsletterTitle;
     }
 
     /**
-     * @param string $newsletter_title
+     * @param string $newsletterTitle
+     *
      * @return $this
      */
-    public function setNewsletterTitle(string $newsletter_title): self
+    public function setNewsletterTitle(string $newsletterTitle): self
     {
-        $this->newsletter_title = $newsletter_title;
+        $this->newsletterTitle = $newsletterTitle;
 
         return $this;
     }
@@ -108,16 +111,17 @@ class Newsletter
      */
     public function getNewsletterText(): string
     {
-        return $this->newsletter_text;
+        return $this->newsletterText;
     }
 
     /**
-     * @param string $newsletter_text
+     * @param string $newsletterText
+     *
      * @return $this
      */
-    public function setNewsletterText(string $newsletter_text): self
+    public function setNewsletterText(string $newsletterText): self
     {
-        $this->newsletter_text = $newsletter_text;
+        $this->newsletterText = $newsletterText;
 
         return $this;
     }
@@ -127,16 +131,17 @@ class Newsletter
      */
     public function getNewsletterView(): ?string
     {
-        return $this->newsletter_view;
+        return $this->newsletterView;
     }
 
     /**
-     * @param string|null $newsletter_view
+     * @param string|null $newsletterView
+     *
      * @return $this
      */
-    public function setNewsletterView(?string $newsletter_view): self
+    public function setNewsletterView(?string $newsletterView): self
     {
-        $this->newsletter_view = $newsletter_view;
+        $this->newsletterView = $newsletterView;
 
         return $this;
     }

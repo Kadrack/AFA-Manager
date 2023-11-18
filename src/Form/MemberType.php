@@ -125,7 +125,7 @@ class MemberType extends AbstractType
         }
 
         $builder
-            ->add('MemberLicenceClub', EntityType::class, array('label' => 'Club', 'class' => Club::class, 'choice_label' => 'club_id', 'attr' => array('placeholder' => 'MemberLicenceClub'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('MemberLicenceClub', EntityType::class, array('label' => 'Club', 'class' => Club::class, 'choice_label' => 'clubId', 'attr' => array('placeholder' => 'MemberLicenceClub'), 'row_attr' => array('class' => 'form-floating')))
             ->add('MemberLicenceDeadline', DateType::class, array('label' => 'Date échéance', 'widget' => 'single_text', 'attr' => array('placeholder' => 'MemberLicenceDeadline'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
         ;
@@ -285,7 +285,7 @@ class MemberType extends AbstractType
     private function phone(FormBuilderInterface $builder): void
     {
         $builder
-            ->add('MemberPhone', TextType::class, array('label' => 'Numéro de téléphone', 'attr' => array('placeholder' => 'MemberPhone'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('MemberPhone', TextType::class, array('label' => 'Numéro de téléphone', 'required' => false, 'attr' => array('placeholder' => 'MemberPhone'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => 'Modifier'))
         ;
     }
@@ -296,7 +296,7 @@ class MemberType extends AbstractType
     private function email(FormBuilderInterface $builder): void
     {
         $builder
-            ->add('MemberEmail', EmailType::class, array('label' => 'Adresse Email', 'attr' => array('placeholder' => 'MemberEmail'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('MemberEmail', EmailType::class, array('label' => 'Adresse Email', 'required' => false, 'attr' => array('placeholder' => 'MemberEmail'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => 'Modifier'))
         ;
     }

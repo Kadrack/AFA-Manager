@@ -8,16 +8,17 @@
 {% endblock %}
 
 {% block body %}
-    {% if app.user.userMember is defined and app.user.userMember is not null %}<div class="text-center"><a class="btn btn-light" href="{{ path('member-index', {'member': app.user.userMember.memberId}) }}">Voir ma fiche</a></div>{% endif %}
-    <div class="container text-center col col-lg-4">
+    {% if app.user.member is defined and app.user.member is not null %}<div class="text-center m-3"><a class="btn btn-lg btn-primary" href="{{ path('member-index', {'member': app.user.member.memberId}) }}">Voir ma fiche</a></div>{% endif %}
+    <div class="container text-center col col-lg-4 mt-4">
         {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {{ form_row(form.Search) }}
+        <div class="visually-hidden">{{ form_row(form.Submit) }}</div>
         {{ form_end(form) }}
     </div>
 
     {% if data.Results is defined and data.Results is not null %}
     <h2>Résultats de la recherche</h2>
-    <table class="table table-sm table-hover unselectable">
+    <table class="table table-sm table-hover user-select-none">
         <thead>
             <tr>
                 <th scope="col">#</th>

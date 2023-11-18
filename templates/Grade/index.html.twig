@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block body %}
-    <h2 class="text-center">{% if data.Session.getGradeSessionType == 1 %}Session d'Examen du {{ data.Session.getGradeSessionDate|date('d/m/Y') }} {% else %}Kagami Biraki du {{ data.Session.getGradeSessionDate|date('d/m/Y') }} {% endif %}{% if access.check('Grade-SessionEdit') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('grade-sessionEdit', {'gradeSession': data.Session.getGradeSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}{% if access.check('Grade-Publication') and data.Session.getGradeSessionDate <= date() %} <a class="btn btn-sm btn-light" href="{{ path('grade-assignment', {'gradeSession': data.Session.getGradeSessionId}) }}">Publication des grades</a>{% endif %}</h2>
+    <h2 class="text-center">{% if data.Session.getGradeSessionType == 1 %}Session d'Examen du {{ data.Session.getGradeSessionDate|date('d/m/Y') }} {% else %}Kagami Biraki du {{ data.Session.getGradeSessionDate|date('d/m/Y') }} {% endif %}{% if access.check('Grade-SessionEdit') %}<button class="btn btn-sm btn-primary" onclick="load('{{ path('grade-sessionEdit', {'gradeSession': data.Session.getGradeSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}{% if access.check('Grade-Publication') and data.Session.getGradeSessionDate <= date() %} <a class="btn btn-sm btn-primary" href="{{ path('grade-assignment', {'gradeSession': data.Session.getGradeSessionId}) }}">Publication des grades</a>{% endif %}</h2>
 
     {% if data.Session.getGradeSessionIsOpen %}
         {% if access.check('Grade-Criteria') and data.Session.getGradeSessionType == 1 %}
             <div class="container col col-lg-6 text-center p-2">
-                <button class="btn btn-light" onclick="load('{{ path('grade-sessionCriteria', {'gradeSession': data.Session.getGradeSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Critères d'inscription et détails de paiement</button>
+                <button class="btn btn-primary" onclick="load('{{ path('grade-sessionCriteria', {'gradeSession': data.Session.getGradeSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Critères d'inscription et détails de paiement</button>
             </div>
         {% endif %}
 
@@ -39,7 +39,7 @@
                         </thead>
                         <tbody>
                         {% for member in data.Member %}
-                            <tr class="table-active" onclick="load('{{ path('grade-candidateAdd', {'gradeSession': data.Session.getGradeSessionId, 'member': member.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                            <tr onclick="load('{{ path('grade-candidateAdd', {'gradeSession': data.Session.getGradeSessionId, 'member': member.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
                                 <td class="align-middle"><img alt="" src="{{ member.Photo }}" /></td>
                                 <td class="align-middle">{{ member.Id }}</td>
                                 <td class="align-middle">{{ member.FirstName|title }}</td>
@@ -69,7 +69,7 @@
                 </thead>
                 <tbody>
                 {% for member in data.Candidates.Payment %}
-                    <tr class="table-active" {% if access.check('Grade-PaymentEdit') %}onclick="load('{{ path('grade-candidatePaymentDate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <tr {% if access.check('Grade-PaymentEdit') %}onclick="load('{{ path('grade-candidatePaymentDate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                         <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -97,7 +97,7 @@
                 </thead>
                 <tbody>
                 {% for member in data.Candidates.Awaiting %}
-                    <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                         <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -113,7 +113,7 @@
     {% if data.Candidates.Validated.Awaiting is defined or data.Candidates.Validated.Success is defined or data.Candidates.Validated.Fail is defined or data.Candidates.Validated.NoShow is defined %}
         <div class="container col">
             {% if data.Candidates.Validated.Awaiting is defined %}
-                <h3 class="text-center">Liste des candidats {% if access.check('Grade-ValidatedAction') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('grade-candidateEmail', {'gradeSession': data.Session.getGradeSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Horaires</button> <a class="btn btn-sm btn-light" href="{{ path('grade-csvList', {'gradeSession': data.Session.getGradeSessionId}) }}"><i class="bi-download"></i> Liste CSV</a> <a class="btn btn-sm btn-light" href="{{ path('grade-candidateForms', {'gradeSession': data.Session.getGradeSessionId}) }}"><i class="bi-download"></i> Formulaires</a>{% endif %}</h3>
+                <h3 class="text-center">Liste des candidats {% if access.check('Grade-ValidatedAction') %}<button class="btn btn-sm btn-primary" onclick="load('{{ path('grade-candidateEmail', {'gradeSession': data.Session.getGradeSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Horaires</button> <a class="btn btn-sm btn-primary" href="{{ path('grade-csvList', {'gradeSession': data.Session.getGradeSessionId}) }}"><i class="bi-download"></i> Liste CSV</a> <a class="btn btn-sm btn-primary" href="{{ path('grade-candidateForms', {'gradeSession': data.Session.getGradeSessionId}) }}"><i class="bi-download"></i> Formulaires</a>{% endif %}</h3>
 
                 <table class="table table-sm table-hover user-select-none">
                     <thead>
@@ -128,7 +128,7 @@
                     </thead>
                     <tbody>
                     {% for member in data.Candidates.Validated.Awaiting %}
-                        <tr class="table-active" {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                        <tr {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                             <td>{{ loop.index }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -142,7 +142,7 @@
             {% endif %}
 
             {% if data.Candidates.Validated.Success is defined %}
-                <h3 class="text-center">Liste des promus{% if access.check('Grade-ValidatedAction') %} <a class="btn btn-sm btn-light" href="{{ path('grade-csvList', {'gradeSession': data.Session.getGradeSessionId}) }}"><i class="bi-download"></i> Liste CSV</a>{% endif %}</h3>
+                <h3 class="text-center">Liste des promus{% if access.check('Grade-ValidatedAction') %} <a class="btn btn-sm btn-primary" href="{{ path('grade-csvList', {'gradeSession': data.Session.getGradeSessionId}) }}"><i class="bi-download"></i> Liste CSV</a>{% endif %}</h3>
                 <table class="table table-sm table-hover user-select-none">
                     <thead>
                     <tr>
@@ -156,7 +156,7 @@
                     </thead>
                     <tbody>
                     {% for member in data.Candidates.Validated.Success %}
-                        <tr class="table-active" {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                        <tr {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                             <td>{{ loop.index }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -184,7 +184,7 @@
                     </thead>
                     <tbody>
                     {% for member in data.Candidates.Validated.Fail %}
-                        <tr class="table-active" {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                        <tr {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                             <td>{{ loop.index }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -212,7 +212,7 @@
                     </thead>
                     <tbody>
                     {% for member in data.Candidates.Validated.NoShow %}
-                        <tr class="table-active" {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                        <tr {% if access.check('Grade-ValidatedAction') %}onclick="load('{{ path('grade-gradeValidate', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                             <td>{{ loop.index }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                             <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -242,7 +242,7 @@
                 </thead>
                 <tbody>
                 {% for member in data.Candidates.Rejected %}
-                    <tr class="table-active" {% if access.check('Grade-CandidatesRejectedAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <tr {% if access.check('Grade-CandidatesRejectedAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': member.getGradeSessionCandidateMember.getMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ member.getGradeSessionCandidateMember.getMemberId }}</td>
                         <td>{{ member.getGradeSessionCandidateMember.getMemberFirstname|title }}</td>
@@ -274,7 +274,7 @@
                             <td class="text-center" colspan="4"><strong>Nanadan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.20 %}
-                            <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
@@ -287,7 +287,7 @@
                             <td class="text-center" colspan="4"><strong>Rokudan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.18 %}
-                            <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
@@ -300,7 +300,7 @@
                             <td class="text-center" colspan="4"><strong>Godan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.16 %}
-                            <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
@@ -313,7 +313,7 @@
                             <td class="text-center" colspan="4"><strong>Yondan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.14 %}
-                            <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
@@ -326,7 +326,7 @@
                             <td class="text-center" colspan="4"><strong>Sandan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.12 %}
-                            <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>
@@ -339,7 +339,7 @@
                             <td class="text-center" colspan="4"><strong>Nidan</strong></td>
                         </tr>
                         {% for candidate in data.Kagami.Candidate.10 %}
-                            <tr class="table-active" {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                            <tr {% if access.check('Grade-CandidatesAwaitingAction') %}onclick="load('{{ path('grade-candidateDetails', {'gradeSession': data.Session.getGradeSessionId, 'member': candidate.Id}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                                 <td class="table-active align-middle">{{ loop.index }}</td>
                                 <td class="table-active align-middle">{{ candidate.FirstName|title }}</td>
                                 <td class="table-active align-middle">{{ candidate.Name|title }}</td>

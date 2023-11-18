@@ -2,7 +2,7 @@
 <p>Ta candidature pour les prochains examens yudansha a bien été enregistrée. Ces examens se dérouleront le samedi {{ gradeSession.getGradeSessionDate|date('d/m/Y') }} à l’adresse suivante:</p>
 <p>
     {{ gradeSession.getGradeSessionStreet }}<br />
-    {{ gradeSession.getGradeSessionZip }} {{ gradeSession.getGradeSessionCity }}
+    {{ gradeSession.getGradeSessionCity(true) }}
 </p>
 <p>
     L'horaire prévu est le suivant:

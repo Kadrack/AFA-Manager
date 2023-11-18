@@ -7,7 +7,7 @@
         {% if gradeSession.getGradeSessionType == 1 %}
         <div class="modal-body">
             <h6>Commentaire inscription</h6>
-            <p class="text-white">{% if candidate.getGradeSessionCandidateComment is null %}Aucun{% else %}{{ candidate.getGradeSessionCandidateComment }}{% endif %}</p>
+            <p class="text-white">{% if candidate.getGradeSessionCandidateComment is null %}Aucun{% else %}{{ candidate.getGradeSessionCandidateComment|raw }}{% endif %}</p>
             <h6>Organisation de la session</h6>
             {{ form_row(form.GradeSessionCandidateJury) }}
             {{ form_row(form.GradeSessionCandidatePosition) }}

@@ -5,13 +5,11 @@ namespace App\Repository;
 use App\Entity\Club;
 use App\Entity\ClubDojo;
 use App\Entity\ClubHistory;
-use App\Entity\ClubManager;
 use App\Entity\ClubTeacher;
 use App\Entity\Formation;
 use App\Entity\Grade;
 use App\Entity\Member;
 use App\Entity\MemberLicence;
-use App\Entity\User;
 
 use DateTime;
 
@@ -37,105 +35,79 @@ class ClubRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Member|null $member
-     * @param User|null $user
      * @param bool|null $active
+     * @param Club|null $club
+     *
      * @return array|null
      */
-    public function getClubList(?Member $member, ?User $user, ?bool $active): ?array
+    public function getClubList(?bool $active = true, ?Club $club = null): ?array
     {
         $qb = $this->createQueryBuilder('c');
 
-        $qb->innerJoin(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.club_history', 'c.club_id'))
-            ->leftJoin(ClubManager::class, 'm', 'WITH', $qb->expr()->eq('m.club_manager_club', 'c.club_id'))
-            ->leftJoin(ClubTeacher::class, 't', 'WITH', $qb->expr()->eq('t.club_teacher', 'c.club_id'));
+        $qb->innerJoin(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.clubHistoryClub', 'c.clubId'));
 
-        if (!is_null($member))
+        if (!is_null($club))
         {
-            $qb->where($qb->expr()->eq('m.club_manager_member', $member->getMemberId()))
-                ->orWhere($qb->expr()->eq('t.club_teacher_member', $member->getMemberId()));
-        }
-        elseif (!is_null($user))
-        {
-            $qb->where($qb->expr()->eq('m.club_manager_user', $user->getId()));
-        }
-
-        if ($active)
-        {
-            $qb->having($qb->expr()->lte('max(h.club_history_status)', 2));
+            $qb->where($qb->expr()->eq('c.clubId', $club->getClubId()));
         }
         else
         {
-            $qb->having($qb->expr()->eq('max(h.club_history_status)', 3));
+            if (is_null($active))
+            {
+                $qb->having($qb->expr()->eq('max(h.clubHistoryStatus)', 1));
+            }
+            elseif ($active)
+            {
+                $qb->having($qb->expr()->lte('max(h.clubHistoryStatus)', 2));
+            }
+            else
+            {
+                $qb->having($qb->expr()->eq('max(h.clubHistoryStatus)', 3));
+            }
         }
 
-        return $qb->groupBy('c.club_id')
-            ->orderBy('c.club_id', 'ASC')
+        return $qb->groupBy('c.clubId')
+            ->orderBy('c.clubId', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
+
+
+
+
+
+
     /**
-     * @param DateTime|null $referenceDate
+     * @param DateTime $referenceDate
      * @param int|null $province
-     * @param int|null $club
-     * @param bool|null $inactive
      * @return array|null
      */
-    public function getMembers(?DateTime $referenceDate, ?int $province, ?int $club, ?bool $inactive = null): ?array
+    public function getMembers(DateTime $referenceDate, ?int $province = null): ?array
     {
-        $today = new DateTime();
+        $deadlineLow = date('Y-m-d', $referenceDate->getTimestamp());
 
-        if (is_null($inactive))
-        {
-            $deadlineLow = date('Y-m-d', $referenceDate->getTimestamp());
-
-            $deadlineHigh = date('Y-m-d', strtotime('+1 year', $today->getTimestamp()));
-        }
-        elseif ($inactive)
-        {
-            $deadlineLow = date('Y-m-d', strtotime('-3 month', $today->getTimestamp()));
-
-            $deadlineHigh = date('Y-m-d', $today->getTimestamp());
-        }
-        else
-        {
-            $deadlineLow = date('Y-m-d', $today->getTimestamp());
-
-            $deadlineHigh = date('Y-m-d', strtotime('+3 month', $today->getTimestamp()));
-        }
+        $deadlineHigh = date('Y-m-d', strtotime('+1 year', $referenceDate->getTimestamp()));
 
         $qb = $this->createQueryBuilder('c');
 
-        $qb->select('m.member_id AS Id', 'm.member_firstname AS Firstname', 'm.member_name AS Name', 'm.member_email AS Mail', 'c.club_province AS Province', 'c.club_id AS ClubId', 'c.club_name AS ClubName', 'm.member_sex AS Sex', 'm.member_birthday AS Birthday', 'max(g.grade_rank) AS Grade', 'max(f.formation_rank) AS Level', 'max(l.member_licence_deadline) AS Deadline')
-            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('c.club_id', 'l.member_licence_club'))
-            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('l.member_licence', 'm.member_id'))
-            ->innerJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.member_id', 'g.grade_member'))
-            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.member_id', 'f.formation_member'));
+        $qb->select('m.memberId AS Id', 'c.clubProvince AS Province', 'c.clubId AS ClubId', 'c.clubName AS ClubName', 'm.memberSex AS Sex', 'm.memberBirthday AS Birthday', 'max(g.gradeRank) AS Grade', 'max(f.formationRank) AS Level')
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('c.clubId', 'l.memberLicenceClub'))
+            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('l.memberLicenceMember', 'm.memberId'))
+            ->leftJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.memberId', 'g.gradeMember'))
+            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.memberId', 'f.formationMember'))
+            ->where($qb->expr()->lt('g.gradeStatus', 4))
+            ->andWhere($qb->expr()->orX($qb->expr()->lte('g.gradeDate', "'".$deadlineLow."'"), $qb->expr()->isNull('g.gradeDate')))
+            ->andWhere($qb->expr()->orX($qb->expr()->lte('f.formationDate', "'".$deadlineLow."'"), $qb->expr()->isNull('f.formationDate')))
+            ->andWhere($qb->expr()->andX($qb->expr()->gt('l.memberLicenceDeadline', "'".$deadlineLow."'"), $qb->expr()->lte('l.memberLicenceDeadline', "'".$deadlineHigh."'")));
 
         if (!is_null($province))
         {
-            $qb->andWhere($qb->expr()->eq('c.club_province', $province));
+            $qb->andWhere($qb->expr()->eq('c.clubProvince', $province));
         }
-        elseif (!is_null($club))
-        {
-            $qb->andWhere($qb->expr()->eq('c.club_id', $club));
-        }
-
-        $qb->andWhere($qb->expr()->lt('g.grade_status', 4));
-
-        if (is_null($inactive))
-        {
-            $qb->andWhere($qb->expr()->gt('l.member_licence_deadline', "'".$deadlineLow."'"))
-                ->andWhere($qb->expr()->lte('l.member_licence_deadline', "'".$deadlineHigh."'"));
-        }
-
-        $qb->having($qb->expr()->gt('max(l.member_licence_deadline)', "'".$deadlineLow."'"))
-            ->andHaving($qb->expr()->lte('max(l.member_licence_deadline)', "'".$deadlineHigh."'"));
 
         return $qb->groupBy('Id')
             ->orderBy('ClubId')
-            ->addOrderBy('Firstname')
             ->getQuery()
             ->getArrayResult();
     }
@@ -147,11 +119,11 @@ class ClubRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c');
 
-        return $qb->select('c.club_id AS Id', 'c.club_name AS Name', 'c.club_creation AS Creation', 'h.club_history_update AS Affiliation')
-            ->join(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.club_history', 'c.club_id'))
-            ->having($qb->expr()->eq('max(h.club_history_status)', 1))
-            ->groupBy('c.club_id')
-            ->orderBy('c.club_name', 'ASC')
+        return $qb->select('c.clubId AS Id', 'c.clubName AS Name', 'c.clubCreation AS Creation', 'h.clubHistoryUpdate AS Affiliation')
+            ->join(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.clubHistoryClub', 'c.clubId'))
+            ->having($qb->expr()->eq('max(h.clubHistoryStatus)', 1))
+            ->groupBy('c.clubId')
+            ->orderBy('c.clubName', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }
@@ -163,13 +135,13 @@ class ClubRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c');
 
-        return $qb->select('c.club_id AS Id', 'c.club_name AS Name', 'c.club_address AS Address', 'c.club_zip AS Zip', 'c.club_city AS City', 'd.club_dojo_id AS DojoId', 'd.club_dojo_street AS AddressDojo', 'd.club_dojo_zip AS ZipDojo', 'd.club_dojo_city AS CityDojo', 'c.club_president AS President', 'c.club_secretary AS Secretary', 'c.club_treasurer AS Treasurer', 't.club_teacher_id AS TeacherId', 'm.member_firstname AS TeacherFirstname', 'm.member_name AS TeacherName', 'f.formation_id AS Formation', 'c.club_email_public AS Email', 'd.club_dojo_dea AS DEA', 'h.club_history_status AS Status')
-            ->join(ClubDojo::class, 'd', 'WITH', $qb->expr()->eq('d.club_dojo_club', 'c.club_id'))
-            ->join(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.club_history', 'c.club_id'))
-            ->join(ClubTeacher::class, 't', 'WITH', $qb->expr()->eq('t.club_teacher', 'c.club_id'))
-            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 't.club_teacher_member'))
-            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.member_id', 'f.formation_member'))
-            ->addOrderBy('c.club_id', 'ASC')
+        return $qb->select('c.clubId AS Id', 'c.clubName AS Name', 'c.clubAddress AS Address', 'c.clubZip AS Zip', 'c.clubCity AS City', 'd.clubDojoId AS DojoId', 'd.clubDojoStreet AS AddressDojo', 'd.clubDojoZip AS ZipDojo', 'd.clubDojoCity AS CityDojo', 'c.clubPresident AS President', 'c.clubSecretary AS Secretary', 'c.clubTreasurer AS Treasurer', 't.clubTeacherId AS TeacherId', 'm.memberFirstname AS TeacherFirstname', 'm.memberName AS TeacherName', 'f.formationId AS Formation', 'c.clubEmailPublic AS Email', 'd.clubDojoDea AS DEA', 'h.clubHistoryStatus AS Status')
+            ->join(ClubDojo::class, 'd', 'WITH', $qb->expr()->eq('d.clubDojoClub', 'c.clubId'))
+            ->join(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.clubHistoryClub', 'c.clubId'))
+            ->join(ClubTeacher::class, 't', 'WITH', $qb->expr()->eq('t.clubTeacherClub', 'c.clubId'))
+            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 't.clubTeacherMember'))
+            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.memberId', 'f.formationMember'))
+            ->addOrderBy('c.clubId', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }

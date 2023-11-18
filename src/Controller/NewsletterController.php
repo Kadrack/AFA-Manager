@@ -44,7 +44,7 @@ class NewsletterController extends AbstractController
         $data['OnGoing']   = array();
         $data['Published'] = array();
 
-        $list = $doctrine->getRepository(Newsletter::class)->findBy(array(), array('newsletter_date' => 'DESC'));
+        $list = $doctrine->getRepository(Newsletter::class)->findBy(array(), array('newsletterDate' => 'DESC'));
 
         foreach ($list as $news)
         {
@@ -206,7 +206,7 @@ class NewsletterController extends AbstractController
             $mailer->send($email);
         }
 
-        return $this->redirectToRoute('newsletter-send', array('newsletter' => $newsletter->getNewsletterId(), 'id' => $id+100));
+        return $this->redirectToRoute('newsletter-send', array('newsletter' => $newsletter->getNewsletterId(), 'id' => $id+50));
     }
 
     /**
@@ -220,7 +220,7 @@ class NewsletterController extends AbstractController
     {
         if ($uniqueId == md5('AFA-Manager'))
         {
-            if (is_null($doctrine->getRepository(NewsletterSubscription::class)->findOneBy(array('newsletter_subscription_email' => $request->get('email')))))
+            if (is_null($doctrine->getRepository(NewsletterSubscription::class)->findOneBy(array('newsletterSubscriptionEmail' => $request->get('email')))))
             {
                 if ($request->get('salt') == md5($request->get('email').'Wordpress'))
                 {

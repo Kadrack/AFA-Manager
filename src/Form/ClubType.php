@@ -2,6 +2,7 @@
 // src/Form/ClubType.php
 namespace App\Form;
 
+use App\Entity\Club;
 use App\Entity\ClubDojo;
 
 use App\Service\ListData;
@@ -43,11 +44,13 @@ class ClubType extends AbstractType
             case 'Club':
                 $this->club($builder, $options['formData']);
                 break;
+
+
+
+
+
             case 'Member':
                 $this->member($builder, $options['formData']);
-                break;
-            case 'Payment':
-                $this->payment($builder, $options['formData']);
                 break;
             case 'Teacher':
                 $this->teacher($builder, $options['formData']);
@@ -69,12 +72,6 @@ class ClubType extends AbstractType
                 break;
             case 'Lesson':
                 $this->lesson($builder, $options['formData']);
-                break;
-            case 'LessonOld':
-                $this->lessonOld($builder);
-                break;
-            case 'SecretariatOld':
-                $this->secretariatOld($builder);
                 break;
             case 'Subscription':
                 $this->subscription($builder);
@@ -110,11 +107,14 @@ class ClubType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $data
+     * @param array                $data
      */
     private function club(FormBuilderInterface $builder, array $data): void
     {
-        $list = new ListData();
+        $club = new Club();
+
+        $province = $club->getClubProvinceText();
+        $type     = $club->getClubTypeText();
 
         if ($data['Action'] == 'Add')
         {
@@ -131,9 +131,9 @@ class ClubType extends AbstractType
             ->add('ClubAddress', TextType::class, array('label' => 'Adresse', 'attr' => array('placeholder' => 'ClubAddress'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubZip', IntegerType::class, array('label' => 'Code postal', 'attr' => array('placeholder' => 'ClubZip'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubCity', TextType::class, array('label' => 'Localité', 'attr' => array('placeholder' => 'ClubCity'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubProvince', ChoiceType::class, array('label' => 'Province', 'multiple' => false, 'expanded' => false, 'placeholder' => 'Choississez une province', 'choices' => $list->getProvince(0), 'attr' => array('placeholder' => 'ClubProvince'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubProvince', ChoiceType::class, array('label' => 'Province', 'multiple' => false, 'expanded' => false, 'placeholder' => 'Choississez une province', 'choices' => $province, 'attr' => array('placeholder' => 'ClubProvince'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubCreation', DateType::class, array('label' => 'Date de création', 'widget' => 'single_text', 'mapped' => false, 'attr' => array('placeholder' => 'ClubCreation'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubType', ChoiceType::class, array('label' => 'Type d\'association', 'multiple' => false, 'expanded' => false, 'placeholder' => 'Choississez le type d\'association', 'choices' => $list->getClubType(0), 'attr' => array('placeholder' => 'ClubType'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubType', ChoiceType::class, array('label' => 'Type d\'association', 'multiple' => false, 'expanded' => false, 'placeholder' => 'Choississez le type d\'association', 'choices' => $type, 'attr' => array('placeholder' => 'ClubType'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
         ;
     }
@@ -169,28 +169,6 @@ class ClubType extends AbstractType
             ->add('MemberBirthday', BirthdayType::class, array('label' => 'Date de naissance'))
             ->add('GradeRank', ChoiceType::class, array('label' => 'Grade', 'placeholder' => 'Choississez un grade', 'choices' => $list->getGrade(), 'required' => false, 'mapped' => false, 'attr' => array('placeholder' => 'GradeRank'), 'row_attr' => array('class' => 'form-floating')))
             ->add('MemberLicenceMedicalCertificate', DateType::class, array('label' => 'Date du certificat ou du consentement', 'widget' => 'single_text', 'mapped' => false, 'attr' => array('placeholder' => 'MemberLicenceMedicalCertificate'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('Submit', SubmitType::class, array('label' => $submitLabel))
-        ;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $data
-     */
-    private function payment(FormBuilderInterface $builder, array $data): void
-    {
-        if ($data['Action'] == 'Add')
-        {
-            $submitLabel = 'Ajouter';
-        }
-        elseif ($data['Action'] == 'Edit')
-        {
-            $submitLabel = 'Modifier';
-        }
-
-        $builder
-            ->add('LicenceNumber', TextType::class, array('label' => 'N° de licence (séparé par un virgule)', 'mapped' => false, 'attr' => array('placeholder' => 'LicenceNumber'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('PaymentDate', DateType::class, array('label' => 'Date de paiment', 'widget' => 'single_text', 'mapped' => false, 'attr' => array('placeholder' => 'PaymentDate'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
         ;
     }
@@ -296,10 +274,10 @@ class ClubType extends AbstractType
 
         $builder
             ->add('ClubClassDay', ChoiceType::class, array('label' => 'Jour : ', 'placeholder' => 'Choississez un jour', 'choices' => $list->getDay(0)))
-            ->add('ClubClassStartingHour', TimeType::class, array ('label' => 'Début : '))
-            ->add('ClubClassEndingHour', TimeType::class, array ('label' => 'Fin : '))
+            ->add('ClubClassStart', TimeType::class, array ('label' => 'Début : '))
+            ->add('ClubClassEnd', TimeType::class, array ('label' => 'Fin : '))
             ->add('ClubClassType', ChoiceType::class, array('label' => 'Type de cours : ', 'placeholder' => 'Choississez un type de cours', 'choices' => $list->getClassType(0)))
-            ->add('ClubClassDojo', EntityType::class, array ('label' => 'Adresse : ', 'class' => ClubDojo::class, 'choices' => $data['Choices'], 'choice_label' => 'club_dojo_street'))
+            ->add('ClubClassClubDojo', EntityType::class, array ('label' => 'Adresse : ', 'class' => ClubDojo::class, 'choices' => $data['Choices'], 'choice_label' => 'clubDojoStreet'))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
         ;
     }
@@ -363,33 +341,11 @@ class ClubType extends AbstractType
         }
 
         $builder
-            ->add('LessonDate', DateType::class, array('label' => 'Date du cours', 'widget' => 'single_text', 'attr' => array('placeholder' => 'TrainingSessionDate'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('LessonStartingHour', TimeType::class, array ('label' => 'Début'))
-            ->add('LessonEndingHour', TimeType::class, array ('label' => 'Fin', 'mapped' => false))
-            ->add('LessonType', ChoiceType::class, array('label' => 'Type de cours', 'choices' => $list->getClassType(0)))
+            ->add('ClubLessonDate', DateType::class, array('label' => 'Date du cours', 'widget' => 'single_text', 'attr' => array('placeholder' => 'TrainingSessionDate'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubLessonStart', TimeType::class, array ('label' => 'Début'))
+            ->add('ClubLessonEnd', TimeType::class, array ('label' => 'Fin', 'mapped' => false))
+            ->add('ClubLessonType', ChoiceType::class, array('label' => 'Type de cours', 'choices' => $list->getClassType(0)))
             ->add('Submit', SubmitType::class, array('label' => $submitLabel))
-        ;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    private function lessonOld(FormBuilderInterface $builder): void
-    {
-        $builder
-            ->add('Date', DateType::class, array('label' => 'Date recherchée', 'widget' => 'single_text', 'attr' => array('placeholder' => 'Date'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('Submit', SubmitType::class, array('label' => 'Valider'))
-        ;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    private function secretariatOld(FormBuilderInterface $builder): void
-    {
-        $builder
-            ->add('Date', DateType::class, array('label' => 'Date recherchée', 'widget' => 'single_text', 'attr' => array('placeholder' => 'Date'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('Submit', SubmitType::class, array('label' => 'Valider'))
         ;
     }
 
@@ -413,16 +369,16 @@ class ClubType extends AbstractType
      */
     private function association(FormBuilderInterface $builder): void
     {
-        $list = new ListData();
+        $club = new Club();
 
         $builder
             ->add('ClubName', TextType::class, array('label' => 'Nom du club', 'attr' => array('placeholder' => 'ClubName'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubType', ChoiceType::class, array('label' => 'Type d\'association', 'multiple' => false, 'expanded' => false, 'placeholder' => 'Choississez un type d\'association', 'choices' => $list->getClubType(0), 'attr' => array('placeholder' => 'ClubType'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubType', ChoiceType::class, array('label' => 'Type d\'association', 'multiple' => false, 'expanded' => false, 'placeholder' => 'Choississez un type d\'association', 'choices' => $club->getClubTypeText(), 'attr' => array('placeholder' => 'ClubType'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubAddress', TextType::class, array('label' => 'Adresse', 'attr' => array('placeholder' => 'ClubAddress'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubZip', IntegerType::class, array('label' => 'Code postal', 'attr' => array('placeholder' => 'ClubZip'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubCity', TextType::class, array('label' => 'Localité', 'attr' => array('placeholder' => 'ClubCity'), 'row_attr' => array('class' => 'form-floating')))
             ->add('ClubIban', TextType::class, array('label' => 'N° de compte (IBAN)', 'required' => false, 'attr' => array('placeholder' => 'ClubIban'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubBceNumber', TextType::class, array('label' => 'N° d\'entreprise', 'required' => false, 'attr' => array('placeholder' => 'ClubBceNumber'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubBce', TextType::class, array('label' => 'N° d\'entreprise', 'required' => false, 'attr' => array('placeholder' => 'ClubBceNumber'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => 'Modifier'))
         ;
     }
@@ -447,9 +403,9 @@ class ClubType extends AbstractType
     {
         $builder
             ->add('ClubUrl', TextType::class, array('label' => 'Site internet', 'required' => false, 'attr' => array('placeholder' => 'ClubUrl'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubContactPublic', TextType::class, array('label' => 'Personne de contact', 'required' => false, 'attr' => array('placeholder' => 'ClubContactPublic'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubPhonePublic', TextType::class, array('label' => 'Numéro de téléphone', 'required' => false, 'attr' => array('placeholder' => 'ClubPhonePublic'), 'row_attr' => array('class' => 'form-floating')))
-            ->add('ClubEmailPublic', EmailType::class, array('label' => 'Email publique', 'required' => false, 'attr' => array('placeholder' => 'ClubEmailPublic'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubContact', TextType::class, array('label' => 'Personne de contact', 'required' => false, 'attr' => array('placeholder' => 'ClubContactPublic'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubPhone', TextType::class, array('label' => 'Numéro de téléphone', 'required' => false, 'attr' => array('placeholder' => 'ClubPhonePublic'), 'row_attr' => array('class' => 'form-floating')))
+            ->add('ClubEmail', EmailType::class, array('label' => 'Email publique', 'required' => false, 'attr' => array('placeholder' => 'ClubEmailPublic'), 'row_attr' => array('class' => 'form-floating')))
             ->add('Submit', SubmitType::class, array('label' => 'Modifier'))
         ;
     }

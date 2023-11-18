@@ -9,19 +9,24 @@
 
 {% block body %}
     <div class="container col col-lg-5">
-        <h1 class="text-center">Liste des stages {% if access.check('Training-Add') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('training-trainingAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h1>
-
-        <div class="text-center">
+        <h1 class="text-center m-0">
+            Liste des stages
             <label>
-                <select class="form-select form-select-sm" onchange="window.open('{{ path('training-list') }}' + '/' + this.value, '_self')">
+                <select class="h1 border-0 bg-transparent" onchange="window.open('{{ path('training-list') }}' + '/' + this.value, '_self')">
                     {% for year in data.YearList %}
-                        <option value="{{ year }}" {% if year == data.Year %}selected{% endif %}>{{ year }}</option>
+                        <option class="h5" value="{{ year }}" {% if year == data.Year %}selected{% endif %}>{{ year }}</option>
                     {% endfor %}
                 </select>
             </label>
-        </div>
+        </h1>
 
-        <table id="stageList" class="table table-sm table-hover">
+        {% if access.check('Training-Add') %}
+        <div class="text-center">
+            <button class="btn btn-lg btn-primary m-0" onclick="load('{{ path('training-trainingAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+        </div>
+        {% endif %}
+
+        <table id="stageList" class="table table-sm table-hover mt-3">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -34,7 +39,7 @@
             <tbody>
             {% if access.check('Training-TotalPayment') %}{% set total = 0 %}{% endif %}
             {% for training in data.Trainings %}
-                <tr class="table-active" {% if access.check('Training-Index') %}onclick="window.open('{{ path('training-index', {'training': training.getTrainingId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <tr {% if access.check('Training-Index') %}onclick="window.open('{{ path('training-index', {'training': training.getTrainingId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                     <td class="align-middle">{{ loop.index }}</td>
                     <td class="align-middle">{{ training.getTrainingFirstDate|date("d/m/Y") }}</td>
                     <td class="align-middle">{{ training.getTrainingName }}</td>

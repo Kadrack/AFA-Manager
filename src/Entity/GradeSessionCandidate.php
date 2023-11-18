@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Grade
  */
-#[ORM\Table(name: 'grade_session_candidate')]
+#[ORM\Table(name: 'gradeSessionCandidate')]
 #[ORM\Entity(repositoryClass: GradeSessionCandidateRepository::class)]
 class GradeSessionCandidate
 {
@@ -24,89 +24,89 @@ class GradeSessionCandidate
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $grade_session_candidate_id;
+    private int $gradeSessionCandidateId;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $grade_session_candidate_date;
+    private ?DateTime $gradeSessionCandidateDate;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $grade_session_candidate_rank;
+    private ?int $gradeSessionCandidateRank;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $grade_session_candidate_payment_date;
+    private ?DateTime $gradeSessionCandidatePaymentDate;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $grade_session_candidate_comment;
+    private ?string $gradeSessionCandidateComment;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $grade_session_candidate_staff_comment;
+    private ?string $gradeSessionCandidateStaffComment;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $grade_session_candidate_jury;
+    private ?string $gradeSessionCandidateJury;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $grade_session_candidate_position;
+    private ?int $gradeSessionCandidatePosition;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $grade_session_candidate_result;
+    private ?int $gradeSessionCandidateResult;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $grade_session_candidate_status;
+    private ?int $gradeSessionCandidateStatus;
 
     /**
      * @var GradeSession|null
      */
-    #[ORM\ManyToOne(targetEntity: GradeSession::class, cascade: ['persist'], inversedBy: 'grade_session_candidates')]
-    #[ORM\JoinColumn(name: 'grade_session_candidate_join_grade_session', referencedColumnName: 'grade_session_id', nullable: true)]
-    private ?GradeSession $grade_session_candidate_exam;
+    #[ORM\ManyToOne(targetEntity: GradeSession::class, cascade: ['persist'], inversedBy: 'gradeSessionCandidates')]
+    #[ORM\JoinColumn(name: 'gradeSessionCandidate_join_gradeSession', referencedColumnName: 'gradeSessionId', nullable: true)]
+    private ?GradeSession $gradeSessionCandidateExam;
 
     /**
      * @var Member|null
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_exams')]
-    #[ORM\JoinColumn(name: 'grade_session_candidate_join_member', referencedColumnName: 'member_id', nullable: false)]
-    private ?Member $grade_session_candidate_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberGradeSessionCandidates')]
+    #[ORM\JoinColumn(name: 'gradeSessionCandidate_join_member', referencedColumnName: 'memberId', nullable: false)]
+    private ?Member $gradeSessionCandidateMember;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'grade_session', targetEntity: Grade::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['grade_rank' => 'ASC'])]
-    private ArrayCollection|Collection|null $grade_session_candidate_grades;
+    #[ORM\OneToMany(mappedBy: 'gradeSession', targetEntity: Grade::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['gradeRank' => 'ASC'])]
+    private ArrayCollection|Collection|null $gradeSessionCandidateGrades;
 
     /**
      * GradeSession constructor.
      */
     public function __construct()
     {
-        $this->grade_session_candidate_grades = new ArrayCollection();
+        $this->gradeSessionCandidateGrades = new ArrayCollection();
     }
 
     /**
@@ -114,7 +114,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateId(): int
     {
-        return $this->grade_session_candidate_id;
+        return $this->gradeSessionCandidateId;
     }
 
     /**
@@ -123,7 +123,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateId(int $gradeSessionCandidateId): self
     {
-        $this->grade_session_candidate_id = $gradeSessionCandidateId;
+        $this->gradeSessionCandidateId = $gradeSessionCandidateId;
 
         return $this;
     }
@@ -133,7 +133,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateDate(): ?DateTime
     {
-        return $this->grade_session_candidate_date;
+        return $this->gradeSessionCandidateDate;
     }
 
     /**
@@ -142,7 +142,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateDate(DateTime $gradeSessionCandidateDate): self
     {
-        $this->grade_session_candidate_date = $gradeSessionCandidateDate;
+        $this->gradeSessionCandidateDate = $gradeSessionCandidateDate;
 
         return $this;
     }
@@ -152,7 +152,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateRank(): ?int
     {
-        return $this->grade_session_candidate_rank;
+        return $this->gradeSessionCandidateRank;
     }
 
     /**
@@ -161,7 +161,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateRank(?int $gradeSessionCandidateRank): self
     {
-        $this->grade_session_candidate_rank = $gradeSessionCandidateRank;
+        $this->gradeSessionCandidateRank = $gradeSessionCandidateRank;
 
         return $this;
     }
@@ -171,7 +171,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidatePaymentDate(): ?DateTime
     {
-        return $this->grade_session_candidate_payment_date;
+        return $this->gradeSessionCandidatePaymentDate;
     }
 
     /**
@@ -180,7 +180,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidatePaymentDate(DateTime $gradeSessionCandidatePaymentDate): self
     {
-        $this->grade_session_candidate_payment_date = $gradeSessionCandidatePaymentDate;
+        $this->gradeSessionCandidatePaymentDate = $gradeSessionCandidatePaymentDate;
 
         return $this;
     }
@@ -190,7 +190,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateComment(): ?string
     {
-        return $this->grade_session_candidate_comment;
+        return $this->gradeSessionCandidateComment;
     }
 
     /**
@@ -199,7 +199,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateComment(?string $gradeSessionCandidateComment): self
     {
-        $this->grade_session_candidate_comment = $gradeSessionCandidateComment;
+        $this->gradeSessionCandidateComment = $gradeSessionCandidateComment;
 
         return $this;
     }
@@ -209,7 +209,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateStaffComment(): ?string
     {
-        return $this->grade_session_candidate_staff_comment;
+        return $this->gradeSessionCandidateStaffComment;
     }
 
     /**
@@ -218,7 +218,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateStaffComment(?string $gradeSessionCandidateStaffComment): self
     {
-        $this->grade_session_candidate_staff_comment = $gradeSessionCandidateStaffComment;
+        $this->gradeSessionCandidateStaffComment = $gradeSessionCandidateStaffComment;
 
         return $this;
     }
@@ -228,7 +228,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateJury(): ?string
     {
-        return $this->grade_session_candidate_jury;
+        return $this->gradeSessionCandidateJury;
     }
 
     /**
@@ -237,7 +237,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateJury(?string $gradeSessionCandidateJury): self
     {
-        $this->grade_session_candidate_jury = $gradeSessionCandidateJury;
+        $this->gradeSessionCandidateJury = $gradeSessionCandidateJury;
 
         return $this;
     }
@@ -247,7 +247,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidatePosition(): ?int
     {
-        return $this->grade_session_candidate_position;
+        return $this->gradeSessionCandidatePosition;
     }
 
     /**
@@ -256,7 +256,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidatePosition(?int $gradeSessionCandidatePosition): self
     {
-        $this->grade_session_candidate_position = $gradeSessionCandidatePosition;
+        $this->gradeSessionCandidatePosition = $gradeSessionCandidatePosition;
 
         return $this;
     }
@@ -266,7 +266,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateResult(): ?int
     {
-        return $this->grade_session_candidate_result;
+        return $this->gradeSessionCandidateResult;
     }
 
     /**
@@ -275,7 +275,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateResult(?int $gradeSessionCandidateResult): self
     {
-        $this->grade_session_candidate_result = $gradeSessionCandidateResult;
+        $this->gradeSessionCandidateResult = $gradeSessionCandidateResult;
 
         return $this;
     }
@@ -285,7 +285,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateStatus(): ?int
     {
-        return $this->grade_session_candidate_status;
+        return $this->gradeSessionCandidateStatus;
     }
 
     /**
@@ -294,7 +294,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateStatus(?int $gradeSessionCandidateStatus): self
     {
-        $this->grade_session_candidate_status = $gradeSessionCandidateStatus;
+        $this->gradeSessionCandidateStatus = $gradeSessionCandidateStatus;
 
         return $this;
     }
@@ -304,7 +304,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateExam(): ?GradeSession
     {
-        return $this->grade_session_candidate_exam;
+        return $this->gradeSessionCandidateExam;
     }
 
     /**
@@ -313,7 +313,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateExam(?GradeSession $gradeSessionCandidateExam): self
     {
-        $this->grade_session_candidate_exam = $gradeSessionCandidateExam;
+        $this->gradeSessionCandidateExam = $gradeSessionCandidateExam;
 
         return $this;
     }
@@ -323,7 +323,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidateMember(): ?Member
     {
-        return $this->grade_session_candidate_member;
+        return $this->gradeSessionCandidateMember;
     }
 
     /**
@@ -332,7 +332,7 @@ class GradeSessionCandidate
      */
     public function setGradeSessionCandidateMember(?Member $gradeSessionCandidateMember): self
     {
-        $this->grade_session_candidate_member = $gradeSessionCandidateMember;
+        $this->gradeSessionCandidateMember = $gradeSessionCandidateMember;
 
         return $this;
     }
@@ -342,7 +342,7 @@ class GradeSessionCandidate
      */
     public function getGradeSessionCandidates(): Collection
     {
-        return $this->grade_session_candidate_grades;
+        return $this->gradeSessionCandidateGrades;
     }
 
     /**
@@ -351,8 +351,8 @@ class GradeSessionCandidate
      */
     public function addGradeSessionCandidates(Grade $grade): self
     {
-        if (!$this->grade_session_candidate_grades->contains($grade)) {
-            $this->grade_session_candidate_grades[] = $grade;
+        if (!$this->gradeSessionCandidateGrades->contains($grade)) {
+            $this->gradeSessionCandidateGrades[] = $grade;
             $grade->setGradeSession($this);
         }
 
@@ -365,8 +365,8 @@ class GradeSessionCandidate
      */
     public function removeGradeSessionGrades(Grade $grade): self
     {
-        if ($this->grade_session_candidate_grades->contains($grade)) {
-            $this->grade_session_candidate_grades->removeElement($grade);
+        if ($this->gradeSessionCandidateGrades->contains($grade)) {
+            $this->gradeSessionCandidateGrades->removeElement($grade);
             // set the owning side to null (unless already changed)
             if ($grade->getGradeSession() === $this) {
                 $grade->setGradeSession(null);
@@ -385,7 +385,7 @@ class GradeSessionCandidate
      */
     public function getCandidateMemberId(): int
     {
-        return $this->grade_session_candidate_member->getMemberId();
+        return $this->gradeSessionCandidateMember->getMemberId();
     }
 
     /**
@@ -393,7 +393,7 @@ class GradeSessionCandidate
      */
     public function getCandidateMemberFirstname(): string
     {
-        return $this->grade_session_candidate_member->getMemberFirstname();
+        return $this->gradeSessionCandidateMember->getMemberFirstname();
     }
 
     /**
@@ -401,7 +401,7 @@ class GradeSessionCandidate
      */
     public function getCandidateMemberName(): string
     {
-        return $this->grade_session_candidate_member->getMemberName();
+        return $this->gradeSessionCandidateMember->getMemberName();
     }
 
     /**
@@ -409,7 +409,7 @@ class GradeSessionCandidate
      */
     public function getCandidateMemberEmail(): ?string
     {
-        return $this->grade_session_candidate_member->getMemberEmail();
+        return $this->gradeSessionCandidateMember->getMemberEmail();
     }
 
     /**
@@ -417,7 +417,7 @@ class GradeSessionCandidate
      */
     public function getCandidateMemberClub(): Club
     {
-        return $this->grade_session_candidate_member->getMemberActualClub();
+        return $this->gradeSessionCandidateMember->getMemberActualClub();
     }
 
     /**
@@ -427,6 +427,6 @@ class GradeSessionCandidate
     {
         $listData = new ListData();
 
-        return $listData->getGrade($this->grade_session_candidate_rank);
+        return $listData->getGrade($this->gradeSessionCandidateRank);
     }
 }

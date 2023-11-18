@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class TrainingAttendance
  */
-#[ORM\Table(name: 'training_attendance')]
+#[ORM\Table(name: 'trainingAttendance')]
 #[ORM\Entity(repositoryClass: TrainingAttendanceRepository::class)]
 class TrainingAttendance
 {
@@ -23,88 +23,82 @@ class TrainingAttendance
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $training_attendance_id;
+    private int $trainingAttendanceId;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $training_attendance_name;
+    private ?string $trainingAttendanceName;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $training_attendance_sex;
+    private ?int $trainingAttendanceSex;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $training_attendance_country;
+    private ?string $trainingAttendanceCountry;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
-    private ?int $training_attendance_payment_cash = null;
+    private ?int $trainingAttendancePaymentCash = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
-    private ?int $training_attendance_payment_card = null;
+    private ?int $trainingAttendancePaymentCard = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
-    private ?int $training_attendance_payment_transfert = null;
+    private ?int $trainingAttendancePaymentTransfert = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $training_attendance_payment_discount;
-
-    /**
-     * @var DateTime|null
-     */
-    #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $training_attendance_payment_validity;
+    private ?int $trainingAttendancePaymentDiscount;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer', options: ['default' => 1])]
-    private int $training_attendance_status = 1;
+    private int $trainingAttendanceStatus = 1;
 
     /**
      * @var Training|null
      */
-    #[ORM\ManyToOne(targetEntity: Training::class, cascade: ['persist'], inversedBy: 'training_attendances')]
-    #[ORM\JoinColumn(name: 'training_attendance_join_training', referencedColumnName: 'training_id', nullable: true)]
-    private ?Training $training;
+    #[ORM\ManyToOne(targetEntity: Training::class, cascade: ['persist'], inversedBy: 'trainingAttendances')]
+    #[ORM\JoinColumn(name: 'trainingAttendance_join_training', referencedColumnName: 'trainingId', nullable: true)]
+    private ?Training $trainingAttendanceTraining;
 
     /**
      * @var Member|null
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_training_attendances')]
-    #[ORM\JoinColumn(name: 'training_attendance_join_member', referencedColumnName: 'member_id', nullable: true)]
-    private ?Member $training_attendance_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberTrainingAttendances')]
+    #[ORM\JoinColumn(name: 'trainingAttendance_join_member', referencedColumnName: 'memberId', nullable: true)]
+    private ?Member $trainingAttendanceMember;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'training_session_attendances', targetEntity: TrainingSessionAttendance::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $training_attendance_sessions;
+    #[ORM\OneToMany(mappedBy: 'trainingSessionAttendanceTrainingAttendance', targetEntity: TrainingSessionAttendance::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $trainingAttendanceSessions;
 
     /**
      * TrainingSession constructor.
      */
     public function __construct()
     {
-        $this->training_attendance_sessions = new ArrayCollection();
+        $this->trainingAttendanceSessions = new ArrayCollection();
     }
 
     /**
@@ -112,16 +106,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceId(): int
     {
-        return $this->training_attendance_id;
+        return $this->trainingAttendanceId;
     }
 
     /**
-     * @param int $training_attendance_id
+     * @param int $trainingAttendanceId
+     *
      * @return $this
      */
-    public function setTrainingAttendanceId(int $training_attendance_id): self
+    public function setTrainingAttendanceId(int $trainingAttendanceId): self
     {
-        $this->training_attendance_id = $training_attendance_id;
+        $this->trainingAttendanceId = $trainingAttendanceId;
 
         return $this;
     }
@@ -131,16 +126,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceName(): ?string
     {
-        return $this->training_attendance_name;
+        return $this->trainingAttendanceName;
     }
 
     /**
-     * @param string|null $training_attendance_name
+     * @param string|null $trainingAttendanceName
+     *
      * @return $this
      */
-    public function setTrainingAttendanceName(?string $training_attendance_name): self
+    public function setTrainingAttendanceName(?string $trainingAttendanceName): self
     {
-        $this->training_attendance_name = $training_attendance_name;
+        $this->trainingAttendanceName = $trainingAttendanceName;
 
         return $this;
     }
@@ -150,16 +146,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceSex(): ?int
     {
-        return $this->training_attendance_sex;
+        return $this->trainingAttendanceSex;
     }
 
     /**
-     * @param int|null $training_attendance_sex
+     * @param int|null $trainingAttendanceSex
+     *
      * @return $this
      */
-    public function setTrainingAttendanceSex(?int $training_attendance_sex): self
+    public function setTrainingAttendanceSex(?int $trainingAttendanceSex): self
     {
-        $this->training_attendance_sex = $training_attendance_sex;
+        $this->trainingAttendanceSex = $trainingAttendanceSex;
 
         return $this;
     }
@@ -169,16 +166,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceCountry(): ?string
     {
-        return $this->training_attendance_country;
+        return $this->trainingAttendanceCountry;
     }
 
     /**
-     * @param string|null $training_attendance_country
+     * @param string|null $trainingAttendanceCountry
+     *
      * @return $this
      */
-    public function setTrainingAttendanceCountry(?string $training_attendance_country): self
+    public function setTrainingAttendanceCountry(?string $trainingAttendanceCountry): self
     {
-        $this->training_attendance_country = $training_attendance_country;
+        $this->trainingAttendanceCountry = $trainingAttendanceCountry;
 
         return $this;
     }
@@ -188,16 +186,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendancePaymentCash(): ?int
     {
-        return $this->training_attendance_payment_cash;
+        return $this->trainingAttendancePaymentCash;
     }
 
     /**
-     * @param int|null $training_attendance_payment_cash
+     * @param int|null $trainingAttendancePaymentCash
+     *
      * @return $this
      */
-    public function setTrainingAttendancePaymentCash(?int $training_attendance_payment_cash): self
+    public function setTrainingAttendancePaymentCash(?int $trainingAttendancePaymentCash): self
     {
-        $this->training_attendance_payment_cash = $training_attendance_payment_cash;
+        $this->trainingAttendancePaymentCash = $trainingAttendancePaymentCash;
 
         return $this;
     }
@@ -207,16 +206,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendancePaymentCard(): ?int
     {
-        return $this->training_attendance_payment_card;
+        return $this->trainingAttendancePaymentCard;
     }
 
     /**
-     * @param int|null $training_attendance_payment_card
+     * @param int|null $trainingAttendancePaymentCard
+     *
      * @return $this
      */
-    public function setTrainingAttendancePaymentCard(?int $training_attendance_payment_card): self
+    public function setTrainingAttendancePaymentCard(?int $trainingAttendancePaymentCard): self
     {
-        $this->training_attendance_payment_card = $training_attendance_payment_card;
+        $this->trainingAttendancePaymentCard = $trainingAttendancePaymentCard;
 
         return $this;
     }
@@ -226,16 +226,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendancePaymentTransfert(): ?int
     {
-        return $this->training_attendance_payment_transfert;
+        return $this->trainingAttendancePaymentTransfert;
     }
 
     /**
-     * @param int|null $training_attendance_payment_transfert
+     * @param int|null $trainingAttendancePaymentTransfert
+     *
      * @return $this
      */
-    public function setTrainingAttendancePaymentTransfert(?int $training_attendance_payment_transfert): self
+    public function setTrainingAttendancePaymentTransfert(?int $trainingAttendancePaymentTransfert): self
     {
-        $this->training_attendance_payment_transfert = $training_attendance_payment_transfert;
+        $this->trainingAttendancePaymentTransfert = $trainingAttendancePaymentTransfert;
 
         return $this;
     }
@@ -245,16 +246,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendancePaymentDiscount(): ?int
     {
-        return $this->training_attendance_payment_discount;
+        return $this->trainingAttendancePaymentDiscount;
     }
 
     /**
-     * @param int|null $training_attendance_payment_discount
+     * @param int|null $trainingAttendancePaymentDiscount
+     *
      * @return $this
      */
-    public function setTrainingAttendancePaymentDiscount(?int $training_attendance_payment_discount): self
+    public function setTrainingAttendancePaymentDiscount(?int $trainingAttendancePaymentDiscount): self
     {
-        $this->training_attendance_payment_discount = $training_attendance_payment_discount;
+        $this->trainingAttendancePaymentDiscount = $trainingAttendancePaymentDiscount;
 
         return $this;
     }
@@ -264,16 +266,17 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceStatus(): int
     {
-        return $this->training_attendance_status;
+        return $this->trainingAttendanceStatus;
     }
 
     /**
-     * @param int $training_attendance_status
+     * @param int $trainingAttendanceStatus
+     *
      * @return $this
      */
-    public function setTrainingAttendanceStatus(int $training_attendance_status): self
+    public function setTrainingAttendanceStatus(int $trainingAttendanceStatus): self
     {
-        $this->training_attendance_status = $training_attendance_status;
+        $this->trainingAttendanceStatus = $trainingAttendanceStatus;
 
         return $this;
     }
@@ -281,18 +284,19 @@ class TrainingAttendance
     /**
      * @return Training|null
      */
-    public function getTraining(): ?Training
+    public function getTrainingAttendanceTraining(): ?Training
     {
-        return $this->training;
+        return $this->trainingAttendanceTraining;
     }
 
     /**
-     * @param Training|null $training
+     * @param Training|null $trainingAttendanceTraining
+     *
      * @return $this
      */
-    public function setTraining(?Training $training): self
+    public function setTrainingAttendanceTraining(?Training $trainingAttendanceTraining): self
     {
-        $this->training = $training;
+        $this->trainingAttendanceTraining = $trainingAttendanceTraining;
 
         return $this;
     }
@@ -302,7 +306,7 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceMember(): ?Member
     {
-        return $this->training_attendance_member;
+        return $this->trainingAttendanceMember;
     }
 
     /**
@@ -311,7 +315,7 @@ class TrainingAttendance
      */
     public function setTrainingAttendanceMember(?Member $member): self
     {
-        $this->training_attendance_member = $member;
+        $this->trainingAttendanceMember = $member;
 
         return $this;
     }
@@ -321,7 +325,7 @@ class TrainingAttendance
      */
     public function getTrainingAttendanceSessions(): Collection
     {
-        return $this->training_attendance_sessions;
+        return $this->trainingAttendanceSessions;
     }
 
     /**
@@ -330,9 +334,9 @@ class TrainingAttendance
      */
     public function addTrainingAttendanceSessions(TrainingSessionAttendance $training_attendance_sessions): self
     {
-        if (!$this->training_attendance_sessions->contains($training_attendance_sessions)) {
-            $this->training_attendance_sessions[] = $training_attendance_sessions;
-            $training_attendance_sessions->setTrainingSessionAttendances($this);
+        if (!$this->trainingAttendanceSessions->contains($training_attendance_sessions)) {
+            $this->trainingAttendanceSessions[] = $training_attendance_sessions;
+            $training_attendance_sessions->setTrainingSessionAttendanceTrainingAttendance($this);
         }
 
         return $this;
@@ -344,11 +348,11 @@ class TrainingAttendance
      */
     public function removeTrainingAttendanceSessions(TrainingSessionAttendance $training_attendance_sessions): self
     {
-        if ($this->training_attendance_sessions->contains($training_attendance_sessions)) {
-            $this->training_attendance_sessions->removeElement($training_attendance_sessions);
+        if ($this->trainingAttendanceSessions->contains($training_attendance_sessions)) {
+            $this->trainingAttendanceSessions->removeElement($training_attendance_sessions);
             // set the owning side to null (unless already changed)
-            if ($training_attendance_sessions->getTrainingSessionAttendances() === $this) {
-                $training_attendance_sessions->setTrainingSessionAttendances(null);
+            if ($training_attendance_sessions->getTrainingSessionAttendanceTrainingAttendance() === $this) {
+                $training_attendance_sessions->setTrainingSessionAttendanceTrainingAttendance(null);
             }
         }
 
@@ -387,7 +391,7 @@ class TrainingAttendance
     {
         $total = 0;
 
-        foreach ($this->training_attendance_sessions as $session)
+        foreach ($this->trainingAttendanceSessions as $session)
         {
             $total = $total + $session->getTrainingSessionDuration();
         }

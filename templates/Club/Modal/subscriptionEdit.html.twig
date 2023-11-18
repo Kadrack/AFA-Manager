@@ -2,9 +2,16 @@
     <div class="modal-content">
         {{ form_start(form) }}
         <div class="modal-header">
-            <h5 class="modal-title">Mise à jour cotisation</h5>
+            <h5 class="modal-title">Modification</h5>
         </div>
         <div class="modal-body">
+            {% if not member.memberOutdate %}
+            <h3 class="text-center">Licence</h3>
+            <div class="d-grid gap-0">
+                <a class="btn btn-lg btn-primary m-2" href="{{ path('member-licencesFormPrint', {'member': member.getMemberId}) }}">Télécharger le formulaire de licence</a>
+            </div>
+            {% endif %}
+            <h3 class="text-center">Cotisation</h3>
             {{ form_widget(form.MemberSubscriptionList) }}
             {{ form_widget(form.MemberSubscriptionStatus) }}
             {{ form_row(form.MemberSubscriptionValidity) }}

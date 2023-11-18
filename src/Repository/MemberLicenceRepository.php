@@ -40,35 +40,35 @@ class MemberLicenceRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('l');
 
-        $count['Total'] = sizeof($qb->select('count(l.member_licence_id)')
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->gte('l.member_licence_deadline', "'".$limitLow->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lt('l.member_licence_deadline', "'".$limitHigh->format('Y-m-d')."'"))
-            ->groupBy('l.member_licence')
+        $count['Total'] = sizeof($qb->select('count(l.memberLicenceId)')
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gte('l.memberLicenceDeadline', "'".$limitLow->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('l.memberLicenceDeadline', "'".$limitHigh->format('Y-m-d')."'"))
+            ->groupBy('l.memberLicenceMember')
             ->getQuery()
             ->getResult());
 
         $qb = $this->createQueryBuilder('l');
 
-        $count['Adult'] = sizeof($qb->select('count(l.member_licence_id)')
-            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->gte('l.member_licence_deadline', "'".$limitLow->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lt('l.member_licence_deadline', "'".$limitHigh->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->neq('m.member_subscription_list', 2))
-            ->groupBy('l.member_licence')
+        $count['Adult'] = sizeof($qb->select('count(l.memberLicenceId)')
+            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gte('l.memberLicenceDeadline', "'".$limitLow->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('l.memberLicenceDeadline', "'".$limitHigh->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->neq('m.memberSubscriptionList', 2))
+            ->groupBy('l.memberLicenceMember')
             ->getQuery()
             ->getResult());
 
         $qb = $this->createQueryBuilder('l');
 
-        $count['Child'] = sizeof($qb->select('count(l.member_licence_id)')
-            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->gte('l.member_licence_deadline', "'".$limitLow->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lt('l.member_licence_deadline', "'".$limitHigh->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->neq('m.member_subscription_list', 1))
-            ->groupBy('l.member_licence')
+        $count['Child'] = sizeof($qb->select('count(l.memberLicenceId)')
+            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gte('l.memberLicenceDeadline', "'".$limitLow->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('l.memberLicenceDeadline', "'".$limitHigh->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->neq('m.memberSubscriptionList', 1))
+            ->groupBy('l.memberLicenceMember')
             ->getQuery()
             ->getResult());
 
@@ -84,12 +84,12 @@ class MemberLicenceRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('l');
 
         $qb->select('l')
-            ->where($qb->expr()->isNull('l.member_licence_printout_done'))
-            ->andWhere($qb->expr()->isNotNull('l.member_licence_printout_creation'));
+            ->where($qb->expr()->isNull('l.memberLicencePrintoutDone'))
+            ->andWhere($qb->expr()->isNotNull('l.memberLicencePrintoutCreation'));
 
-        is_null($club) ?: $qb->andWhere($qb->expr()->eq('l.member_licence_club', $club->getClubId()));
+        is_null($club) ?: $qb->andWhere($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()));
 
-        return $qb->orderBy('l.member_licence_printout_creation', 'ASC')
+        return $qb->orderBy('l.memberLicencePrintoutCreation', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -102,12 +102,12 @@ class MemberLicenceRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('l');
 
-        $qb->where($qb->expr()->isNull('l.member_licence_payment_date'))
-            ->andWhere($qb->expr()->gt('l.member_licence_update', "'".'2021-10-01'."'" ));
+        $qb->where($qb->expr()->isNull('l.memberLicencePaymentDate'))
+            ->andWhere($qb->expr()->gt('l.memberLicenceUpdate', "'".'2021-10-01'."'" ));
 
-        is_null($club) ?: $qb->andWhere($qb->expr()->eq('l.member_licence_club', $club->getClubId()));
+        is_null($club) ?: $qb->andWhere($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()));
 
-        return $qb->orderBy('l.member_licence_deadline', 'ASC')
+        return $qb->orderBy('l.memberLicenceDeadline', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -121,11 +121,11 @@ class MemberLicenceRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('p');
 
-        return $qb->select('m.member_id AS Id', 'p.member_licence_deadline AS Deadline', 'p.member_licence_update AS DateUpdate', 'p.member_licence_payment_date AS DatePayment', 'p.member_licence_payment_update AS PaymentUpdate', 'c.club_id AS ClubId', 'p.member_licence_printout_creation AS StampCreation', 'p.member_licence_printout_done AS StampPrint')
-            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 'p.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('p.member_licence_club', 'c.club_id'))
-            ->where($qb->expr()->gte('p.member_licence_update', "'".$limit->format('Y-m-d')."'"))
-            ->orderBy('p.member_licence_update', 'DESC')
+        return $qb->select('m.memberId AS Id', 'p.memberLicenceDeadline AS Deadline', 'p.memberLicenceUpdate AS DateUpdate', 'p.memberLicencePaymentDate AS DatePayment', 'p.memberLicencePaymentUpdate AS PaymentUpdate', 'c.clubId AS ClubId', 'p.memberLicencePrintoutCreation AS StampCreation', 'p.memberLicencePrintoutDone AS StampPrint')
+            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 'p.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('p.memberLicenceClub', 'c.clubId'))
+            ->where($qb->expr()->gte('p.memberLicenceUpdate', "'".$limit->format('Y-m-d')."'"))
+            ->orderBy('p.memberLicenceUpdate', 'DESC')
             ->getQuery()
             ->getArrayResult();
     }
@@ -139,11 +139,11 @@ class MemberLicenceRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('p');
 
-        return $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'p.member_licence_deadline AS Deadline', 'p.member_licence_printout_done AS DatePrint', 'c.club_id AS ClubId', 'c.club_name AS ClubName')
-            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 'p.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('p.member_licence_club', 'c.club_id'))
-            ->where($qb->expr()->gte('p.member_licence_printout_done', "'".$limit->format('Y-m-d')."'"))
-            ->orderBy('p.member_licence_printout_done', 'DESC')
+        return $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'p.memberLicenceDeadline AS Deadline', 'p.memberLicencePrintoutDone AS DatePrint', 'c.clubId AS ClubId', 'c.clubName AS ClubName')
+            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 'p.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('p.memberLicenceClub', 'c.clubId'))
+            ->where($qb->expr()->gte('p.memberLicencePrintoutDone', "'".$limit->format('Y-m-d')."'"))
+            ->orderBy('p.memberLicencePrintoutDone', 'DESC')
             ->getQuery()
             ->getArrayResult();
     }

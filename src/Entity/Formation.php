@@ -22,62 +22,63 @@ class Formation
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $formation_id;
+    private int $formationId;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $formation_date;
+    private ?DateTime $formationDate;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
     #[Assert\NotBlank]
-    private int $formation_rank;
+    private int $formationRank;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_certificate;
+    private ?string $formationCertificate;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $formation_status;
+    private ?int $formationStatus;
 
     /**
      * @var Member
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_formations')]
-    #[ORM\JoinColumn(name: 'formation_join_member', referencedColumnName: 'member_id', nullable: false)]
-    private Member $formation_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberFormations')]
+    #[ORM\JoinColumn(name: 'formation_join_member', referencedColumnName: 'memberId', nullable: false)]
+    private Member $formationMember;
 
     /**
      * @var FormationSessionCandidate|null
      */
-    #[ORM\ManyToOne(targetEntity: FormationSessionCandidate::class, cascade: ['persist'], inversedBy: 'formation_session_candidate_formations')]
-    #[ORM\JoinColumn(name: 'formation_join_formation_session_candidate', referencedColumnName: 'formation_session_candidate_id', nullable: true)]
-    private ?FormationSessionCandidate $formation_session;
+    #[ORM\ManyToOne(targetEntity: FormationSessionCandidate::class, cascade: ['persist'], inversedBy: 'formationSessionCandidateFormations')]
+    #[ORM\JoinColumn(name: 'formation_join_formationSessionCandidate', referencedColumnName: 'formationSessionCandidateId', nullable: true)]
+    private ?FormationSessionCandidate $formationSession;
 
     /**
      * @return int
      */
     public function getFormationId(): int
     {
-        return $this->formation_id;
+        return $this->formationId;
     }
 
     /**
-     * @param int $formation_id
+     * @param int $formationId
+     *
      * @return $this
      */
-    public function setFormationId(int $formation_id): self
+    public function setFormationId(int $formationId): self
     {
-        $this->formation_id = $formation_id;
+        $this->formationId = $formationId;
 
         return $this;
     }
@@ -87,16 +88,17 @@ class Formation
      */
     public function getFormationDate(): ?DateTime
     {
-        return $this->formation_date;
+        return $this->formationDate;
     }
 
     /**
-     * @param DateTime $formation_date
+     * @param DateTime $formationDate
+     *
      * @return $this
      */
-    public function setFormationDate(DateTime $formation_date): self
+    public function setFormationDate(DateTime $formationDate): self
     {
-        $this->formation_date = $formation_date;
+        $this->formationDate = $formationDate;
 
         return $this;
     }
@@ -106,16 +108,17 @@ class Formation
      */
     public function getFormationRank(): int
     {
-        return $this->formation_rank;
+        return $this->formationRank;
     }
 
     /**
-     * @param int $formation_rank
+     * @param int $formationRank
+     *
      * @return $this
      */
-    public function setFormationRank(int $formation_rank): self
+    public function setFormationRank(int $formationRank): self
     {
-        $this->formation_rank = $formation_rank;
+        $this->formationRank = $formationRank;
 
         return $this;
     }
@@ -125,16 +128,17 @@ class Formation
      */
     public function getFormationCertificate(): ?string
     {
-        return $this->formation_certificate;
+        return $this->formationCertificate;
     }
 
     /**
-     * @param string|null $formation_certificate
+     * @param string|null $formationCertificate
+     *
      * @return $this
      */
-    public function setFormationCertificate(?string $formation_certificate): self
+    public function setFormationCertificate(?string $formationCertificate): self
     {
-        $this->formation_certificate = $formation_certificate;
+        $this->formationCertificate = $formationCertificate;
 
         return $this;
     }
@@ -144,16 +148,17 @@ class Formation
      */
     public function getFormationStatus(): ?int
     {
-        return $this->formation_status;
+        return $this->formationStatus;
     }
 
     /**
-     * @param int|null $formation_status
+     * @param int|null $formationStatus
+     *
      * @return $this
      */
-    public function setFormationStatus(?int $formation_status): self
+    public function setFormationStatus(?int $formationStatus): self
     {
-        $this->formation_status = $formation_status;
+        $this->formationStatus = $formationStatus;
 
         return $this;
     }
@@ -163,16 +168,17 @@ class Formation
      */
     public function getFormationSession(): ?GradeSessionCandidate
     {
-        return $this->formation_session;
+        return $this->formationSession;
     }
 
     /**
-     * @param FormationSessionCandidate|null $formation_session
+     * @param FormationSessionCandidate|null $formationSession
+     *
      * @return $this
      */
-    public function setFormationSession(?FormationSessionCandidate $formation_session): self
+    public function setFormationSession(?FormationSessionCandidate $formationSession): self
     {
-        $this->formation_session = $formation_session;
+        $this->formationSession = $formationSession;
 
         return $this;
     }
@@ -182,16 +188,17 @@ class Formation
      */
     public function getFormationMember(): Member
     {
-        return $this->formation_member;
+        return $this->formationMember;
     }
 
     /**
-     * @param Member $formation_member
+     * @param Member $formationMember
+     *
      * @return $this
      */
-    public function setFormationMember(Member $formation_member): self
+    public function setFormationMember(Member $formationMember): self
     {
-        $this->formation_member = $formation_member;
+        $this->formationMember = $formationMember;
 
         return $this;
     }

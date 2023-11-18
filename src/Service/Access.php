@@ -3,15 +3,18 @@
 namespace App\Service;
 
 use App\Entity\Club;
+use App\Entity\Cluster;
 use App\Entity\ClusterMember;
+
+use Doctrine\Persistence\ManagerRegistry;
+
+use Symfony\Bundle\SecurityBundle\Security;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
-
 /**
  * Class Tools
+ *
  * @package App\Service
  */
 class Access
@@ -37,60 +40,51 @@ class Access
     private ?array $teachers = array();
 
     /**
-     * @var Security
-     */
-    private Security $security;
-
-    /**
      * Access constructor.
      */
-    public function __construct(Security $security)
+    public function __construct(private readonly ManagerRegistry $doctrine, private readonly Security $security)
     {
         $session = new Session();
 
-        $this->security = $security;
-
-        $user = $this->getUser();
-
-        if (!is_null($user))
+        if (!is_null($security->getUser()))
         {
-            foreach ($user->getUserManagers() AS $manager)
+            foreach ($security->getUser()->getManagers() AS $manager)
             {
                 $this->managers[] = $manager;
 
                 if (!$session->has('Id') && !$session->has('Cluster'))
                 {
-                    $this->setListAccess($manager->getClubManagerClub());
+                    $this->setListAccess($manager->getClubManagerClub()->getClubId());
                 }
             }
 
-            if (!is_null($user->getUserMember()?->getMemberManagers()))
+            if (!is_null($security->getUser()->getMember()?->getMemberClubManagers()))
             {
-                foreach ($user->getUserMember()->getMemberManagers() AS $manager)
+                foreach ($security->getUser()->getMember()->getMemberClubManagers() AS $manager)
                 {
                     $this->managers[] = $manager;
 
                     if (!$session->has('Id') && !$session->has('Cluster'))
                     {
-                        $this->setListAccess($manager->getClubManagerClub());
+                        $this->setListAccess($manager->getClubManagerClub()->getClubId());
                     }
                 }
             }
 
-            if (!is_null($user->getUserMember()?->getMemberTeachers()))
+            if (!is_null($security->getUser()->getMember()?->getMemberClubTeachers()))
             {
-                foreach ($user->getUserMember()->getMemberTeachers() AS $teacher)
+                foreach ($security->getUser()->getMember()->getMemberClubTeachers() AS $teacher)
                 {
                     $this->teachers[] = $teacher;
 
                     if (!$session->has('Id') && !$session->has('Cluster'))
                     {
-                        $this->setListAccess($teacher->getClubTeacher());
+                        $this->setListAccess($teacher->getClubTeacherClub()->getClubId());
                     }
                 }
             }
 
-            foreach ($user->getUserClusters() AS $cluster)
+            foreach ($security->getUser()->getClusters() AS $cluster)
             {
                 if ($cluster->getClusterMemberActive())
                 {
@@ -98,14 +92,14 @@ class Access
 
                     if (!$session->has('Id') && !$session->has('Club'))
                     {
-                        $this->setListAccess(null, $cluster);
+                        $this->setListAccess($cluster->getClusterMemberCluster()->getClusterId());
                     }
                 }
             }
 
-            if (!is_null($user->getUserMember()?->getMemberClusters()))
+            if (!is_null($security->getUser()->getMember()?->getMemberClusterMembers()))
             {
-                foreach ($user->getUserMember()->getMemberClusters() AS $cluster)
+                foreach ($security->getUser()->getMember()->getMemberClusterMembers() AS $cluster)
                 {
                     if ($cluster->getClusterMemberActive())
                     {
@@ -113,7 +107,7 @@ class Access
 
                         if (!$session->has('Id') && !$session->has('Club'))
                         {
-                            $this->setListAccess(null, $cluster);
+                            $this->setListAccess($cluster->getClusterMemberCluster()->getClusterId());
                         }
                     }
                 }
@@ -121,14 +115,14 @@ class Access
 
             if ($session->has('Id') && $session->has('Club'))
             {
-                $this->setListAccess($session->get('Club'));
+                $this->setListAccess($session->get('Club')->getClubId());
             }
             elseif ($session->has('Id') && $session->has('Cluster'))
             {
-                $this->setListAccess(null, $session->get('Cluster'));
+                $this->setListAccess($session->get('Id'));
             }
 
-            if (!$session->has('Id') && !is_null($user->getUserMember()))
+            if (!$session->has('Id') && !is_null($security->getUser()->getMember()))
             {
                 $this->setMemberAccess();
             }
@@ -136,11 +130,19 @@ class Access
     }
 
     /**
-     * @return UserInterface|null
+     * @return bool
      */
-    public function getUser(): ?UserInterface
+    public function isWebmaster(): bool
     {
-        return $this->security->getUser();
+        foreach ($this->clusters as $cluster)
+        {
+            if ($cluster->getClusterMemberCluster()->getClusterId() == 12)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -150,13 +152,13 @@ class Access
     {
         foreach ($this->clusters as $cluster)
         {
-            if (($cluster->getCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 1))
+            if (($cluster->getClusterMemberCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 1))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -166,13 +168,13 @@ class Access
     {
         foreach ($this->clusters as $cluster)
         {
-            if (($cluster->getCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 3))
+            if (($cluster->getClusterMemberCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 3))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -182,13 +184,13 @@ class Access
     {
         foreach ($this->clusters as $cluster)
         {
-            if (($cluster->getCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 4))
+            if (($cluster->getClusterMemberCluster()->getClusterId() == 3) && ($cluster->getClusterMemberTitle() == 4))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -198,13 +200,13 @@ class Access
     {
         foreach ($this->clusters as $cluster)
         {
-            if (($cluster->getCluster()->getClusterId() == 1) && ($cluster->getClusterMemberTitle() == 1))
+            if (($cluster->getClusterMembercluster()->getClusterId() == 1) && ($cluster->getClusterMemberTitle() == 1))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -214,13 +216,13 @@ class Access
     {
         foreach ($this->clusters as $cluster)
         {
-            if (($cluster->getCluster()->getClusterId() == 1) && ($cluster->getClusterMemberTitle() == 10))
+            if (($cluster->getClusterMemberCluster()->getClusterId() == 1) && ($cluster->getClusterMemberTitle() == 10))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -230,13 +232,13 @@ class Access
     {
         foreach ($this->clusters as $cluster)
         {
-            if (($cluster->getCluster()->getClusterId() == 4) && ($cluster->getClusterMemberTitle() == 10))
+            if (($cluster->getClusterMemberCluster()->getClusterId() == 4) && ($cluster->getClusterMemberTitle() == 10))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -258,29 +260,7 @@ class Access
             }
         }
 
-        return false;
-    }
-
-    /**
-     * @param Club|null $club
-     * @return bool
-     */
-    public function isTeacher(?Club $club = null): bool
-    {
-        if (is_null($club) && sizeof($this->teachers) > 0)
-        {
-            return true;
-        }
-
-        foreach ($this->teachers as $teacher)
-        {
-            if ($teacher->getClubTeacher()->getClubId() === $club->getClubId())
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -298,14 +278,36 @@ class Access
                     return true;
                 }
 
-                if ($teacher->getClubTeacher()->getClubId() === $club->getClubId())
+                if ($teacher->getClubTeacherClub()->getClubId() === $club->getClubId())
                 {
                     return true;
                 }
             }
         }
 
-        return false;
+        return $this->isWebmaster();
+    }
+
+    /**
+     * @param Club|null $club
+     * @return bool
+     */
+    public function isTeacher(?Club $club = null): bool
+    {
+        if (is_null($club) && sizeof($this->teachers) > 0)
+        {
+            return true;
+        }
+
+        foreach ($this->teachers as $teacher)
+        {
+            if ($teacher->getClubTeacherClub()->getClubId() === $club->getClubId())
+            {
+                return true;
+            }
+        }
+
+        return $this->isWebmaster();
     }
 
     /**
@@ -316,13 +318,13 @@ class Access
     {
         foreach ($this->teachers as $teacher)
         {
-            if (($teacher->getClubTeacher()->getClubId() === $club->getClubId()) && ($teacher->getClubTeacherType() != 2))
+            if (($teacher->getClubTeacherClub()->getClubId() === $club->getClubId()) && ($teacher->getClubTeacherType() != 2))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -333,13 +335,13 @@ class Access
     {
         foreach ($this->teachers as $teacher)
         {
-            if (($teacher->getClubTeacher()->getClubId() === $club->getClubId()) && ($teacher->getClubTeacherType() != 1))
+            if (($teacher->getClubTeacherClub()->getClubId() === $club->getClubId()) && ($teacher->getClubTeacherType() != 1))
             {
                 return true;
             }
         }
 
-        return false;
+        return $this->isWebmaster();
     }
 
     /**
@@ -356,17 +358,32 @@ class Access
 
         foreach ($this->teachers as $teacher)
         {
-            $list[$teacher->getClubTeacher()->getClubId()] = ucwords($teacher->getClubTeacher()->getClubName());
+            $list[$teacher->getClubTeacherClub()->getClubId()] = ucwords($teacher->getClubTeacherClub()->getClubName());
         }
 
-        foreach ($this->clusters as $cluster)
+        if ($this->isWebmaster())
         {
-            if (!$cluster->getCluster()->getClusterGiveAccess())
+            foreach ($this->doctrine->getRepository(Cluster::class)->findAll() as $cluster)
             {
-                continue;
-            }
+                if (!$cluster->getClusterGiveAccess())
+                {
+                    continue;
+                }
 
-            $list[$cluster->getCluster()->getClusterId()] = $cluster->getCluster()->getClusterName();
+                $list[$cluster->getClusterId()] = $cluster->getClusterName();
+            }
+        }
+        else
+        {
+            foreach ($this->clusters as $cluster)
+            {
+                if (!$cluster->getClusterMembercluster()->getClusterGiveAccess())
+                {
+                    continue;
+                }
+
+                $list[$cluster->getClusterMemberCluster()->getClusterId()] = $cluster->getClusterMemberCLuster()->getClusterName();
+            }
         }
 
         asort($list);
@@ -375,12 +392,42 @@ class Access
     }
 
     /**
-     * @param Club|null $club
-     * @param ClusterMember|null $cluster
+     * @param int $id
+     *
      * @return bool
      */
-    public function setListAccess(?Club $club = null, ?ClusterMember $cluster = null): bool
+    public function setListAccess(int $id): bool
     {
+        $club    = null;
+        $cluster = null;
+
+        if ($id < 1000)
+        {
+            if ($this->isWebmaster())
+            {
+                $cluster = $this->doctrine->getRepository(ClusterMember::class)->findOneBy(array('clusterMemberCluster' => 12, 'clusterMember' => $this->security->getUser()?->getMember()->getMemberId()));
+
+                !is_null($cluster) ?: $cluster = $this->doctrine->getRepository(ClusterMember::class)->findOneBy(array('cluster' => 12, 'clusterMemberUser' => $this->security->getUser()->getId()));
+            }
+            else
+            {
+                $clusters = $this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => $id, 'clusterMemberUser' => $this->security->getUser()->getId()));
+                $clusters = array_merge($clusters, $this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => $id, 'clusterMember' => $this->security->getUser()->getMember()?->getMemberId())));
+
+                foreach ($clusters as $clusterMember)
+                {
+                    if ($clusterMember->getClusterMemberActive())
+                    {
+                        $cluster = $clusterMember;
+                    }
+                }
+            }
+        }
+        else
+        {
+            $club = $this->doctrine->getRepository(Club::class)->findOneBy(array('clubId' => $id));
+        }
+
         $session = new Session();
 
         $list = $this->getAccessList();
@@ -396,14 +443,14 @@ class Access
 
             return true;
         }
-        elseif (!is_null($cluster) && isset($list[$cluster->getCluster()->getClusterId()]))
+        elseif (!is_null($cluster) && isset($list[$id]))
         {
-            $session->set('Id', $cluster->getCluster()->getClusterId());
+            $session->set('Id', $id);
             $session->set('Cluster', $cluster);
 
             $session->remove('Club');
 
-            $this->setClusterAccess($cluster);
+            $this->setClusterAccess($id);
 
             return true;
         }
@@ -433,10 +480,10 @@ class Access
      */
     public function setClubAccess(Club $club): bool
     {
-        $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-LessonIndex', 'Club-LessonOld', 'Club-MemberDetail', 'Club-Menu', 'Club-SecretariatOld', 'Club-SubscriptionEdit', 'Club-SubscriptionList', 'Club-TrainingAdd', 'Club-TrainingOld');
+        $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-LessonIndex', 'Club-MemberDetail', 'Club-Menu', 'Club-SubscriptionEdit', 'Club-SubscriptionList', 'Club-TrainingAdd', 'Club-TrainingOld');
         $grade    = array('Grade-CandidatesAwaiting', 'Grade-CandidatesRejected', 'Grade-Criteria', 'Grade-Index', 'Grade-List', 'Grade-Menu', 'Grade-Search', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
         $mailing  = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
-        $member   = array('Member-EmailTab', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeTab', 'Member-Index', 'Member-Menu', 'Member-TitleTab', 'Member-TrainingTab');
+        $member   = array('Member-EmailTab', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeTab', 'Member-Index', 'Member-LicenceTab', 'Member-Menu', 'Member-TitleTab', 'Member-TrainingTab');
         $search   = array('Search-Member');
         $training = array('Training-AttendancesDetails', 'Training-AttendancesDetailsRestricted', 'Training-Index', 'Training-Menu');
 
@@ -445,7 +492,7 @@ class Access
             $dojo     = array_merge($dojo, array('Club-AdultTab', 'Club-AttendanceAdd', 'Club-AttendanceDelete', 'Club-AttendanceTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClassAdd', 'Club-ClassEdit', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-FormDownload', 'Club-FormRenew', 'Club-ManagementTab', 'Club-ManagerEdit', 'Club-PhotoEdit', 'Club-SecretariatTab', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-WebsiteEdit'));
             $grade    = array_merge($grade, array('Grade-PaymentView'));
             $mailing  = array_merge($mailing, array('Mailing-ClubAdult', 'Mailing-ClubChild', 'Mailing-OtherClubs'));
-            $member   = array_merge($member, array('Member-LicenceFormPrint', 'Member-LicenceStampPrint', 'Member-LicenceTab', 'Member-PersonalEdit', 'Member-PersonalTab'));
+            $member   = array_merge($member, array('Member-LicenceFormPrint', 'Member-LicenceStampPrint', 'Member-PersonalEdit', 'Member-PersonalTab'));
             $search   = array_merge($search, array());
             $training = array_merge($training, array());
         }
@@ -486,12 +533,12 @@ class Access
     }
 
     /**
-     * @param ClusterMember $cluster
+     * @param int $cluster
      * @return bool
      */
-    public function setClusterAccess(ClusterMember $cluster): bool
+    public function setClusterAccess(int $cluster): bool
     {
-        if ($cluster->getCluster()->getClusterId() == 1)
+        if ($cluster == 1)
         {
             $admin    = array('Admin-List', 'Admin-Menu');
             $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-MemberDetail', 'Club-ListOpen', 'Club-Menu');
@@ -504,30 +551,35 @@ class Access
 
             if ($this->isCTPresident())
             {
-                $search = array_merge($search, array('Search-ActualMember'));
+                $admin   = array_merge($admin, array('Admin-Mailing'));
+                $mailing = array_merge($mailing, array('Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Teacher'));
+                $search  = array_merge($search, array('Search-ActualMember'));
             }
-            elseif ($this->isCTSecretary())
+
+            if ($this->isCTSecretary())
             {
-                $grade  = array_merge($grade, array('Grade-AikikaiList', 'Grade-Assignment', 'Grade-CandidateEmail', 'Grade-CandidateForms', 'Grade-CandidateList', 'Grade-CandidateValidate', 'Grade-CandidatesRejectedAction', 'Grade-GradeValidate', 'Grade-PaymentView', 'Grade-Publication', 'Grade-Search', 'Grade-SessionAdd', 'Grade-SessionEdit', 'Grade-ValidatedAction'));
-                $member = array_merge($member, array('Member-AikikaiIdEdit', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeDanEdit', 'Member-ListGradeDan', 'Member-ListGradeKyu', 'Member-TitleAdd', 'Member-TitleEdit'));
-                $search = array_merge($search, array('Search-ActualMember'));
+                $admin   = array_merge($admin, array('Admin-Mailing'));
+                $grade   = array_merge($grade, array('Grade-AikikaiList', 'Grade-Assignment', 'Grade-CandidateEmail', 'Grade-CandidateForms', 'Grade-CandidateList', 'Grade-CandidateValidate', 'Grade-CandidatesRejectedAction', 'Grade-GradeValidate', 'Grade-PaymentView', 'Grade-Publication', 'Grade-Search', 'Grade-SessionAdd', 'Grade-SessionEdit', 'Grade-ValidatedAction'));
+                $mailing = array_merge($mailing, array('Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Teacher'));
+                $member  = array_merge($member, array('Member-AikikaiIdEdit', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeDanEdit', 'Member-ListGradeDan', 'Member-ListGradeKyu', 'Member-TitleAdd', 'Member-TitleEdit'));
+                $search  = array_merge($search, array('Search-ActualMember'));
             }
 
             $this->access = array_merge($admin, $dojo, $grade, $list, $mailing, $member, $search, $training);
         }
-        elseif ($cluster->getCluster()->getClusterId() == 2)
+        elseif ($cluster == 2)
         {
-            $admin    = array('Admin-List', 'Admin-Menu');
+            $admin    = array('Admin-List', 'Admin-Mailing', 'Admin-Menu');
             $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-ListOpen', 'Club-MemberDetail', 'Club-Menu');
             $list     = array('List-Various');
-            $mailing  = array('Mailing-ClubManager', 'Mailing-ClubTeacher');
+            $mailing  = array('Mailing-ClubManager', 'Mailing-ClubTeacher', 'Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Teacher');
             $member   = array('Member-GradeTab', 'Member-Index', 'Member-Menu', 'Member-EmailTab', 'Member-TitleTab', 'Member-TrainingTab');
             $training = array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-AttendanceDetailsRestricted', 'Training-Edit', 'Training-Index', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit');
             $search   = array('Search-Child', 'Search-Member');
 
             $this->access = array_merge($admin, $dojo, $list, $mailing, $member, $search, $training);
         }
-        elseif ($cluster->getCluster()->getClusterId() == 3)
+        elseif ($cluster == 3)
         {
             $admin    = array('Admin-List', 'Admin-Menu');
             $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-ListOpen', 'Club-MemberDetail', 'Club-Menu');
@@ -542,13 +594,15 @@ class Access
             if ($this->isCAPresident())
             {
                 $admin    = array_merge($admin, array());
+                $list     = array_merge($list, array('List-Licence'));
                 $mailing  = array_merge($mailing, array('Mailing-CA', 'Mailing-CT', 'Mailing-CJ', 'Mailing-CP', 'Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Menu', 'Mailing-Preview', 'Mailing-Teacher'));
-                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-Edit', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
+                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-DiscountAdd', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
             }
-            elseif ($this->isCASecretary())
+
+            if ($this->isCASecretary())
             {
-                $admin    = array_merge($admin, array('Admin-Cluster', 'Admin-Login', 'Admin-Mailing'));
-                $dojo     = array_merge($dojo, array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClubAdd', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-FormDownload', 'Club-FormRenew', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-ListClose', 'Club-ManagementTab', 'Club-ManagerAdd', 'Club-ManagerEdit', 'Club-MemberAdd', 'Club-PaymentAdd', 'Club-PhotoEdit', 'Club-PrintStamp', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-SecretariatTab', 'Club-WebsiteEdit'));
+                $admin    = array_merge($admin, array('Admin-Cluster', 'Admin-Login', 'Admin-Mailing', 'Admin-PaymentAdd'));
+                $dojo     = array_merge($dojo, array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClubAdd', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-FormDownload', 'Club-FormRenew', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-ListClose', 'Club-ManagementTab', 'Club-ManagerAdd', 'Club-ManagerEdit', 'Club-MemberAdd', 'Club-PhotoEdit', 'Club-PrintStamp', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-SecretariatTab', 'Club-WebsiteEdit'));
                 $grade    = array_merge($grade, array('Grade-AikikaiList', 'Grade-Assignment', 'Grade-CandidateEmail', 'Grade-CandidateForms', 'Grade-CandidateList', 'Grade-CandidatesAwaiting', 'Grade-CandidatesRejected', 'Grade-List', 'Grade-Menu', 'Grade-PaymentEdit', 'Grade-PaymentView', 'Grade-Search', 'Grade-SessionAdd', 'Grade-SessionEdit', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess'));
                 $list     = array_merge($list, array('List-Licence'));
                 $mailing  = array_merge($mailing, array('Mailing-CA', 'Mailing-CJ', 'Mailing-CP', 'Mailing-CT', 'Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Menu', 'Mailing-Preview', 'Mailing-Teacher'));
@@ -556,14 +610,17 @@ class Access
                 $search   = array_merge($search, array('Search-FullAccess'));
                 $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
             }
-            elseif ($this->isCATreasurer())
+
+            if ($this->isCATreasurer())
             {
-                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
+                $admin    = array_merge($admin, array('Admin-PaymentAdd'));
+                $list     = array_merge($list, array('List-Licence'));
+                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-DiscountAdd', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
             }
 
             $this->access = array_merge($admin, $dojo, $grade, $list, $mailing, $member, $news, $search, $training);
         }
-        elseif ($cluster->getCluster()->getClusterId() == 4)
+        elseif ($cluster == 4)
         {
             $admin     = array('Admin-List', 'Admin-Menu');
             $dojo      = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-ListOpen', 'Club-MemberDetail', 'Club-Menu');
@@ -574,15 +631,15 @@ class Access
             if ($this->isCPSecretary())
             {
                 $admin    = array_merge($admin, array('Admin-Mailing'));
-                $mailing  = array_merge($mailing, array('Mailing-CPAnimateur'));
+                $mailing  = array_merge($mailing, array('Mailing-CPAnimateur', 'Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Teacher'));
             }
 
             $this->access = array_merge($admin, $dojo, $formation, $list, $mailing);
         }
-        elseif ($cluster->getCluster()->getClusterId() == 8)
+        elseif ($cluster == 8)
         {
-            $admin     = array('Admin-Cluster', 'Admin-List', 'Admin-Login', 'Admin-Mailing', 'Admin-Menu');
-            $dojo      = array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClassAdd', 'Club-ClassEdit', 'Club-ClubAdd', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-DojoTab', 'Club-EmailTab', 'Club-FormDownload', 'Club-FormRenew', 'Club-HistoryEdit', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-ListClose', 'Club-ListOpen', 'Club-ManagementTab', 'Club-ManagerAdd', 'Club-ManagerEdit', 'Club-MemberAdd', 'Club-MemberDetail', 'Club-Menu', 'Club-PaymentAdd', 'Club-PhotoEdit', 'Club-PrintStamp', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-SecretariatTab', 'Club-WebsiteEdit');
+            $admin     = array('Admin-Cluster', 'Admin-List', 'Admin-Login', 'Admin-Mailing', 'Admin-Menu', 'Admin-PaymentAdd');
+            $dojo      = array('Club-AdultTab', 'Club-AssociationEdit', 'Club-ChildTab', 'Club-ClassAdd', 'Club-ClassEdit', 'Club-ClubAdd', 'Club-CommiteeEdit', 'Club-DojoAdd', 'Club-DojoEdit', 'Club-DojoTab', 'Club-EmailTab', 'Club-FormDownload', 'Club-FormRenew', 'Club-HistoryEdit', 'Club-Index', 'Club-LessonAdd', 'Club-LessonEdit', 'Club-ListClose', 'Club-ListOpen', 'Club-ManagementTab', 'Club-ManagerAdd', 'Club-ManagerEdit', 'Club-MemberAdd', 'Club-MemberDetail', 'Club-Menu', 'Club-PhotoEdit', 'Club-PrintStamp', 'Club-SocialEdit', 'Club-TeacherAdd', 'Club-TeacherEdit', 'Club-SecretariatTab', 'Club-WebsiteEdit');
             $formation = array('Formation-Menu', 'Formation-SessionAdd', 'Formation-SessionList', 'Formation-SessionManagement');
             $grade     = array('Grade-AikikaiList', 'Grade-Assignment', 'Grade-CandidateEmail', 'Grade-CandidateForms', 'Grade-CandidateList', 'Grade-CandidatesAwaiting', 'Grade-CandidatesRejected', 'Grade-Index', 'Grade-List', 'Grade-Menu', 'Grade-PaymentEdit', 'Grade-PaymentView', 'Grade-Search', 'Grade-SessionAdd', 'Grade-SessionEdit', 'Grade-ValidatedAwaiting', 'Grade-ValidatedFail', 'Grade-ValidatedNoShow', 'Grade-ValidatedSuccess');
             $list      = array('List-Licence', 'List-Various');
@@ -594,7 +651,7 @@ class Access
 
             $this->access = array_merge($admin, $dojo, $formation, $grade, $list, $mailing, $member, $news, $search, $training);
         }
-        elseif ($cluster->getCluster()->getClusterId() == 10)
+        elseif ($cluster == 10)
         {
             $admin    = array('Admin-List', 'Admin-Menu');
             $dojo     = array('Club-DojoTab', 'Club-EmailTab', 'Club-Index', 'Club-MemberDetail', 'Club-Menu');
@@ -607,7 +664,7 @@ class Access
 
             $this->access = array_merge($admin, $dojo, $grade, $list, $mailing, $member, $search, $training);
         }
-        elseif ($cluster->getCluster()->getClusterId() == 11)
+        elseif ($cluster == 11)
         {
             $search   = array('Search-ActualMember');
             $training = array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-Edit', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit');

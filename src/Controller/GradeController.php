@@ -53,7 +53,7 @@ class GradeController extends AbstractController
             die();
         }
 
-        $data['Sessions'] = $doctrine->getRepository(GradeSession::class)->findBy(array(), array('grade_session_date' => 'DESC'));
+        $data['Sessions'] = $doctrine->getRepository(GradeSession::class)->findBy(array(), array('gradeSessionDate' => 'DESC'));
 
         return $this->render('Grade/list.html.twig', array('data' => $data));
     }
@@ -158,7 +158,7 @@ class GradeController extends AbstractController
                     continue;
                 }
 
-                if (($candidate->getGradeSessionCandidateRank > 14 ) && ($gradeSession->getGradeSessionType() == 2))
+                if (($candidate->getGradeSessionCandidateRank() > 14 ) && ($gradeSession->getGradeSessionType() == 2))
                 {
                     continue;
                 }
@@ -262,7 +262,7 @@ class GradeController extends AbstractController
             return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
         }
 
-        if (!is_null($doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('grade_session_candidate_exam' => $gradeSession->getGradeSessionId(), 'grade_session_candidate_member' => $member->getMemberId()))))
+        if (!is_null($doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('gradeSessionCandidateExam' => $gradeSession->getGradeSessionId(), 'gradeSessionCandidateMember' => $member->getMemberId()))))
         {
             $this->addFlash('warning', 'Ce membre est déjà inscrit à cette session');
 
@@ -315,7 +315,7 @@ class GradeController extends AbstractController
             return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
         }
 
-        $candidate = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('grade_session_candidate_exam' => $gradeSession->getGradeSessionId(), 'grade_session_candidate_member' => $member->getMemberId()));
+        $candidate = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('gradeSessionCandidateExam' => $gradeSession->getGradeSessionId(), 'gradeSessionCandidateMember' => $member->getMemberId()));
 
         $candidate->setGradeSessionCandidatePaymentDate(new DateTime());
 
@@ -356,7 +356,7 @@ class GradeController extends AbstractController
 
         $candidate['Member'] = $member;
 
-        $candidate['Session'] = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('grade_session_candidate_exam' => $gradeSession->getGradeSessionId(), 'grade_session_candidate_member' => $member->getMemberId()));
+        $candidate['Session'] = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('gradeSessionCandidateExam' => $gradeSession->getGradeSessionId(), 'gradeSessionCandidateMember' => $member->getMemberId()));
 
         $candidate['New'] = false;
 
@@ -377,11 +377,11 @@ class GradeController extends AbstractController
 
         if ($gradeSession->getGradeSessionType() == 1)
         {
-            $candidate['OldSession'] = $doctrine->getRepository(GradeSessionCandidate::class)->findBy(array('grade_session_candidate_member' => $member->getMemberId()), array('grade_session_candidate_date' => 'DESC'));
+            $candidate['OldSession'] = $doctrine->getRepository(GradeSessionCandidate::class)->findBy(array('gradeSessionCandidateMember' => $member->getMemberId()), array('gradeSessionCandidateDate' => 'DESC'));
         }
         else
         {
-            $candidate['OldSession'] = $member->getMemberLastExam();
+            $candidate['OldSession'] = $member->getMemberLastGradeExam();
         }
 
         if ($member->getMemberLastGrade()->getGradeRank() == 6)
@@ -547,7 +547,7 @@ class GradeController extends AbstractController
 
         foreach ($candidates as $candidate)
         {
-            $candidate['Sessions'] = $doctrine->getRepository(GradeSessionCandidate::class)->findBy(array('grade_session_candidate_member' => $candidate['Id']), array('grade_session_candidate_date' => 'DESC'));
+            $candidate['Sessions'] = $doctrine->getRepository(GradeSessionCandidate::class)->findBy(array('gradeSessionCandidateMember' => $candidate['Id']), array('gradeSessionCandidateDate' => 'DESC'));
 
             if ($candidate['ActualGrade'] == 6)
             {
@@ -571,7 +571,7 @@ class GradeController extends AbstractController
             $members[] = $candidate;
         }
 
-        $user = $this->getUser()->getUserMember()->getMemberFirstname() . ' ' . $this->getUser()->getUserMember()->getMemberName();
+        $user = $this->getUser()->getMember()->getMemberFirstname() . ' ' . $this->getUser()->getMember()->getMemberName();
 
         $notationForm = $this->renderView('Grade/Print/notationForm.html.twig', array('members' => $members, 'gradeSession' => $gradeSession, 'user' => $user));
 
@@ -619,7 +619,7 @@ class GradeController extends AbstractController
             $entry['Licence']          = $member->getMemberId();
             $entry['Firstname']        = $member->getMemberFirstname();
             $entry['Name']             = $member->getMemberName();
-            $entry['Sex']              = $member->getMemberSexName();
+            $entry['Sex']              = $member->getMemberSex(true);
             $entry['StartPractice']    = $member->getMemberStartPractice()?->format('d/m/Y');
             $entry['Grade']            = $listData->getGrade($candidate->getGradeSessionCandidateRank());
             $entry['Birthday']         = $member->getMemberBirthday()?->format('d/m/Y');
@@ -661,7 +661,7 @@ class GradeController extends AbstractController
             return $this->redirectToRoute('grade-index', array('gradeSession' => $gradeSession->getGradeSessionId()));
         }
 
-        $candidate = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('grade_session_candidate_exam' => $gradeSession->getGradeSessionId(), 'grade_session_candidate_member' => $member->getMemberId()));
+        $candidate = $doctrine->getRepository(GradeSessionCandidate::class)->findOneBy(array('gradeSessionCandidateExam' => $gradeSession->getGradeSessionId(), 'gradeSessionCandidateMember' => $member->getMemberId()));
 
         if ($gradeSession->getGradeSessionType() == 1)
         {
@@ -730,7 +730,7 @@ class GradeController extends AbstractController
 
                 if (($candidate->getGradeSessionCandidateRank() % 2 == 0) && ($candidate->getGradeSessionCandidateResult() == 1))
                 {
-                    $grade = $doctrine->getRepository(Grade::class)->findOneBy(array('grade_member' => $candidate->getCandidateMemberId(), 'grade_rank' => $candidate->getGradeSessionCandidateRank() - 1));
+                    $grade = $doctrine->getRepository(Grade::class)->findOneBy(array('gradeMember' => $candidate->getCandidateMemberId(), 'gradeRank' => $candidate->getGradeSessionCandidateRank() - 1));
 
                     if (is_null($grade))
                     {
@@ -772,7 +772,7 @@ class GradeController extends AbstractController
                 }
                 else
                 {
-                    $grade = $doctrine->getRepository(Grade::class)->findOneBy(array('grade_member' => $candidate->getCandidateMemberId(), 'grade_rank' => $candidate->getGradeSessionCandidateRank()));
+                    $grade = $doctrine->getRepository(Grade::class)->findOneBy(array('gradeMember' => $candidate->getCandidateMemberId(), 'gradeRank' => $candidate->getGradeSessionCandidateRank()));
 
                     if (is_null($grade->getGradeSession()) || $grade->getGradeSession() === $candidate->getGradeSessionCandidateExam())
                     {

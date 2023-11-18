@@ -45,7 +45,7 @@
                 <td>Localité : {{ data.Member.getMemberCity|title }}</td>
             </tr>
             <tr>
-                <td>Pays : {{ listData.countryName(data.Member.getMemberCountry) }}</td>
+                <td>Pays : {{ data.Member.getMemberCountry(true) }}</td>
                 <td>Téléphone : {{ data.Member.getMemberPhone }}</td>
                 <td colspan="2">E-mail : {{ data.Member.getMemberEmail }}</td>
             </tr>

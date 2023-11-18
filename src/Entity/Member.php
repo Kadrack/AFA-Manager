@@ -4,13 +4,16 @@ namespace App\Entity;
 
 use App\Repository\MemberRepository;
 
-use App\Service\ListData;
 use DateTime;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Doctrine\ORM\Mapping as ORM;
+
+use Symfony\Component\Intl\Countries;
+
+use Symfony\Component\Mime\Address;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -26,211 +29,211 @@ class Member
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $member_id;
+    private int $memberId;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    private string $member_firstname;
+    private string $memberFirstname;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    private string $member_name;
+    private string $memberName;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $member_photo;
+    private string|null $memberPhoto = null;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
     #[Assert\NotBlank]
-    private int $member_sex;
+    private int $memberSex;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
-    private string $member_address;
-
-    /**
-     * @var string|null
-     */
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\NotBlank]
-    private ?string $member_zip;
+    private string $memberAddress;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    private string $member_city;
+    private string $memberZip;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    private string $member_country;
+    private string $memberCity;
+
+    /**
+     * @var string
+     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    private string $memberCountry;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Email]
-    private ?string $member_email;
+    private string|null $memberEmail = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $member_phone;
+    private string|null $memberPhone = null;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'date')]
-    private DateTime $member_birthday;
+    private DateTime $memberBirthday;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'date')]
-    private DateTime $member_start_practice;
+    private DateTime $memberStartPractice;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $member_aikikai_id;
+    private string|null $memberAikikaiId = null;
 
     /**
-     * @var int|null
+     * @var int
      */
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $member_subscription_status = 1;
+    #[ORM\Column(type: 'integer', options: ['default' => 1])]
+    private int $memberSubscriptionStatus = 1;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_subscription_validity;
+    private DateTime|null $memberSubscriptionValidity;
 
     /**
-     * @var int|null
+     * @var int
      */
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $member_subscription_list = 1;
+    #[ORM\Column(type: 'integer', options: ['default' => 1])]
+    private int $memberSubscriptionList = 1;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $member_last_kagami = 0;
+    private int $memberLastKagami = 0;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'cluster_member', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $member_clusters;
+    #[ORM\OneToMany(mappedBy: 'clubLessonAttendanceMember', targetEntity: ClubLessonAttendance::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $memberClubLessonAttendances;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'grade_session_candidate_member', targetEntity: GradeSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['grade_session_candidate_rank' => 'DESC'])]
-    private ArrayCollection|Collection|null $member_exams;
+    #[ORM\OneToMany(mappedBy: 'clubManagerMember', targetEntity: ClubManager::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $memberClubManagers;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'formation_member', targetEntity: Formation::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['formation_date' => 'DESC'])]
-    private ArrayCollection|Collection|null $member_formations;
+    #[ORM\OneToMany(mappedBy: 'clubTeacherMember', targetEntity: ClubTeacher::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $memberClubTeachers;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'formation_session_candidate_member', targetEntity: FormationSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $member_candidate_formations;
+    #[ORM\OneToMany(mappedBy: 'clusterMember', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $memberClusterMembers;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'grade_member', targetEntity: Grade::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['grade_rank' => 'DESC', 'grade_session' => 'DESC'])]
-    private ArrayCollection|Collection|null $member_grades;
+    #[ORM\OneToMany(mappedBy: 'formationMember', targetEntity: Formation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['formationDate' => 'DESC'])]
+    private ArrayCollection|Collection|null $memberFormations;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'lesson_attendance_member', targetEntity: LessonAttendance::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $member_lesson_attendances;
+    #[ORM\OneToMany(mappedBy: 'formationSessionCandidateMember', targetEntity: FormationSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $memberFormationSessionCandidates;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'member_licence', targetEntity: MemberLicence::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['member_licence_id' => 'DESC'])]
-    private ArrayCollection|Collection|null $member_licences;
+    #[ORM\OneToMany(mappedBy: 'gradeMember', targetEntity: Grade::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['gradeRank' => 'DESC', 'gradeSession' => 'DESC'])]
+    private ArrayCollection|Collection|null $memberGrades;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'club_manager_member', targetEntity: ClubManager::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $member_managers;
+    #[ORM\OneToMany(mappedBy: 'gradeSessionCandidateMember', targetEntity: GradeSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['gradeSessionCandidateRank' => 'DESC'])]
+    private ArrayCollection|Collection|null $memberGradeSessionCandidates;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'club_teacher_member', targetEntity: ClubTeacher::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $member_teachers;
+    #[ORM\OneToMany(mappedBy: 'memberLicenceMember', targetEntity: MemberLicence::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['memberLicenceId' => 'DESC'])]
+    private ArrayCollection|Collection|null $memberLicences;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'title_member', targetEntity: Title::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['title_date' => 'DESC'])]
-    private ArrayCollection|Collection|null $member_titles;
+    #[ORM\OneToMany(mappedBy: 'titleMember', targetEntity: Title::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['titleDate' => 'DESC'])]
+    private ArrayCollection|Collection|null $memberTitles;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'training_attendance_member', targetEntity: TrainingAttendance::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $member_training_attendances;
+    #[ORM\OneToMany(mappedBy: 'trainingAttendanceMember', targetEntity: TrainingAttendance::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $memberTrainingAttendances;
 
     /**
      * @var User|null
      */
-    #[ORM\OneToOne(mappedBy: 'user_member', targetEntity: User::class, cascade: ['persist'], orphanRemoval: true)]
-    private User|null $member_user;
+    #[ORM\OneToOne(mappedBy: 'member', targetEntity: User::class, cascade: ['persist'], orphanRemoval: true)]
+    private User|null $memberUser;
 
     /**
      * Member constructor.
      */
     public function __construct()
     {
-        $this->member_candidate_formations = new ArrayCollection();
-        $this->member_clusters             = new ArrayCollection();
-        $this->member_exams                = new ArrayCollection();
-        $this->member_formations           = new ArrayCollection();
-        $this->member_grades               = new ArrayCollection();
-        $this->member_lesson_attendances   = new ArrayCollection();
-        $this->member_licences             = new ArrayCollection();
-        $this->member_managers             = new ArrayCollection();
-        $this->member_teachers             = new ArrayCollection();
-        $this->member_titles               = new ArrayCollection();
-        $this->member_training_attendances = new ArrayCollection();
+        $this->memberClubLessonAttendances      = new ArrayCollection();
+        $this->memberClubManagers               = new ArrayCollection();
+        $this->memberClubTeachers               = new ArrayCollection();
+        $this->memberClusterMembers             = new ArrayCollection();
+        $this->memberFormationSessionCandidates = new ArrayCollection();
+        $this->memberGrades                     = new ArrayCollection();
+        $this->memberGradeSessionCandidates     = new ArrayCollection();
+        $this->memberFormations                 = new ArrayCollection();
+        $this->memberLicences                   = new ArrayCollection();
+        $this->memberTitles                     = new ArrayCollection();
+        $this->memberTrainingAttendances        = new ArrayCollection();
     }
 
     /**
@@ -238,16 +241,17 @@ class Member
      */
     public function getMemberId(): int
     {
-        return $this->member_id;
+        return $this->memberId;
     }
 
     /**
-     * @param int $member_id
+     * @param int $set
+     *
      * @return $this
      */
-    public function setMemberId(int $member_id): self
+    public function setMemberId(int $set): self
     {
-        $this->member_id = $member_id;
+        $this->memberId = $set;
 
         return $this;
     }
@@ -257,16 +261,17 @@ class Member
      */
     public function getMemberFirstname(): string
     {
-        return ucwords(strtolower($this->member_firstname));
+        return ucwords(strtolower($this->memberFirstname));
     }
 
     /**
-     * @param string $member_firstname
+     * @param string $set
+     *
      * @return $this
      */
-    public function setMemberFirstname(string $member_firstname): self
+    public function setMemberFirstname(string $set): self
     {
-        $this->member_firstname = ucwords($member_firstname);
+        $this->memberFirstname = ucwords(strtolower($set));
 
         return $this;
     }
@@ -276,50 +281,88 @@ class Member
      */
     public function getMemberName(): string
     {
-        return ucwords(strtolower($this->member_name));
+        return ucwords(strtolower($this->memberName));
     }
 
     /**
-     * @param string $member_name
+     * @param string $set
+     *
      * @return $this
      */
-    public function setMemberName(string $member_name): self
+    public function setMemberName(string $set): self
     {
-        $this->member_name = ucwords($member_name);
+        $this->memberName = ucwords(strtolower($set));
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMemberFullName(): string
+    {
+        return ucwords(strtolower($this->memberFirstname)) . ' ' . ucwords(strtolower($this->memberName));
     }
 
     /**
      * @return string|null
      */
-    public function getMemberPhoto(): ?string
+    public function getMemberPhoto(): string|null
     {
-        return $this->member_photo;
+        return $this->memberPhoto;
     }
 
     /**
-     * @param string|null $member_photo
+     * @param string|null $set
+     *
      * @return $this
      */
-    public function setMemberPhoto(?string $member_photo): self
+    public function setMemberPhoto(string|null $set = null): self
     {
-        $this->member_photo = $member_photo;
+        $this->memberPhoto = $set;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @param bool $format
+     *
+     * @return int|string
      */
-    public function getMemberSex(): int
+    public function getMemberSex(bool $format = false): int|string
     {
-        return $this->member_sex;
+        return $format ? $this->getMemberSexText($this->memberSex) : $this->memberSex;
     }
 
-    public function setMemberSex(int $member_sex): self
+    /**
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getMemberSexText(int $id = 0): array|string
     {
-        $this->member_sex = $member_sex;
+        $keys = array('Masculin' => 1, 'Féminin' => 2, 'Non défini' => 3);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        elseif ($id > sizeof($keys))
+        {
+            return "Autre";
+        }
+
+        return array_search($id, $keys);
+    }
+
+    /**
+     * @param int $set
+     *
+     * @return $this
+     */
+    public function setMemberSex(int $set): self
+    {
+        $this->memberSex = $set;
 
         return $this;
     }
@@ -329,35 +372,37 @@ class Member
      */
     public function getMemberAddress(): string
     {
-        return $this->member_address;
+        return $this->memberAddress;
     }
 
     /**
-     * @param string $member_address
+     * @param string $set
+     *
      * @return $this
      */
-    public function setMemberAddress(string $member_address): self
+    public function setMemberAddress(string $set): self
     {
-        $this->member_address = $member_address;
+        $this->memberAddress = $set;
 
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getMemberZip(): ?string
+    public function getMemberZip(): string
     {
-        return $this->member_zip;
+        return $this->memberZip;
     }
 
     /**
-     * @param string $member_zip
+     * @param string $set
+     *
      * @return $this
      */
-    public function setMemberZip(string $member_zip): self
+    public function setMemberZip(string $set): self
     {
-        $this->member_zip = $member_zip;
+        $this->memberZip = $set;
 
         return $this;
     }
@@ -367,16 +412,17 @@ class Member
      */
     public function getMemberCity(): string
     {
-        return $this->member_city;
+        return ucwords(strtolower($this->memberCity));
     }
 
     /**
-     * @param string $member_city
+     * @param string $set
+     *
      * @return $this
      */
-    public function setMemberCity(string $member_city): self
+    public function setMemberCity(string $set): self
     {
-        $this->member_city = $member_city;
+        $this->memberCity = ucwords(strtolower($set));
 
         return $this;
     }
@@ -386,641 +432,83 @@ class Member
      */
     public function getMemberCountry(): string
     {
-        return $this->member_country;
+        return Countries::getName($this->memberCountry);
     }
 
     /**
-     * @param string $member_country
+     * @param string $set
+     *
      * @return $this
      */
-    public function setMemberCountry(string $member_country): self
+    public function setMemberCountry(string $set): self
     {
-        $this->member_country = $member_country;
+        $this->memberCountry = $set;
 
         return $this;
     }
 
     /**
+     * @param bool $format
+     *
+     * @return Address|string|null
+     */
+    public function getMemberEmail(bool $format = false): Address|string|null
+    {
+        if (is_null($this->memberEmail))
+        {
+            return $format ? 'Aucune' : null;
+        }
+
+        return $format ? new Address($this->memberEmail, $this->getMemberFirstname() . ' ' . $this->getMemberName()) : $this->memberEmail;
+    }
+
+    /**
+     * @param string|null $set
+     *
+     * @return $this
+     */
+    public function setMemberEmail(string|null $set = null): self
+    {
+        $this->memberEmail = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $format
+     *
      * @return string|null
      */
-    public function getMemberEmail(): ?string
+    public function getMemberPhone(bool $format = false): string|null
     {
-        return $this->member_email;
-    }
-
-    /**
-     * @param string|null $member_email
-     * @return $this
-     */
-    public function setMemberEmail(?string $member_email): self
-    {
-        $this->member_email = $member_email;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getMemberPhone(): ?string
-    {
-        return $this->member_phone;
-    }
-
-    /**
-     * @param string|null $member_phone
-     * @return $this
-     */
-    public function setMemberPhone(?string $member_phone): self
-    {
-        $this->member_phone = $member_phone;
-
-        return $this;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getMemberBirthday(): DateTime
-    {
-        return $this->member_birthday;
-    }
-
-    /**
-     * @param DateTime $member_birthday
-     * @return $this
-     */
-    public function setMemberBirthday(DateTime $member_birthday): self
-    {
-        $this->member_birthday = $member_birthday;
-
-        return $this;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getMemberStartPractice(): DateTime
-    {
-        return $this->member_start_practice;
-    }
-
-    /**
-     * @param DateTime $member_start_practice
-     * @return $this
-     */
-    public function setMemberStartPractice(DateTime $member_start_practice): self
-    {
-        $this->member_start_practice = $member_start_practice;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getMemberAikikaiId(): ?string
-    {
-        return $this->member_aikikai_id;
-    }
-
-    /**
-     * @param string|null $member_aikikai_id
-     * @return $this
-     */
-    public function setMemberAikikaiId(?string $member_aikikai_id): self
-    {
-        $this->member_aikikai_id = $member_aikikai_id;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMemberSubscriptionStatus(): int
-    {
-        return $this->member_subscription_status;
-    }
-
-    /**
-     * @param int|null $member_subscription_status
-     * @return $this
-     */
-    public function setMemberSubscriptionStatus(?int $member_subscription_status): self
-    {
-        $this->member_subscription_status = $member_subscription_status;
-
-        return $this;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getMemberSubscriptionValidity(): ?DateTime
-    {
-        return $this->member_subscription_validity;
-    }
-
-    /**
-     * @param DateTime|null $member_subscription_validity
-     * @return $this
-     */
-    public function setMemberSubscriptionValidity(?DateTime $member_subscription_validity): self
-    {
-        $this->member_subscription_validity = $member_subscription_validity;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMemberSubscriptionList(): int
-    {
-        return $this->member_subscription_list;
-    }
-
-    /**
-     * @param int|null $member_subscription_list
-     * @return $this
-     */
-    public function setMemberSubscriptionList(?int $member_subscription_list): self
-    {
-        $this->member_subscription_list = $member_subscription_list;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getMemberLastKagami(): bool
-    {
-        return $this->member_last_kagami;
-    }
-
-    /**
-     * @param bool $member_last_kagami
-     * @return $this
-     */
-    public function setMemberLastKagami(bool $member_last_kagami): self
-    {
-        $this->member_last_kagami = $member_last_kagami;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberCandidateFormations(): Collection
-    {
-        return $this->member_candidate_formations;
-    }
-
-    /**
-     * @param FormationSessionCandidate $formationSessionCandidate
-     * @return $this
-     */
-    public function addMemberCandidateFormations(FormationSessionCandidate $formationSessionCandidate): self
-    {
-        if (!$this->member_candidate_formations->contains($formationSessionCandidate)) {
-            $this->member_candidate_formations[] = $formationSessionCandidate;
-            $formationSessionCandidate->setFormationSessionCandidateMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param FormationSessionCandidate $formationSessionCandidate
-     * @return $this
-     */
-    public function removeMemberCandidateFormations(FormationSessionCandidate $formationSessionCandidate): self
-    {
-        if ($this->member_candidate_formations->contains($formationSessionCandidate)) {
-            $this->member_candidate_formations->removeElement($formationSessionCandidate);
-            // set the owning side to null (unless already changed)
-            if ($formationSessionCandidate->getFormationSessionCandidateMember() === $this) {
-                $formationSessionCandidate->setFormationSessionCandidateMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberClusters(): Collection
-    {
-        return $this->member_clusters;
-    }
-
-    /**
-     * @param ClusterMember $clusterMember
-     * @return $this
-     */
-    public function addMemberClusters(ClusterMember $clusterMember): self
-    {
-        if (!$this->member_clusters->contains($clusterMember)) {
-            $this->member_clusters[] = $clusterMember;
-            $clusterMember->setClusterMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ClusterMember $clusterMember
-     * @return $this
-     */
-    public function removeMemberClusters(ClusterMember $clusterMember): self
-    {
-        if ($this->member_clusters->contains($clusterMember)) {
-            $this->member_clusters->removeElement($clusterMember);
-            // set the owning side to null (unless already changed)
-            if ($clusterMember->getClusterMember() === $this) {
-                $clusterMember->setClusterMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberExams(): Collection
-    {
-        return $this->member_exams;
-    }
-
-    /**
-     * @param GradeSessionCandidate $gradeSessionCandidate
-     * @return $this
-     */
-    public function addMemberExams(GradeSessionCandidate $gradeSessionCandidate): self
-    {
-        if (!$this->member_exams->contains($gradeSessionCandidate)) {
-            $this->member_exams[] = $gradeSessionCandidate;
-            $gradeSessionCandidate->setGradeSessionCandidateMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param GradeSessionCandidate $gradeSessionCandidate
-     * @return $this
-     */
-    public function removeMemberExams(GradeSessionCandidate $gradeSessionCandidate): self
-    {
-        if ($this->member_exams->contains($gradeSessionCandidate)) {
-            $this->member_exams->removeElement($gradeSessionCandidate);
-            // set the owning side to null (unless already changed)
-            if ($gradeSessionCandidate->getGradeSessionCandidateMember() === $this) {
-                $gradeSessionCandidate->setGradeSessionCandidateMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberFormations(): Collection
-    {
-        return $this->member_formations;
-    }
-
-    /**
-     * @param Formation $formation
-     * @return $this
-     */
-    public function addMemberFormations(Formation $formation): self
-    {
-        if (!$this->member_formations->contains($formation)) {
-            $this->member_formations[] = $formation;
-            $formation->setFormationMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Formation $formation
-     * @return $this
-     */
-    public function removeMemberFormations(Formation $formation): self
-    {
-        if ($this->member_formations->contains($formation))
+        if (is_null($this->memberPhone))
         {
-            $this->member_formations->removeElement($formation);
+            return $format ? 'Aucun' : null;
         }
 
-        return $this;
+        return $this->memberPhone;
     }
 
     /**
-     * @return Collection
-     */
-    public function getMemberGrades(): Collection
-    {
-        return $this->member_grades;
-    }
-
-    /**
-     * @param Grade $grade
+     * @param string|null $set
+     *
      * @return $this
      */
-    public function addMemberGrades(Grade $grade): self
+    public function setMemberPhone(string|null $set = null): self
     {
-        if (!$this->member_grades->contains($grade)) {
-            $this->member_grades[] = $grade;
-            $grade->setGradeMember($this);
-        }
+        $this->memberPhone = $set;
 
         return $this;
     }
 
     /**
-     * @param Grade $grade
-     * @return $this
+     * @param bool $format
+     *
+     * @return DateTime|string
      */
-    public function removeMemberGrades(Grade $grade): self
+    public function getMemberBirthday(bool $format = false): DateTime|string
     {
-        if ($this->member_grades->contains($grade))
-        {
-            $this->member_grades->removeElement($grade);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberLessonAttendances(): Collection
-    {
-        return $this->member_lesson_attendances;
-    }
-
-    /**
-     * @param LessonAttendance $lesson_attendance
-     * @return $this
-     */
-    public function addMemberLessonAttendances(LessonAttendance $lesson_attendance): self
-    {
-        if (!$this->member_lesson_attendances->contains($lesson_attendance)) {
-            $this->member_lesson_attendances[] = $lesson_attendance;
-            $lesson_attendance->setLessonAttendanceMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param LessonAttendance $lesson_attendance
-     * @return $this
-     */
-    public function removeMemberLessonAttendances(LessonAttendance $lesson_attendance): self
-    {
-        if ($this->member_lesson_attendances->contains($lesson_attendance)) {
-            $this->member_lesson_attendances->removeElement($lesson_attendance);
-            // set the owning side to null (unless already changed)
-            if ($lesson_attendance->getLessonAttendanceMember() === $this) {
-                $lesson_attendance->setLessonAttendanceMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberLicences(): Collection
-    {
-        return $this->member_licences;
-    }
-
-    /**
-     * @param MemberLicence $memberLicence
-     * @return $this
-     */
-    public function addMemberLicences(MemberLicence $memberLicence): self
-    {
-        if (!$this->member_licences->contains($memberLicence)) {
-            $this->member_licences[] = $memberLicence;
-            $memberLicence->setMemberLicence($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param MemberLicence $memberLicence
-     * @return $this
-     */
-    public function removeMemberLicences(MemberLicence $memberLicence): self
-    {
-        if ($this->member_licences->contains($memberLicence))
-        {
-            $this->member_licences->removeElement($memberLicence);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberManagers(): Collection
-    {
-        return $this->member_managers;
-    }
-
-    /**
-     * @param ClubManager $clubManager
-     * @return $this
-     */
-    public function addMemberManagers(ClubManager $clubManager): self
-    {
-        if (!$this->member_managers->contains($clubManager)) {
-            $this->member_managers[] = $clubManager;
-            $clubManager->setClubManagerMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ClubManager $clubManager
-     * @return $this
-     */
-    public function removeMemberManagers(ClubManager $clubManager): self
-    {
-        if ($this->member_managers->contains($clubManager)) {
-            $this->member_managers->removeElement($clubManager);
-            // set the owning side to null (unless already changed)
-            if ($clubManager->getClubManagerMember() === $this) {
-                $clubManager->setClubManagerMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberTeachers(): Collection
-    {
-        return $this->member_teachers;
-    }
-
-    /**
-     * @param ClubTeacher $memberTeacher
-     * @return $this
-     */
-    public function addMemberTeachers(ClubTeacher $memberTeacher): self
-    {
-        if (!$this->member_teachers->contains($memberTeacher)) {
-            $this->member_teachers[] = $memberTeacher;
-            $memberTeacher->setClubTeacherMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ClubTeacher $memberTeacher
-     * @return $this
-     */
-    public function removeMemberTeachers(ClubTeacher $memberTeacher): self
-    {
-        if ($this->member_teachers->contains($memberTeacher)) {
-            $this->member_teachers->removeElement($memberTeacher);
-            // set the owning side to null (unless already changed)
-            if ($memberTeacher->getClubTeacherMember() === $this) {
-                $memberTeacher->setClubTeacherMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberTitles(): Collection
-    {
-        return $this->member_titles;
-    }
-
-    /**
-     * @param Title $title
-     * @return $this
-     */
-    public function addMemberTitles(Title $title): self
-    {
-        if (!$this->member_titles->contains($title)) {
-            $this->member_titles[] = $title;
-            $title->setTitleMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Title $title
-     * @return $this
-     */
-    public function removeMemberTitles(Title $title): self
-    {
-        if ($this->member_titles->contains($title))
-        {
-            $this->member_titles->removeElement($title);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getMemberTrainingAttendances(): Collection
-    {
-        return $this->member_training_attendances;
-    }
-
-    /**
-     * @param TrainingAttendance $trainingAttendance
-     * @return $this
-     */
-    public function addMemberTrainingAttendances(TrainingAttendance $trainingAttendance): self
-    {
-        if (!$this->member_training_attendances->contains($trainingAttendance)) {
-            $this->member_training_attendances[] = $trainingAttendance;
-            $trainingAttendance->setTrainingAttendanceMember($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param TrainingAttendance $trainingAttendance
-     * @return $this
-     */
-    public function removeMemberTrainingAttendances(TrainingAttendance $trainingAttendance): self
-    {
-        if ($this->member_training_attendances->contains($trainingAttendance)) {
-            $this->member_training_attendances->removeElement($trainingAttendance);
-            // set the owning side to null (unless already changed)
-            if ($trainingAttendance->getTrainingAttendanceMember() === $this) {
-                $trainingAttendance->setTrainingAttendanceMember(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return User|null
-     */
-    public function getMemberUser(): ?User
-    {
-        return $this->member_user;
-    }
-
-    /**
-     * @param User $user
-     * @return $this
-     */
-    public function setMemberUser(User $user): self
-    {
-        $this->member_user = $user;
-
-        $user->setUserMember($this);
-
-        return $this;
-    }
-
-    /**
-     * Custom function
-     */
-
-    /**
-     * @return string
-     */
-    public function getMemberSexName(): string
-    {
-        $listData = new ListData();
-
-        return $listData->getSex($this->getMemberSex());
+        return $format ? $this->memberBirthday->format('d/m/Y') : $this->memberBirthday;
     }
 
     /**
@@ -1037,19 +525,253 @@ class Member
     }
 
     /**
-     * @return Grade|null
+     * @param bool $format
+     *
+     * @return int
      */
-    public function getMemberAikikaiDate(): ?DateTime
+    public function getMemberAge(bool $format = false): int
     {
-        foreach ($this->member_grades as $grade)
+        $age = intval($this->memberBirthday->diff(new DateTime())->format('y'));
+
+        return $format ? $age . ' ans' : $age;
+    }
+
+    /**
+     * @param DateTime $set
+     *
+     * @return $this
+     */
+    public function setMemberBirthday(DateTime $set): self
+    {
+        $this->memberBirthday = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return DateTime|string
+     */
+    public function getMemberStartPractice(bool $format = false): DateTime|string
+    {
+        return $format ? $this->memberStartPractice->format('d/m/Y') : $this->memberStartPractice;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return int|string
+     */
+    public function getMemberPracticeTime(bool $format = false): int|string
+    {
+        $age = intval($this->memberStartPractice->diff(new DateTime())->format('y'));
+
+        return $format ? ($age > 1 ? $age . ' années' : $age . ' année') : $age;
+    }
+
+    /**
+     * @param DateTime $set
+     *
+     * @return $this
+     */
+    public function setMemberStartPractice(DateTime $set): self
+    {
+        $this->memberStartPractice = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return string|null
+     */
+    public function getMemberAikikaiId(bool $format = false): string|null
+    {
+        if (is_null($this->memberAikikaiId))
         {
-            if (($grade->getGradeRank() == 8) && ($grade->getGradeStatus() < 4))
-            {
-                return $grade->getGradeDate();
-            }
+            return $format ? 'Aucun' : null;
         }
 
-        return null;
+        return $this->memberAikikaiId;
+    }
+
+    /**
+     * @param string|null $set
+     *
+     * @return $this
+     */
+    public function setMemberAikikaiId(string|null $set = null): self
+    {
+        $this->memberAikikaiId = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return int|string
+     */
+    public function getMemberSubscriptionStatus(bool $format = false): int|string
+    {
+        return $format ? $this->getMemberSubscriptionStatusText($this->memberSubscriptionStatus) : $this->memberSubscriptionStatus;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getMemberSubscriptionStatusText(int $id = 0): array|string
+    {
+        $keys = array('N\'expire jamais' => 1, 'Date d\'expiration' => 2, 'Ne pratique plus' => 3);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        elseif ($id > sizeof($keys))
+        {
+            return "Autre";
+        }
+
+        return array_search($id, $keys);
+    }
+
+    /**
+     * @param int $set
+     *
+     * @return $this
+     */
+    public function setMemberSubscriptionStatus(int $set = 1): self
+    {
+        $this->memberSubscriptionStatus = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return DateTime|string|null
+     */
+    public function getMemberSubscriptionValidity(bool $format = false): DateTime|string|null
+    {
+        if (is_null($this->memberSubscriptionValidity))
+        {
+            return $format ? 'Aucune' : null;
+        }
+
+        return $format ? $this->memberSubscriptionValidity->format('d/m/Y') : $this->memberSubscriptionValidity;
+    }
+
+    /**
+     * @param DateTime|null $set
+     *
+     * @return $this
+     */
+    public function setMemberSubscriptionValidity(DateTime|null $set = null): self
+    {
+        $this->memberSubscriptionValidity = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return int|string
+     */
+    public function getMemberSubscriptionList(bool $format = false): int|string
+    {
+        return $format ? $this->getMemberSubscriptionListText($this->memberSubscriptionList) : $this->memberSubscriptionList;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getMemberSubscriptionListText(int $id = 0): array|string
+    {
+        $keys = array('Cours Adultes' => 1, 'Cours Enfants' => 2, 'Cours Adultes/Enfants' => 3);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        elseif ($id > sizeof($keys))
+        {
+            return "Autre";
+        }
+
+        return array_search($id, $keys);
+    }
+
+    /**
+     * @param int $set
+     *
+     * @return $this
+     */
+    public function setMemberSubscriptionList(int $set = 1): self
+    {
+        $this->memberSubscriptionList = $set;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMemberLastKagami(): bool
+    {
+        return $this->memberLastKagami;
+    }
+
+    /**
+     * @param bool $set
+     *
+     * @return $this
+     */
+    public function setMemberLastKagami(bool $set = false): self
+    {
+        $this->memberLastKagami = $set;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberClubLessonAttendances(): Collection
+    {
+        return $this->memberClubLessonAttendances;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberClubManagers(): Collection
+    {
+        return $this->memberClubManagers;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberClubTeachers(): Collection
+    {
+        return $this->memberClubTeachers;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberClusterMembers(): Collection
+    {
+        return $this->memberClusterMembers;
     }
 
     /**
@@ -1057,9 +779,9 @@ class Member
      */
     public function getMemberFreeTraining(): bool
     {
-        foreach ($this->getMemberClusters() as $cluster)
+        foreach ($this->getMemberClusterMembers() as $cluster)
         {
-            if ($cluster->getCluster()->getClusterFreeTraining() && $cluster->getClusterMemberActive())
+            if ($cluster->getClusterMembercluster()->getClusterFreeTraining() && $cluster->getClusterMemberActive())
             {
                 return true;
             }
@@ -1069,61 +791,109 @@ class Member
     }
 
     /**
-     * @return Grade|null
+     * @return Collection
      */
-    public function getMemberLastExamSession(): ?GradeSessionCandidate
+    public function getMemberFormations(): Collection
     {
-        return $this->member_exams[0];
+        return $this->memberFormations;
     }
 
     /**
-     * @return Grade|null
+     * @return Formation|null
      */
-    public function getMemberLastFormation(): ?Formation
+    public function getMemberLastFormation(): Formation|null
     {
-        return $this->member_formations[0];
+        return $this->memberFormations[0];
     }
 
     /**
-     * @return Grade|null
+     * @return Collection
      */
-    public function getMemberLastGrade(): ?Grade
+    public function getMemberFormationSessionCandidates(): Collection
     {
-        foreach ($this->member_grades as $grade)
+        return $this->memberFormationSessionCandidates;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberGrades(): Collection
+    {
+        return $this->memberGrades;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return DateTime|string|null
+     */
+    public function getMemberAikikaiDate(bool $format = false): DateTime|string|null
+    {
+        foreach ($this->memberGrades as $grade)
         {
-            if ($grade->getGradeStatus() < 4)
+            if (($grade->getGradeRank() == 8) && ($grade->getGradeStatus() < 4))
             {
-                return $grade;
+                return $grade->getGradeDate($format);
             }
         }
 
-        return $this->member_grades[0];
+        return $format ? 'Aucune' : null;
     }
 
     /**
-     * @return string
+     * @param bool $format
+     *
+     * @return Grade|string|null
      */
-    public function getMemberLastGradeName(): string
+    public function getMemberLastGrade(bool $format = false): Grade|string|null
     {
-        $listData = new ListData();
+        foreach ($this->memberGrades as $grade)
+        {
+            if ($grade->getGradeStatus() < 4)
+            {
+                return $format ? $grade->getGradeRank($format) : $grade;
+            }
+        }
 
-        return $listData->getGrade($this->getMemberLastGrade()->getGradeRank());
+        return $format ? $this->memberGrades[0]->getGradeRank($format) : $this->memberGrades[0];
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLastGradeDate(): DateTime|null
+    public function getMemberLastGradeDate(bool $format = false): DateTime|string|null
     {
-        return $this->getMemberLastGrade()->getGradeDate();
+        return $this->getMemberLastGrade()->getGradeDate($format);
     }
 
     /**
-     * @return Grade|null
+     * @param bool $format
+     *
+     * @return Grade|string|null
      */
-    public function getMemberLastGradeAikikai(): ?Grade
+    public function getMemberLastGradeExam(bool $format = false): Grade|string|null
     {
-        foreach ($this->member_grades as $grade)
+        foreach ($this->memberGrades as $grade)
+        {
+            if ($grade->getGradeStatus() == 1)
+            {
+                return $format ? $grade->getGradeRank($format) : $grade;
+            }
+        }
+
+        return $format ? 'Aucun' : null;
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return Grade|string|null
+     */
+    public function getMemberLastGradeAikikai(bool $format = false): Grade|string|null
+    {
+        foreach ($this->memberGrades as $grade)
         {
             if ($grade->getGradeRank() <= 6)
             {
@@ -1137,19 +907,21 @@ class Member
 
             if ($grade->getGradeRank() % 2 == 0)
             {
-                return $grade;
+                return $format ? $grade->getGradeRank($format) : $grade;
             }
         }
 
-        return null;
+        return $format ? 'Aucun' : null;
     }
 
     /**
-     * @return Grade|null
+     * @param bool $format
+     *
+     * @return Grade|string|null
      */
-    public function getMemberLastGradeAFA(): ?Grade
+    public function getMemberLastGradeAFA(bool $format = false): Grade|string|null
     {
-        foreach ($this->member_grades as $grade)
+        foreach ($this->memberGrades as $grade)
         {
             if ($grade->getGradeRank() <= 6)
             {
@@ -1163,43 +935,88 @@ class Member
 
             if ($grade->getGradeRank() % 2 != 0)
             {
-                return $grade;
+                return $format ? $grade->getGradeRank($format) : $grade;
             }
         }
 
-        return null;
+        return $format ? 'Aucun' : null;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberGradeSessionCandidates(): Collection
+    {
+        return $this->memberGradeSessionCandidates;
     }
 
     /**
      * @return Grade|null
      */
-    public function getMemberLastExam(): ?Grade
+    public function getMemberLastExamSession(): GradeSessionCandidate|null
     {
-        foreach ($this->member_grades as $grade)
-        {
-            if ($grade->getGradeStatus() == 1)
-            {
-                return $grade;
-            }
-        }
+        return $this->memberGradeSessionCandidates[0];
+    }
 
-        return null;
+    /**
+     * @return Collection
+     */
+    public function getMemberLicences(): Collection
+    {
+        return $this->memberLicences;
     }
 
     /**
      * @return MemberLicence|null
      */
-    public function getMemberLastLicence(): ?MemberLicence
+    public function getMemberLastLicence(): MemberLicence|null
     {
         return $this->getMemberLicences()[0];
     }
 
     /**
-     * @return DateTime
+     * @param bool $format
+     *
+     * @return Club|string|null
      */
-    public function getMemberLastDeadline(): DateTime
+    public function getMemberActualClub(bool $format = false): Club|string|null
     {
-        return $this->getMemberLicences()[0]->getMemberLicenceDeadline();
+        if (sizeof($this->getMemberLicences()) > 0)
+        {
+            return $format ? $this->getMemberLastLicence()->getMemberLicenceClub()->getClubName($format) : $this->getMemberLastLicence()->getMemberLicenceClub();
+        }
+
+        return $format ? null : 'Aucun';
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return DateTime|string|null
+     */
+    public function getMemberDeadline(bool $format = false): DateTime|string|null
+    {
+        return $this->getMemberLastLicence()->getMemberLicenceDeadline($format);
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return DateTime|string|null
+     */
+    public function getMemberLicenceUpdate(bool $format = false): DateTime|string|null
+    {
+        return $this->getMemberLastLicence()->getMemberLicenceUpdate($format);
+    }
+
+    /**
+     * @param bool $format
+     *
+     * @return DateTime|string|null
+     */
+    public function getMemberLicencePayment(bool $format = false): DateTime|string|null
+    {
+        return $this->getMemberLastLicence()->getMemberLicencePaymentDate($format);
     }
 
     /**
@@ -1207,7 +1024,7 @@ class Member
      */
     public function getMemberNeedRenew(): bool
     {
-        if ($this->getMemberLastLicence()->getMemberLicenceDeadline() > new DateTime('+3 month today'))
+        if ($this->getMemberDeadline() > new DateTime('+3 month today'))
         {
             return false;
         }
@@ -1220,7 +1037,7 @@ class Member
      */
     public function getMemberOutdate(): bool
     {
-        if ($this->getMemberLastLicence()->getMemberLicenceDeadline() > new DateTime('-3 month today'))
+        if ($this->getMemberDeadline() > new DateTime('-3 month today'))
         {
             return false;
         }
@@ -1229,23 +1046,53 @@ class Member
     }
 
     /**
-     * @return Club|null
+     * @return Collection
      */
-    public function getMemberActualClub(): ?Club
+    public function getMemberTitles(): Collection
     {
-        if (sizeof($this->getMemberLicences()) > 0)
-        {
-            return $this->getMemberLicences()[0]->getMemberLicenceClub();
-        }
-
-        return null;
+        return $this->memberTitles;
     }
 
     /**
-     * @return Grade|null
+     * @param bool $format
+     *
+     * @return Title|string|null
      */
-    public function getMemberLastTitle(): ?Title
+    public function getMemberLastTitle(bool $format = false): Title|string|null
     {
-        return $this->member_titles[0];
+        if (sizeof($this->memberTitles) > 0)
+        {
+            return $format ? $this->memberTitles[0]->getTitleRank($format) : $this->memberTitles[0];
+        }
+
+        return $format ? 'Aucun' : null;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberTrainingAttendances(): Collection
+    {
+        return $this->memberTrainingAttendances;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getMemberUser(): User|null
+    {
+        return $this->memberUser;
+    }
+
+    /**
+     * @param User|null $user
+     *
+     * @return $this
+     */
+    public function setMemberUser(User|null $user): self
+    {
+        $this->memberUser = $user;
+
+        return $this;
     }
 }

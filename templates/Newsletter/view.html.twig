@@ -4,10 +4,10 @@
 {% endblock %}
 
 {% block body %}
-    {% if access.check('News-Edit') and data.newsletterDate is null %}<div class="text-center"><button class="btn btn-sm btn-light" onclick="window.open('{{ path('newsletter-edit', {'newsletter': data.getNewsletterId }) }}', '_self')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %} {% if access.check('News-Delete') and data.newsletterDate is null %}<button class="btn btn-sm btn-danger" onclick="document.getElementById('delete').classList.remove('visually-hidden');" onmouseover="this.style.cursor='pointer'">Supprimer</button></div>{% endif %}
+    {% if access.check('News-Edit') and data.newsletterDate is null %}<div class="text-center"><button class="btn btn-sm btn-primary" onclick="window.open('{{ path('newsletter-edit', {'newsletter': data.getNewsletterId }) }}', '_self')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %} {% if access.check('News-Delete') and data.newsletterDate is null %}<button class="btn btn-sm btn-danger" onclick="document.getElementById('delete').classList.remove('visually-hidden');" onmouseover="this.style.cursor='pointer'">Supprimer</button></div>{% endif %}
     {% if access.check('News-Delete') and data.newsletterDate is null %}<div id="delete" class="text-center visually-hidden"><button class="btn btn-sm btn-danger" onclick="window.open('{{ path('newsletter-delete', {'newsletter': data.getNewsletterId }) }}', '_self')" onmouseover="this.style.cursor='pointer'">Confirmer la suppression</button></div>{% endif %}
     {{ data.getNewsletterView|raw }}
-    {% if access.check('News-Send') and data.newsletterDate is null %}<div class="text-center"><a class="btn btn-sm btn-light" onclick="window.open('{{ path('newsletter-send', {'newsletter': data.getNewsletterId }) }}', '_self')" onmouseover="this.style.cursor='pointer'">Envoyer</a></div>{% endif %}
+    {% if access.check('News-Send') and data.newsletterDate is null %}<div class="text-center"><a class="btn btn-sm btn-primary" onclick="window.open('{{ path('newsletter-send', {'newsletter': data.getNewsletterId }) }}', '_self')" onmouseover="this.style.cursor='pointer'">Envoyer</a></div>{% endif %}
 {% endblock %}
 
 {% block javascripts %}

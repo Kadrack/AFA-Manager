@@ -10,13 +10,15 @@ use DateTime;
 
 use Doctrine\Persistence\ManagerRegistry;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+use Symfony\Component\ExpressionLanguage\Expression;
 
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Class AdministrationController
@@ -25,15 +27,17 @@ use Symfony\Component\Routing\Annotation\Route;
  * @IsGranted("ROLE_USER")
  */
 #[Route('/statistique', name:'statistics-')]
+#[IsGranted(new Expression('is_granted("ROLE_USER")'))]
 class StatisticsController extends AbstractController
 {
     /**
      * @param ManagerRegistry $doctrine
-     * @param int $date
+     * @param string|null     $date
+     *
      * @return Response
      */
-    #[Route('/index/{date<\d+>}', name:'index')]
-    public function index(ManagerRegistry $doctrine, int $date = 0): Response
+    #[Route('/index/{date}', name:'index')]
+    public function index(ManagerRegistry $doctrine, ?string $date = null): Response
     {
         $data['Statistics'] = array();
 
@@ -59,14 +63,14 @@ class StatisticsController extends AbstractController
             }
         }
 
-        $data['Date'] = DateTime::createFromFormat("Ymd", (string)$date);
+        $data['Date'] = DateTime::createFromFormat("Y-m-d", $date);
 
-        if ((!$data['Date']) || ($date < new DateTime('2020-10-01')))
+        if ((!$data['Date']) || ($data['Date'] < new DateTime('2020-10-01')))
         {
             $data['Date'] = new DateTime();
         }
 
-        $query = $doctrine->getRepository(Club::class)->getMembers($data['Date'], null, null);
+        $query = $doctrine->getRepository(Club::class)->getMembers($data['Date']);
 
         $limit = $this->getLimit($data['Date']);
 
@@ -112,21 +116,22 @@ class StatisticsController extends AbstractController
 
     /**
      * @param ManagerRegistry $doctrine
-     * @param int $province
-     * @param int $date
+     * @param int             $province
+     * @param string|null     $date
+     *
      * @return Response
      */
-    #[Route('/province/{province<\d+>}/{date<\d+>}', name:'province')]
-    public function province(ManagerRegistry $doctrine, int $province, int $date = 0): Response
+    #[Route('/province/{province<\d+>}/{date}', name:'province')]
+    public function province(ManagerRegistry $doctrine, int $province, ?string $date = null): Response
     {
-        $data['Date'] = DateTime::createFromFormat("Ymd", (string)$date);
+        $data['Date'] = DateTime::createFromFormat("Y-m-d", $date);
 
         if ((!$data['Date']) || ($data['Date'] < new DateTime('2020-10-01')))
         {
             $data['Date'] = new DateTime();
         }
 
-        $query = $doctrine->getRepository(Club::class)->getMembers($data['Date'], $province, null);
+        $query = $doctrine->getRepository(Club::class)->getMembers($data['Date'], $province);
 
         $limit = $this->getLimit($data['Date']);
 

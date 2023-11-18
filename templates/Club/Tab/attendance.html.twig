@@ -1,18 +1,18 @@
 <h1 class="text-center">
     Août
     <label>
-        <select class="form-select form-select-sm" onchange="window.open('{{ path('club-index', {'club': data.Club.getClubId}) }}' + '?season=' + this.value, '_self')">
+        <select class="h1 border-0 bg-transparent" onchange="window.open('{{ path('club-index', {'club': data.Club.getClubId}) }}' + '?season=' + this.value, '_self')">
             {% for Season in data.SeasonList %}
-                <option value="{{ Season }}" {% if Season == data.Season %}selected{% endif %}>{{ Season }}</option>
+                <option class="h1" value="{{ Season }}" {% if Season == data.Season %}selected{% endif %}>{{ Season }}</option>
             {% endfor %}
         </select>
     </label>
      - Juillet {{ data.Season + 1 }}
 </h1>
 
-<div id="adultSummary" class="container col col-lg-4 text-center visually-hidden">
-    <button class="btn btn-light" onclick="show('lessonSummary')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('childSummary')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
-    <h3 class="text-center">Bilan des présences adultes</h3>
+<div id="adultSummary" class="container col col-lg-5 text-center visually-hidden">
+    <button class="btn btn-primary" onclick="show('lessonSummary')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-primary" onclick="show('childSummary')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
+    <h3 class="text-center mt-3">Bilan des présences adultes</h3>
 
     <table class="table table-sm table-hover user-select-none">
         <thead>
@@ -28,9 +28,9 @@
                     <td class="text-center" colspan="3">Total de la saison</td>
                 </tr>
                 {% for member in data.Summary.Adult.Season %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -40,9 +40,9 @@
                     <td class="text-center" colspan="3">Juillet</td>
                 </tr>
                 {% for member in data.Summary.Adult.7 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -52,9 +52,9 @@
                     <td class="text-center" colspan="3">Juin</td>
                 </tr>
                 {% for member in data.Summary.Adult.6 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -64,9 +64,9 @@
                     <td class="text-center" colspan="3">Mai</td>
                 </tr>
                 {% for member in data.Summary.Adult.5 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -76,9 +76,9 @@
                     <td class="text-center" colspan="3">Avril</td>
                 </tr>
                 {% for member in data.Summary.Adult.4 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -88,9 +88,9 @@
                     <td class="text-center" colspan="3">Mars</td>
                 </tr>
                 {% for member in data.Summary.Adult.3 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -100,9 +100,9 @@
                     <td class="text-center" colspan="3">Février</td>
                 </tr>
                 {% for member in data.Summary.Adult.2 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -112,9 +112,9 @@
                     <td class="text-center" colspan="3">Janvier</td>
                 </tr>
                 {% for member in data.Summary.Adult.1 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -124,9 +124,9 @@
                     <td class="text-center" colspan="3">Décembre</td>
                 </tr>
                 {% for member in data.Summary.Adult.12 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -136,9 +136,9 @@
                     <td class="text-center" colspan="3">Novembre</td>
                 </tr>
                 {% for member in data.Summary.Adult.11 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -148,9 +148,9 @@
                     <td class="text-center" colspan="3">Octobre</td>
                 </tr>
                 {% for member in data.Summary.Adult.10 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -160,9 +160,9 @@
                     <td class="text-center" colspan="3">Septembre</td>
                 </tr>
                 {% for member in data.Summary.Adult.9 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -172,9 +172,9 @@
                     <td class="text-center" colspan="3">Août</td>
                 </tr>
                 {% for member in data.Summary.Adult.8 %}
-                    <tr class="table-active">
-                        <td class="text-center">{{ member.Firstname|title }}</td>
-                        <td class="text-center">{{ member.Name|title }}</td>
+                    <tr>
+                        <td class="text-center">{{ member.Firstname }}</td>
+                        <td class="text-center">{{ member.Name }}</td>
                         <td class="text-center">{{ member.Total / 60 }}</td>
                     </tr>
                 {% endfor %}
@@ -183,9 +183,9 @@
     </table>
 </div>
 
-<div id="childSummary" class="container col col-lg-4 text-center visually-hidden">
-    <button class="btn btn-light" onclick="show('lessonSummary')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-light" onclick="show('adultSummary')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button>
-    <h3 class="text-center">Bilan des présences enfants</h3>
+<div id="childSummary" class="container col col-lg-5 text-center visually-hidden">
+    <button class="btn btn-primary" onclick="show('lessonSummary')" onmouseover="this.style.cursor='pointer'">Liste des cours</button> <button class="btn btn-primary" onclick="show('adultSummary')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button>
+    <h3 class="text-center mt-3">Bilan des présences enfants</h3>
 
     <table class="table table-sm table-hover user-select-none">
         <thead>
@@ -201,9 +201,9 @@
                 <td class="text-center" colspan="3">Total de la saison</td>
             </tr>
             {% for member in data.Summary.Child.Season %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -213,9 +213,9 @@
                 <td class="text-center" colspan="3">Juillet</td>
             </tr>
             {% for member in data.Summary.Child.7 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -225,9 +225,9 @@
                 <td class="text-center" colspan="3">Juin</td>
             </tr>
             {% for member in data.Summary.Child.6 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -237,9 +237,9 @@
                 <td class="text-center" colspan="3">Mai</td>
             </tr>
             {% for member in data.Summary.Child.5 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -249,9 +249,9 @@
                 <td class="text-center" colspan="3">Avril</td>
             </tr>
             {% for member in data.Summary.Child.4 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -261,9 +261,9 @@
                 <td class="text-center" colspan="3">Mars</td>
             </tr>
             {% for member in data.Summary.Child.3 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -273,9 +273,9 @@
                 <td class="text-center" colspan="3">Février</td>
             </tr>
             {% for member in data.Summary.Child.2 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -285,9 +285,9 @@
                 <td class="text-center" colspan="3">Janvier</td>
             </tr>
             {% for member in data.Summary.Child.1 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -297,9 +297,9 @@
                 <td class="text-center" colspan="3">Décembre</td>
             </tr>
             {% for member in data.Summary.Child.12 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -309,9 +309,9 @@
                 <td class="text-center" colspan="3">Novembre</td>
             </tr>
             {% for member in data.Summary.Child.11 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -321,9 +321,9 @@
                 <td class="text-center" colspan="3">Octobre</td>
             </tr>
             {% for member in data.Summary.Child.10 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -333,9 +333,9 @@
                 <td class="text-center" colspan="3">Septembre</td>
             </tr>
             {% for member in data.Summary.Child.9 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -345,9 +345,9 @@
                 <td class="text-center" colspan="3">Août</td>
             </tr>
             {% for member in data.Summary.Child.8 %}
-                <tr class="table-active">
-                    <td class="text-center">{{ member.Firstname|title }}</td>
-                    <td class="text-center">{{ member.Name|title }}</td>
+                <tr>
+                    <td class="text-center">{{ member.Firstname }}</td>
+                    <td class="text-center">{{ member.Name }}</td>
                     <td class="text-center">{{ member.Total / 60 }}</td>
                 </tr>
             {% endfor %}
@@ -356,40 +356,42 @@
     </table>
 </div>
 
-<div id="lessonSummary" class="container col col-lg-4 text-center">
-    <button class="btn btn-light" onclick="show('adultSummary')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button> <button class="btn btn-light" onclick="show('childSummary')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
-    <h3 class="text-center">Ajout de cours</h3>
+<div id="lessonSummary" class="container col col-lg-5 text-center">
+    <button class="btn btn-primary" onclick="show('adultSummary')" onmouseover="this.style.cursor='pointer'">Bilan Adultes</button> <button class="btn btn-primary" onclick="show('childSummary')" onmouseover="this.style.cursor='pointer'">Bilan Enfants</button>
+    <h3 class="text-center mt-2">Ajout de cours</h3>
 
     <div class="text-center mb-1">
         {% for lesson in data.Club.getClubClasses %}
-            <button class="btn btn-sm btn-light mb-1" onclick="window.open('{{ path('club-lessonAdd', {'club': data.Club.getClubId, 'number': loop.index}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ lesson.getClubClassDayDisplay }} {{ lesson.getClubClassStartingHour|date('H:i') }}</button>
+            <button class="btn btn-sm btn-primary mb-1" onclick="window.open('{{ path('club-lessonAdd', {'club': data.Club.getClubId, 'number': loop.index}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ lesson.getClubClassDay(true) }} {{ lesson.getClubClassStart(true) }}</button>
         {% endfor %}<br />
-        <button class="btn btn-sm btn-light" onclick="load('{{ path('club-lessonAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Autres jours</button>
+        <button class="btn btn-sm btn-primary" onclick="load('{{ path('club-lessonAdd', {'club': data.Club.getClubId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Autres jours</button>
     </div>
 
-    <h3 class="text-center">Liste des cours</h3>
+    <h3 class="text-center mt-3">Liste des cours</h3>
 
     <table class="table table-sm table-hover user-select-none">
         <thead>
             <tr>
                 <th scope="col" class="text-center">Date</th>
                 <th scope="col" class="text-center">Début</th>
+                <th scope="col" class="text-center">Type</th>
                 <th scope="col" class="text-center"># pratiquants</th>
             </tr>
         </thead>
         <tbody>
         {% set Month = 0 %}
             {% for lesson in data.Lesson %}
-                {% if Month != lesson.getLessonDate|date("n") %}
-                    {% set Month = lesson.getLessonDate|date("n") %}
+                {% if Month != lesson.getClubLessonDate|date("n") %}
+                    {% set Month = lesson.getClubLessonDate|date("n") %}
                     <tr class="table-primary">
-                        <td class="text-center" colspan="3">{{ listData.getMonth(lesson.getLessonDate|date("n")) }}</td>
+                        <td class="text-center" colspan="4">{{ listData.getMonth(lesson.getClubLessonDate|date("n")) }}</td>
                     </tr>
                 {% endif %}
-                <tr class="table-active" onclick="window.open('{{ path('club-lessonIndex', {'club': data.Club.getClubId, 'lesson': lesson.getLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
-                    <td class="text-center">{{ listData.getDay(lesson.getLessonDate|date("N")) }} {{ lesson.getLessonDate|date("d") }}</td>
-                    <td class="text-center">{{ lesson.getLessonStartingHour|date('H:i') }}</td>
-                    <td class="text-center">{{ lesson.getLessonAttendances|length }}</td>
+                <tr onclick="window.open('{{ path('club-lessonIndex', {'club': data.Club.getClubId, 'lesson': lesson.getClubLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="text-center">{{ listData.getDay(lesson.getClubLessonDate|date("N")) }} {{ lesson.getClubLessonDate|date("d") }}</td>
+                    <td class="text-center">{{ lesson.getClubLessonStart(true) }}</td>
+                    <td class="text-center">{{ lesson.getClubLessonType(true) }}</td>
+                    <td class="text-center">{{ lesson.getClubLessonAttendancesCount }}</td>
                 </tr>
             {% endfor %}
         </tbody>

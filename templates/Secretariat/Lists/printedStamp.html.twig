@@ -23,7 +23,7 @@
         </thead>
         <tbody>
         {% for member in list %}
-            <tr class="table-active">
+            <tr>
                 <td class="align-middle">{{ loop.index }}</td>
                 <td class="align-middle">{{ member.DatePrint|date("d/m/Y") }}</td>
                 <td class="align-middle">{{ member.Id }}</td>

@@ -5,12 +5,13 @@ namespace App\Entity;
 use App\Repository\ClubManagerRepository;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Mime\Address;
 
 /**
  * Class ClubManager
  */
-#[ORM\Table(name: 'club_manager')]
+#[ORM\Table(name: 'clubManager')]
 #[ORM\Entity(repositoryClass: ClubManagerRepository::class)]
 class ClubManager
 {
@@ -19,88 +20,91 @@ class ClubManager
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $club_manager_id;
+    private int $clubManagerId;
 
     /**
-     * @var bool|null
+     * @var bool
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $club_manager_is_main;
+    #[ORM\Column(type: 'boolean')]
+    private bool $clubManagerIsMain = false;
 
     /**
-     * @var Club|null
+     * @var Club
      */
-    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'club_managers')]
-    #[ORM\JoinColumn(name: 'club_manager_join_club', referencedColumnName: 'club_id', nullable: true)]
-    private ?Club $club_manager_club;
+    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'clubManagers')]
+    #[ORM\JoinColumn(name: 'clubManager_join_club', referencedColumnName: 'clubId')]
+    private Club $clubManagerClub;
 
     /**
      * @var Member|null
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_managers')]
-    #[ORM\JoinColumn(name: 'club_manager_join_member', referencedColumnName: 'member_id', nullable: true)]
-    private ?Member $club_manager_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberClubManagers')]
+    #[ORM\JoinColumn(name: 'clubManager_join_member', referencedColumnName: 'memberId', nullable: true)]
+    private Member|null $clubManagerMember = null;
 
     /**
      * @var User|null
      */
-    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'user_managers')]
-    #[ORM\JoinColumn(name: 'club_manager_join_user', referencedColumnName: 'id', nullable: true)]
-    private ?User $club_manager_user;
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'managers')]
+    #[ORM\JoinColumn(name: 'clubManager_join_user', referencedColumnName: 'id', nullable: true)]
+    private User|null $clubManagerUser = null;
 
     /**
      * @return int|null
      */
     public function getClubManagerId(): ?int
     {
-        return $this->club_manager_id;
+        return $this->clubManagerId;
     }
 
     /**
-     * @param int $club_manager_id
+     * @param int $set
+     *
      * @return $this
      */
-    public function setClubManagerId(int $club_manager_id): self
+    public function setClubManagerId(int $set): self
     {
-        $this->club_manager_id = $club_manager_id;
+        $this->clubManagerId = $set;
 
         return $this;
     }
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function getClubManagerIsMain(): ?bool
+    public function getClubManagerIsMain(): bool
     {
-        return $this->club_manager_is_main;
+        return $this->clubManagerIsMain;
     }
 
     /**
-     * @param bool|null $club_manager_is_main
+     * @param bool $set
+     *
      * @return $this
      */
-    public function setClubManagerIsMain(?bool $club_manager_is_main): self
+    public function setClubManagerIsMain(bool $set = false): self
     {
-        $this->club_manager_is_main = $club_manager_is_main;
+        $this->clubManagerIsMain = $set;
 
         return $this;
     }
 
     /**
-     * @return Club|null
+     * @return Club
      */
-    public function getClubManagerClub(): ?Club
+    public function getClubManagerClub(): Club
     {
-        return $this->club_manager_club;
+        return $this->clubManagerClub;
     }
 
     /**
-     * @param Club|null $clubManagerClub
+     * @param Club $set
+     *
      * @return $this
      */
-    public function setClubManagerClub(?Club $clubManagerClub): self
+    public function setClubManagerClub(Club $set): self
     {
-        $this->club_manager_club = $clubManagerClub;
+        $this->clubManagerClub = $set;
 
         return $this;
     }
@@ -108,18 +112,19 @@ class ClubManager
     /**
      * @return Member|null
      */
-    public function getClubManagerMember(): ?Member
+    public function getClubManagerMember(): Member|null
     {
-        return $this->club_manager_member;
+        return $this->clubManagerMember;
     }
 
     /**
-     * @param Member|null $club_manager_member
+     * @param Member|null $set
+     *
      * @return $this
      */
-    public function setClubManagerMember(?Member $club_manager_member): self
+    public function setClubManagerMember(Member|null $set = null): self
     {
-        $this->club_manager_member = $club_manager_member;
+        $this->clubManagerMember = $set;
 
         return $this;
     }
@@ -127,48 +132,36 @@ class ClubManager
     /**
      * @return User|null
      */
-    public function getClubManagerUser(): ?User
+    public function getClubManagerUser(): User|null
     {
-        return $this->club_manager_user;
+        return $this->clubManagerUser;
     }
 
     /**
-     * @param User|null $club_manager_user
+     * @param User|null $set
+     *
      * @return $this
      */
-    public function setClubManagerUser(?User $club_manager_user): self
+    public function setClubManagerUser(User|null $set = null): self
     {
-        $this->club_manager_user = $club_manager_user;
+        $this->clubManagerUser = $set;
 
         return $this;
     }
-
-    /**
-     * Custom function
-     */
 
     /**
      * @return string
      */
     public function getClubManagerLogin(): string
     {
-        if (is_null($this->club_manager_member))
+        if (is_null($this->clubManagerMember))
         {
-            return $this->club_manager_user->getLogin();
+            return $this->clubManagerUser->getLogin();
         }
-        else
-        {
-            $login = $this->club_manager_member->getMemberUser()?->getLogin();
 
-            if (is_null($login))
-            {
-                return 'Aucun';
-            }
-            else
-            {
-                return $login;
-            }
-        }
+        $login = $this->clubManagerMember->getMemberUser()?->getLogin();
+
+        return is_null($login) ? 'Aucun' : $login;
     }
 
     /**
@@ -176,14 +169,25 @@ class ClubManager
      */
     public function getClubManagerMemberId(): int|string
     {
-        if (is_null($this->club_manager_member))
+        if (is_null($this->clubManagerMember))
         {
             return 'Aucun';
         }
-        else
+
+        return $this->clubManagerMember->getMemberId();
+    }
+
+    /**
+     * @return string
+     */
+    public function getClubManagerFullName(): string
+    {
+        if (is_null($this->clubManagerMember))
         {
-            return $this->club_manager_member->getMemberId();
+            return $this->clubManagerUser->getFullName();
         }
+
+        return $this->clubManagerMember->getMemberFullName();
     }
 
     /**
@@ -191,14 +195,12 @@ class ClubManager
      */
     public function getClubManagerFirstname(): string
     {
-        if (is_null($this->club_manager_member))
+        if (is_null($this->clubManagerMember))
         {
-            return $this->club_manager_user->getUserFirstname();
+            return $this->clubManagerUser->getFirstname();
         }
-        else
-        {
-            return $this->club_manager_member->getMemberFirstname();
-        }
+
+        return $this->clubManagerMember->getMemberFirstname();
     }
 
     /**
@@ -206,46 +208,45 @@ class ClubManager
      */
     public function getClubManagerName(): string
     {
-        if (is_null($this->club_manager_member))
+        if (is_null($this->clubManagerMember))
         {
-            return $this->club_manager_user->getUserName();
+            return $this->clubManagerUser->getName();
         }
-        else
-        {
-            return $this->club_manager_member->getMemberName();
-        }
+
+        return $this->clubManagerMember->getMemberName();
     }
 
     /**
      * @param bool $format
-     * @return string|Address|null
+     *
+     * @return Address|string|null
      */
-    public function getClubManagerEmail(bool $format = false): string|Address|null
+    public function getClubManagerEmail(bool $format = false): Address|string|null
     {
         $email = null;
 
-        if (is_null($this->club_manager_member))
+        if (is_null($this->clubManagerMember))
         {
             if ($format)
             {
-                $email = new Address($this->club_manager_user->getUserEmail(), ucwords($this->club_manager_user->getUserFirstname()) . ' ' . ucwords($this->club_manager_user->getUserRealName()));
+                $email = new Address($this->clubManagerUser->getEmail(), ucwords($this->clubManagerUser->getFirstname()) . ' ' . ucwords($this->clubManagerUser->getName()));
             }
             else
             {
-                $email = $this->club_manager_user->getUserEmail();
+                $email = $this->clubManagerUser->getEmail();
             }
         }
         else
         {
-            if (!is_null($this->club_manager_member->getMemberEmail()))
+            if (!is_null($this->clubManagerMember->getMemberEmail()))
             {
                 if ($format)
                 {
-                    $email = new Address($this->club_manager_member->getMemberEmail(), ucwords($this->club_manager_member->getMemberFirstname()) . ' ' . ucwords($this->club_manager_member->getMemberName()));
+                    $email = new Address($this->clubManagerMember->getMemberEmail(), ucwords($this->clubManagerMember->getMemberFirstname()) . ' ' . ucwords($this->clubManagerMember->getMemberName()));
                 }
                 else
                 {
-                    $email = $this->club_manager_member->getMemberEmail();
+                    $email = $this->clubManagerMember->getMemberEmail();
                 }
             }
         }

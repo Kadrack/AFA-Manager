@@ -6,10 +6,10 @@
         <div class="modal-body">
             {{ form_start(formEdit) }}
             {{ form_row(formEdit.ClubClassDay) }}
-            {{ form_row(formEdit.ClubClassStartingHour) }}
-            {{ form_row(formEdit.ClubClassEndingHour) }}
+            {{ form_row(formEdit.ClubClassStart) }}
+            {{ form_row(formEdit.ClubClassEnd) }}
             {{ form_row(formEdit.ClubClassType) }}
-            {{ form_row(formEdit.ClubClassDojo) }}
+            {{ form_row(formEdit.ClubClassClubDojo) }}
             <div class="d-grid gap-0">{{ form_widget(formEdit.Submit) }}</div>
             {{ form_end(formEdit) }}
         </div>

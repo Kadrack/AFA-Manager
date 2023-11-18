@@ -9,7 +9,7 @@
 
 {% block body %}
     <h2 class="text-center">Liste des Pass Sport ({{ list|length }}/376)</h2>
-    <div class="text-center"><a class="btn btn-sm btn-light" href="{{ path('secretariat-passSportDownload') }}"><i class="bi-download"></i> Télécharger la liste</a></div>
+    <div class="text-center"><a class="btn btn-sm btn-primary" href="{{ path('secretariat-passSportDownload') }}"><i class="bi-download"></i> Télécharger la liste</a></div>
     <div class="container col col-lg-6">
         <table class="table table-sm table-hover user-select-none">
             <thead>
@@ -23,7 +23,7 @@
             </thead>
             <tbody>
             {% for member in list %}
-                <tr class="table-active">
+                <tr>
                     <td class="align-middle">{{ loop.index }}</td>
                     <td class="align-middle">{{ member.Id }}</td>
                     <td class="align-middle">{{ member.FirstName|title }}</td>

@@ -1,0 +1,54 @@
+<div class="container text-center col col-lg-6">
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th class="align-middle text-center col-2" scope="col">Cash</th>
+                <th class="align-middle text-center col-2" scope="col">Carte</th>
+                <th class="align-middle text-center col-2" scope="col">Payconiq</th>
+                <th class="align-middle text-center col-3 border-bottom-0 border-top-0" scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Cash / 100)|number_format(2, ',', '.') }} €</td>
+                <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Card / 100)|number_format(2, ',', '.') }} €</td>
+                <td class="align-middle text-center">{{ (data.Training.getTrainingPaymentsTotal.Transfert / 100)|number_format(2, ',', '.') }} €</td>
+                <td class="align-middle text-center border-bottom-0 border-top-0">{{ ((data.Training.getTrainingPaymentsTotal.Cash + data.Training.getTrainingPaymentsTotal.Card + data.Training.getTrainingPaymentsTotal.Transfert) / 100)|number_format(2, ',', '.') }} €</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="container text-center col col-lg-10">
+    <table id="ListMembers" class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr onmouseover="this.style.cursor='pointer'">
+                <th scope="col" onclick="sortTable('ListMembers', 0)"></th>
+                <th scope="col" onclick="sortTable('ListMembers', 1)"># Licence</th>
+                <th scope="col" onclick="sortTable('ListMembers', 2)">Nom</th>
+                <th scope="col" onclick="sortTable('ListMembers', 3)"># Cours</th>
+                <th scope="col" onclick="sortTable('ListMembers', 4)">Cash</th>
+                <th scope="col" onclick="sortTable('ListMembers', 5)">Carte</th>
+                <th scope="col" onclick="sortTable('ListMembers', 6)">Payconiq</th>
+                <th scope="col" onclick="sortTable('ListMembers', 7)">Total</th>
+                <th scope="col" onclick="sortTable('ListMembers', 8)">Ristourne</th>
+                <th scope="col" onclick="sortTable('ListMembers', 9)">Inscription</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in data.Attendances %}
+            <tr {% if access.check('Training-FullAccess') or (not access.check('Training-AttendancesDetailsRestricted') and (data.Training.getTrainingLastDate > date() or data.Training.getTrainingLastDate.diff(date()).days <= 7)) %}onclick="load('{{ path('training-attendance', {'training': data.Training.getTrainingId, 'attendance': member.AttendanceId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td class="align-middle">{{ loop.index }}</td>
+                <td class="align-middle">{{ member.Id }}</td>
+                <td class="align-middle">{{ member.FullName }}</td>
+                <td class="align-middle">{{ member.Attendance }}</td>
+                <td class="align-middle">{{ member.CashText }}</td>
+                <td class="align-middle">{{ member.CardText }}</td>
+                <td class="align-middle">{{ member.TransfertText }}</td>
+                <td class="align-middle">{{ member.TotalText }}</td>
+                <td class="align-middle">{{ member.DiscountText }}</td>
+                <td class="align-middle">{{ member.StatusText }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

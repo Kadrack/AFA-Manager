@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class GradeSession
  */
-#[ORM\Table(name: 'grade_session')]
+#[ORM\Table(name: 'gradeSession')]
 #[ORM\Entity(repositoryClass: GradeSessionRepository::class)]
 class GradeSession
 {
@@ -25,72 +25,72 @@ class GradeSession
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $grade_session_id;
+    private int $gradeSessionId;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'date')]
     #[Assert\NotBlank]
-    private DateTime $grade_session_date;
+    private DateTime $gradeSessionDate;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'date')]
     #[Assert\NotBlank]
-    private DateTime $grade_session_open;
+    private DateTime $gradeSessionOpen;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'date')]
     #[Assert\NotBlank]
-    private DateTime $grade_session_close;
+    private DateTime $gradeSessionClose;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
-    private int $grade_session_type;
+    private int $gradeSessionType;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $grade_session_place;
+    private string|null $gradeSessionPlace = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $grade_session_street;
+    private string|null $gradeSessionStreet = null;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $grade_session_zip;
+    private int|null $gradeSessionZip = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $grade_session_city;
+    private string|null $gradeSessionCity = null;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'grade_session_candidate_exam', targetEntity: GradeSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['grade_session_candidate_status' => 'ASC', 'grade_session_candidate_rank' => 'ASC', 'grade_session_candidate_jury' => 'ASC', 'grade_session_candidate_position' => 'ASC'])]
-    private ArrayCollection|Collection|null $grade_session_candidates;
+    #[ORM\OneToMany(mappedBy: 'gradeSessionCandidateExam', targetEntity: GradeSessionCandidate::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['gradeSessionCandidateStatus' => 'ASC', 'gradeSessionCandidateRank' => 'ASC', 'gradeSessionCandidateJury' => 'ASC', 'gradeSessionCandidatePosition' => 'ASC'])]
+    private ArrayCollection|Collection|null $gradeSessionCandidates;
 
     /**
      * GradeSession constructor.
      */
     public function __construct()
     {
-        $this->grade_session_candidates = new ArrayCollection();
+        $this->gradeSessionCandidates = new ArrayCollection();
     }
 
     /**
@@ -98,16 +98,17 @@ class GradeSession
      */
     public function getGradeSessionId(): int
     {
-        return $this->grade_session_id;
+        return $this->gradeSessionId;
     }
 
     /**
-     * @param int $grade_session_id
+     * @param int $gradeSessionId
+     *
      * @return $this
      */
-    public function setGradeSessionId(int $grade_session_id): self
+    public function setGradeSessionId(int $gradeSessionId): self
     {
-        $this->grade_session_id = $grade_session_id;
+        $this->gradeSessionId = $gradeSessionId;
 
         return $this;
     }
@@ -117,16 +118,17 @@ class GradeSession
      */
     public function getGradeSessionDate(): DateTime
     {
-        return $this->grade_session_date;
+        return $this->gradeSessionDate;
     }
 
     /**
-     * @param DateTime $grade_session_date
+     * @param DateTime $gradeSessionDate
+     *
      * @return $this
      */
-    public function setGradeSessionDate(DateTime $grade_session_date): self
+    public function setGradeSessionDate(DateTime $gradeSessionDate): self
     {
-        $this->grade_session_date = $grade_session_date;
+        $this->gradeSessionDate = $gradeSessionDate;
 
         return $this;
     }
@@ -136,16 +138,17 @@ class GradeSession
      */
     public function getGradeSessionOpen(): DateTime
     {
-        return $this->grade_session_open;
+        return $this->gradeSessionOpen;
     }
 
     /**
-     * @param DateTime $grade_session_open
+     * @param DateTime $gradeSessionOpen
+     *
      * @return $this
      */
-    public function setGradeSessionOpen(DateTime $grade_session_open): self
+    public function setGradeSessionOpen(DateTime $gradeSessionOpen): self
     {
-        $this->grade_session_open = $grade_session_open;
+        $this->gradeSessionOpen = $gradeSessionOpen;
 
         return $this;
     }
@@ -155,16 +158,17 @@ class GradeSession
      */
     public function getGradeSessionClose(): DateTime
     {
-        return $this->grade_session_close;
+        return $this->gradeSessionClose;
     }
 
     /**
-     * @param DateTime $grade_session_close
+     * @param DateTime $gradeSessionClose
+     *
      * @return $this
      */
-    public function setGradeSessionClose(DateTime $grade_session_close): self
+    public function setGradeSessionClose(DateTime $gradeSessionClose): self
     {
-        $this->grade_session_close = $grade_session_close;
+        $this->gradeSessionClose = $gradeSessionClose;
 
         return $this;
     }
@@ -189,16 +193,17 @@ class GradeSession
      */
     public function getGradeSessionType(): int
     {
-        return $this->grade_session_type;
+        return $this->gradeSessionType;
     }
 
     /**
-     * @param int $grade_session_type
+     * @param int $gradeSessionType
+     *
      * @return $this
      */
-    public function setGradeSessionType(int $grade_session_type): self
+    public function setGradeSessionType(int $gradeSessionType): self
     {
-        $this->grade_session_type = $grade_session_type;
+        $this->gradeSessionType = $gradeSessionType;
 
         return $this;
     }
@@ -206,18 +211,19 @@ class GradeSession
     /**
      * @return string|null
      */
-    public function getGradeSessionPlace(): ?string
+    public function getGradeSessionPlace(): string|null
     {
-        return $this->grade_session_place;
+        return $this->gradeSessionPlace;
     }
 
     /**
-     * @param string|null $grade_session_place
+     * @param string|null $gradeSessionPlace
+     *
      * @return $this
      */
-    public function setGradeSessionPlace(?string $grade_session_place): self
+    public function setGradeSessionPlace(string|null $gradeSessionPlace = null): self
     {
-        $this->grade_session_place = $grade_session_place;
+        $this->gradeSessionPlace = $gradeSessionPlace;
 
         return $this;
     }
@@ -225,18 +231,19 @@ class GradeSession
     /**
      * @return string|null
      */
-    public function getGradeSessionStreet(): ?string
+    public function getGradeSessionStreet(): string|null
     {
-        return $this->grade_session_street;
+        return $this->gradeSessionStreet;
     }
 
     /**
-     * @param string|null $grade_session_street
+     * @param string|null $gradeSessionStreet
+     *
      * @return $this
      */
-    public function setGradeSessionStreet(?string $grade_session_street): self
+    public function setGradeSessionStreet(string|null $gradeSessionStreet = null): self
     {
-        $this->grade_session_street = $grade_session_street;
+        $this->gradeSessionStreet = $gradeSessionStreet;
 
         return $this;
     }
@@ -244,37 +251,41 @@ class GradeSession
     /**
      * @return int|null
      */
-    public function getGradeSessionZip(): ?int
+    public function getGradeSessionZip(): int|null
     {
-        return $this->grade_session_zip;
+        return $this->gradeSessionZip;
     }
 
     /**
-     * @param int|null $grade_session_zip
+     * @param int|null $gradeSessionZip
+     *
      * @return $this
      */
-    public function setGradeSessionZip(?int $grade_session_zip): self
+    public function setGradeSessionZip(int|null $gradeSessionZip = null): self
     {
-        $this->grade_session_zip = $grade_session_zip;
+        $this->gradeSessionZip = $gradeSessionZip;
 
         return $this;
     }
 
     /**
+     * @param bool $format
+     *
      * @return string|null
      */
-    public function getGradeSessionCity(): ?string
+    public function getGradeSessionCity(bool $format = false): string|null
     {
-        return $this->grade_session_city;
+        return $format ? $this->gradeSessionZip . ' ' . ucwords(strtolower($this->gradeSessionCity)) : ucwords(strtolower($this->gradeSessionCity));
     }
 
     /**
-     * @param string|null $grade_session_city
+     * @param string|null $gradeSessionCity
+     *
      * @return $this
      */
-    public function setGradeSessionCity(?string $grade_session_city): self
+    public function setGradeSessionCity(string|null $gradeSessionCity = null): self
     {
-        $this->grade_session_city = $grade_session_city;
+        $this->gradeSessionCity = $gradeSessionCity;
 
         return $this;
     }
@@ -284,7 +295,7 @@ class GradeSession
      */
     public function getGradeSessionCandidates(): Collection
     {
-        return $this->grade_session_candidates;
+        return $this->gradeSessionCandidates;
     }
 
     /**
@@ -293,8 +304,8 @@ class GradeSession
      */
     public function addGradeSessionCandidates(GradeSessionCandidate $gradeSessionCandidate): self
     {
-        if (!$this->grade_session_candidates->contains($gradeSessionCandidate)) {
-            $this->grade_session_candidates[] = $gradeSessionCandidate;
+        if (!$this->gradeSessionCandidates->contains($gradeSessionCandidate)) {
+            $this->gradeSessionCandidates[] = $gradeSessionCandidate;
             $gradeSessionCandidate->setGradeSessionCandidateExam($this);
         }
 
@@ -307,8 +318,8 @@ class GradeSession
      */
     public function removeGradeSessionCandidates(GradeSessionCandidate $gradeSessionCandidate): self
     {
-        if ($this->grade_session_candidates->contains($gradeSessionCandidate)) {
-            $this->grade_session_candidates->removeElement($gradeSessionCandidate);
+        if ($this->gradeSessionCandidates->contains($gradeSessionCandidate)) {
+            $this->gradeSessionCandidates->removeElement($gradeSessionCandidate);
             // set the owning side to null (unless already changed)
             if ($gradeSessionCandidate->getGradeSessionCandidateExam() === $this) {
                 $gradeSessionCandidate->setGradeSessionCandidateExam(null);

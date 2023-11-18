@@ -12,8 +12,8 @@
         <h1 class="text-center">Inscription à la session {{ listData.getFormationType(data.Session.getFormationSessionType) }}</h1>
         {% if data.Session.getFormationSessionIsOpen and data.FormType == 0 %}
             <div class="text-center mb-3">
-                <a class="btn btn-light" href="{{ path('formation-subscription', {'type': data.Session.getFormationSessionType, 'formType': 1}) }}" onmouseover="this.style.cursor='pointer'">Membre AFA</a>
-                <a class="btn btn-light" href="{{ path('formation-subscription', {'type': data.Session.getFormationSessionType, 'formType': 2}) }}" onmouseover="this.style.cursor='pointer'">Autre fédération</a>
+                <a class="btn btn-primary" href="{{ path('formation-subscription', {'type': data.Session.getFormationSessionType, 'formType': 1}) }}" onmouseover="this.style.cursor='pointer'">Membre AFA</a>
+                <a class="btn btn-primary" href="{{ path('formation-subscription', {'type': data.Session.getFormationSessionType, 'formType': 2}) }}" onmouseover="this.style.cursor='pointer'">Autre fédération</a>
             </div>
         {% elseif data.Session.getFormationSessionOpen > date() %}
             <div class="text-center mb-3">

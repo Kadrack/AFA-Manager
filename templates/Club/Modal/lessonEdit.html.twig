@@ -5,10 +5,10 @@
         </div>
         <div class="modal-body">
             {{ form_start(formEdit) }}
-            {{ form_row(formEdit.LessonDate) }}
-            {{ form_row(formEdit.LessonStartingHour) }}
-            {{ form_row(formEdit.LessonEndingHour) }}
-            {{ form_row(formEdit.LessonType) }}
+            {{ form_row(formEdit.ClubLessonDate) }}
+            {{ form_row(formEdit.ClubLessonStart) }}
+            {{ form_row(formEdit.ClubLessonEnd) }}
+            {{ form_row(formEdit.ClubLessonType) }}
             <div class="d-grid gap-0">{{ form_widget(formEdit.Submit) }}</div>
             {{ form_end(formEdit) }}
         </div>

@@ -24,10 +24,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,8 +35,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+
 use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Class SecretariatController
@@ -45,6 +49,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @IsGranted("ROLE_USER")
  */
 #[Route('/secretariat', name:'secretariat-')]
+#[IsGranted(new Expression('is_granted("ROLE_USER")'))]
 class SecretariatController extends AbstractController
 {
     /**
@@ -60,7 +65,7 @@ class SecretariatController extends AbstractController
             die();
         }
 
-        $data['List'] = $doctrine->getRepository(User::class)->findBy(['user_member' => null], ['login' => 'ASC']);
+        $data['List'] = $doctrine->getRepository(User::class)->findBy(['member' => null], ['login' => 'ASC']);
 
         return $this->render('Secretariat/Login/index.html.twig', array('data' => $data));
     }
@@ -160,7 +165,7 @@ class SecretariatController extends AbstractController
             die();
         }
 
-        $data['Clusters'] = $doctrine->getRepository(Cluster::class)->findBy(array(), array('cluster_name' => 'ASC'));
+        $data['Clusters'] = $doctrine->getRepository(Cluster::class)->findBy(array(), array('clusterName' => 'ASC'));
 
         return $this->render('Secretariat/Cluster/list.html.twig', array('data' => $data));
     }
@@ -288,9 +293,9 @@ class SecretariatController extends AbstractController
         {
             $entityManager = $doctrine->getManager();
 
-            $clusterMember->setCluster($cluster);
+            $clusterMember->setClusterMemberCluster($cluster);
 
-            $member = $doctrine->getRepository(Member::class)->findOneBy(['member_id' => $form->get('ClusterMember')->getData()]);
+            $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $form->get('ClusterMember')->getData()]);
 
             if (!is_null($member))
             {
@@ -385,7 +390,7 @@ class SecretariatController extends AbstractController
         {
             if (!is_null($clusterMember->getClusterMember()))
             {
-                $member = $doctrine->getRepository(Member::class)->findOneBy(array('member_id' => $formEdit->get('ClusterMember')->getData()));
+                $member = $doctrine->getRepository(Member::class)->findOneBy(array('memberId' => $formEdit->get('ClusterMember')->getData()));
 
                 if (is_null($member))
                 {
@@ -542,6 +547,54 @@ class SecretariatController extends AbstractController
 
     /**
      * @param Access $access
+     * @param Club $club
+     * @param ManagerRegistry $doctrine
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/{club<\d+>}/validation-paiement', name:'paymentAdd')]
+    public function paymentAdd(Access $access, Club $club, ManagerRegistry $doctrine, Request $request): Response
+    {
+        if (!$access->check('Admin-PaymentAdd'))
+        {
+            die();
+        }
+
+        $form = $this->createForm(SecretariatType::class, null, array('formData' => array('Form' => 'PaymentLicence', 'Action' => 'Add'), 'action' => $this->generateUrl('secretariat-paymentAdd', array('club' => $club->getClubId()))));
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $members = $doctrine->getRepository(Member::class)->findBy(['memberId' => explode(',', $form->get('LicenceNumber')->getData())]);
+
+            $entityManager = $doctrine->getManager();
+
+            foreach ($members as $member)
+            {
+                if ($member->getMemberActualClub() !== $club)
+                {
+                    continue;
+                }
+
+                if (is_null($member->getMemberLastLicence()->getMemberLicencePaymentDate()) && ($member->getMemberLastLicence()->getMemberLicenceDeadline() > new DateTime()))
+                {
+                    $member->getMemberLastLicence()->setMemberLicencePaymentDate($form->get('PaymentDate')->getData());
+                    $member->getMemberLastLicence()->setMemberLicencePrintoutCreation(new DateTime());
+                    $member->getMemberLastLicence()->setMemberLicencePaymentUpdate(new DateTime());
+                }
+
+                $entityManager->flush();
+            }
+
+            return $this->redirectToRoute('secretariat-paymentOnGoing');
+        }
+
+        return $this->render('Secretariat/Modal/paymentAdd.html.twig', array('form' => $form->createView()));
+    }
+
+    /**
+     * @param Access $access
      * @param ManagerRegistry $doctrine
      * @return Response
      */
@@ -575,17 +628,17 @@ class SecretariatController extends AbstractController
 
         $formEdit = $this->createForm(SecretariatType::class, $licence, array('formData' => array('Form' => 'Payment', 'Action' => 'Edit'), 'data_class' => MemberLicence::class, 'action' => $this->generateUrl('secretariat-paymentEdit', array('licence' => $licence->getMemberLicenceId()))));
 
-        $formEdit->get('MemberId')->setData($licence->getMemberLicence()->getMemberId());
+        $formEdit->get('MemberId')->setData($licence->getMemberLicenceMember()->getMemberId());
 
         $formEdit->handleRequest($request);
 
         if ($formEdit->isSubmitted() && $formEdit->isValid())
         {
-            $member = $doctrine->getRepository(Member::class)->findOneBy(['member_id' => $formEdit->get('MemberId')->getData()]);
+            $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $formEdit->get('MemberId')->getData()]);
 
             if (!is_null($member))
             {
-                $licence->setMemberLicence($member);
+                $licence->setMemberLicenceMember($member);
 
                 $entityManager = $doctrine->getManager();
 
@@ -677,6 +730,89 @@ class SecretariatController extends AbstractController
         ksort($list);
 
         return $this->render('Secretariat/Lists/stampsToPrint.html.twig', array('list' => $list));
+    }
+
+    /**
+     * @param Access $access
+     * @param Club $club
+     * @param Session $session
+     * @return Response
+     */
+    #[Route('/gestion-des-timbres/{club<\d+>}', name:'printStamp')]
+    public function printStamp(Access $access, Club $club, Session $session): Response
+    {
+        if (!$access->check('Club-PrintStamp'))
+        {
+            die();
+        }
+
+        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
+        {
+            die();
+        }
+
+        $data['Club'] = $club;
+
+        return $this->render('Secretariat/Modal/printStamp.html.twig', array('data' => $data));
+    }
+
+    /**
+     * @param Access $access
+     * @param Club $club
+     * @param ManagerRegistry $doctrine
+     * @param Session $session
+     * @return Response
+     */
+    #[Route('/imprimer-les-timbres/{club<\d+>}', name:'printStampView')]
+    public function printStampView(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
+    {
+        if (!$access->check('Club-PrintStamp'))
+        {
+            die();
+        }
+
+        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
+        {
+            die();
+        }
+
+        $data['Member'] = $doctrine->getRepository(Member::class)->getOnGoingStampMember($club);
+
+        return $this->render('Member/Print/stamps.html.twig', array('data' => $data));
+    }
+
+    /**
+     * @param Access $access
+     * @param Club $club
+     * @param ManagerRegistry $doctrine
+     * @param Session $session
+     * @return RedirectResponse|Response
+     */
+    #[Route('/valider-impression-des-timbres/{club<\d+>}', name:'printStampValidate')]
+    public function printStampValidate(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): RedirectResponse|Response
+    {
+        if (!$access->check('Club-PrintStamp'))
+        {
+            die();
+        }
+
+        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
+        {
+            die();
+        }
+
+        $list = $doctrine->getRepository(MemberLicence::class)->getOnGoingStampLicence($club);
+
+        $entityManager = $doctrine->getManager();
+
+        foreach ($list as $licence)
+        {
+            $licence->setMemberLicencePrintoutDone(new DateTime());
+
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('secretariat-stampsToPrint', array('club' => $club->getClubId()));
     }
 
     /**
@@ -836,7 +972,7 @@ class SecretariatController extends AbstractController
             die();
         }
 
-        $list = $doctrine->getRepository(Title::class)->findBy(array('title_rank' => 3));
+        $list = $doctrine->getRepository(Title::class)->findBy(array('titleRank' => 3));
 
         foreach ($list as $shihan)
         {
@@ -880,7 +1016,7 @@ class SecretariatController extends AbstractController
             die();
         }
 
-        $data['List'] = $doctrine->getRepository(ClubTeacher::class)->findBy(array('club_teacher_type' => array(2, 3)));
+        $data['List'] = $doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(2, 3)));
 
         return $this->render('Secretariat/Lists/childTeacher.html.twig', array('data' => $data));
     }

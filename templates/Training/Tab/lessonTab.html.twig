@@ -1,0 +1,33 @@
+<div class="container text-center col col-lg-6">
+    {% if access.check('Training-SessionAdd') %}<button class="btn btn-lg btn-primary" onclick="load('{{ path('training-sessionAdd', {'training': data.Training.getTrainingId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th class="align-middle text-center" scope="col">Date</th>
+                <th class="align-middle text-center" scope="col">Jour</th>
+                <th class="align-middle text-center" scope="col">Début</th>
+                <th class="align-middle text-center" scope="col">Fin</th>
+                <th class="align-middle text-center" scope="col"># Pratiquants</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for session in data.Training.getTrainingSessions %}
+            <tr {% if access.check('Training-SessionEdit') %}onclick="load('{{ path('training-sessionEdit', {'training': data.Training.trainingId, 'session': session.getTrainingSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <td class="align-middle text-center">{{ session.getTrainingSessionDate|date("d/m/Y") }}</td>
+                <td class="align-middle text-center">{{ listData.day(session.getTrainingSessionDate|date("N")) }}</td>
+                <td class="align-middle text-center">{{ session.getTrainingSessionStart|date("H:i") }}</td>
+                <td class="align-middle text-center">{{ session.getTrainingSessionEnd|date("H:i") }}</td>
+                <td class="align-middle text-center">{{ session.getTrainingSessionAttendances|length }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        {% if data.Training.getTrainingSessions|length > 1 %}
+            <thead>
+                <tr>
+                    <th class="align-middle text-center" scope="col" colspan="4">Total des pratiquants</th>
+                    <th class="align-middle text-center" scope="col">{{ data.Training.getTrainingAttendances|length }}</th>
+                </tr>
+            </thead>
+        {% endif %}
+    </table>
+</div>

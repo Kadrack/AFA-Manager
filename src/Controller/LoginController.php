@@ -109,19 +109,19 @@ class LoginController extends AbstractController
 
             $user = $doctrine->getRepository(User::class)->findOneBy(['login' => $login]);
 
-            if (($user?->getUserEmail() == $form->get('Email')->getData()) || ($user?->getUserMember()?->getMemberEmail() == $form->get('Email')->getData()))
+            if (($user?->getEmail() == $form->get('Email')->getData()) || ($user?->getMember()?->getMemberEmail() == $form->get('Email')->getData()))
             {
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
 
                 $notification = new CustomLoginLinkNotification($loginLinkDetails, 'AFA-Manager - Récupération mot de passe');
 
-                if (is_null($user->getUserMember()))
+                if (is_null($user->getMember()))
                 {
-                    $recipient = new Recipient($user->getUserEmail());
+                    $recipient = new Recipient($user->getEmail());
                 }
                 else
                 {
-                    $recipient = new Recipient($user->getUserMember()->getMemberEmail());
+                    $recipient = new Recipient($user->getMember()->getMemberEmail());
                 }
 
                 $notifier->send($notification, $recipient);
@@ -162,15 +162,15 @@ class LoginController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid())
         {
-            $member = $doctrine->getRepository(Member::class)->findOneBy(['member_id' => $form->get('MemberId')->getData(), 'member_firstname' => $form->get('Firstname')->getData(), 'member_name' => $form->get('Name')->getData(), 'member_email' => $form->get('Email')->getData()]);
+            $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $form->get('MemberId')->getData(), 'memberFirstname' => $form->get('Firstname')->getData(), 'memberName' => $form->get('Name')->getData(), 'memberEmail' => $form->get('Email')->getData()]);
 
-            $user = $doctrine->getRepository(User::class)->findOneBy(['user_member' => $member?->getMemberId()]);
+            $user = $doctrine->getRepository(User::class)->findOneBy(['userMember' => $member?->getMemberId()]);
 
             if (!is_null($member) && is_null($user))
             {
                 $user = new User();
 
-                $user->setUserMember($member);
+                $user->setMember($member);
 
                 $login = $member->getMemberFirstname().'-'.$member->getMemberId();
 
@@ -195,7 +195,7 @@ class LoginController extends AbstractController
 
                 $notification = new CustomLoginLinkNotification($loginLinkDetails, 'AFA-Manager - Nouveau login : '.$user->getLogin());
 
-                $recipient = new Recipient($user->getUserMember()->getMemberEmail());
+                $recipient = new Recipient($user->getMember()->getMemberEmail());
 
                 $notifier->send($notification, $recipient);
 

@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-<h1 class="text-center">Newsletters {% if access.check('News-Create') %}<a class="btn btn-sm btn-light" onclick="window.open('{{ path('newsletter-create') }}', '_self')" onmouseover="this.style.cursor='pointer'">Créer</a>{% endif %}</h1>
+<h1 class="text-center">Newsletters {% if access.check('News-Create') %}<a class="btn btn-sm btn-primary" onclick="window.open('{{ path('newsletter-create') }}', '_self')" onmouseover="this.style.cursor='pointer'">Créer</a>{% endif %}</h1>
 
 <div class="container col-lg-8">
     <table class="table table-sm table-hover">
@@ -16,13 +16,13 @@
         </thead>
         <tbody>
         {% for newsletter in data.OnGoing %}
-            <tr class="table-active" onclick="window.open('{{ path('newsletter-view', {'newsletter': newsletter.getNewsletterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+            <tr onclick="window.open('{{ path('newsletter-view', {'newsletter': newsletter.getNewsletterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                 <td class="text-center col-3">En attente</td>
                 <td class="col-9">{{ newsletter.getNewsletterTitle }}</td>
             </tr>
         {% endfor %}
         {% for newsletter in data.Published %}
-            <tr class="table-active" onclick="window.open('{{ path('newsletter-view', {'newsletter': newsletter.getNewsletterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+            <tr onclick="window.open('{{ path('newsletter-view', {'newsletter': newsletter.getNewsletterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                 <td class="text-center col-3">{{ newsletter.getNewsletterDate|date("d/m/Y") }}</td>
                 <td class="col-9">{{ newsletter.getNewsletterTitle }}</td>
             </tr>

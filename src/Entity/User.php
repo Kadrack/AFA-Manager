@@ -42,19 +42,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $user_firstname;
+    private ?string $firstname;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $user_real_name;
+    private ?string $name;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $user_email;
+    private ?string $email;
 
     /**
      * @var string|null
@@ -69,31 +69,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     /**
+     * @var string|null
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $theme;
+
+    /**
      * @var Member|null
      */
-    #[ORM\OneToOne(inversedBy: 'member_user', targetEntity: Member::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'user_join_member', referencedColumnName: 'member_id', nullable: true)]
-    private ?Member $user_member;
+    #[ORM\OneToOne(inversedBy: 'memberUser', targetEntity: Member::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'user_join_member', referencedColumnName: 'memberId', nullable: true)]
+    private ?Member $member;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'cluster_member_user', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $user_clusters;
+    #[ORM\OneToMany(mappedBy: 'clusterMemberUser', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $clusters;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'club_manager_user', targetEntity: ClubManager::class, cascade: ['persist'], orphanRemoval: true)]
-    private ArrayCollection|Collection|null $user_managers;
+    #[ORM\OneToMany(mappedBy: 'clubManagerUser', targetEntity: ClubManager::class, cascade: ['persist'], orphanRemoval: true)]
+    private ArrayCollection|Collection|null $managers;
 
     /**
      * User constructor.
      */
     public function __construct()
     {
-        $this->user_clusters = new ArrayCollection();
-        $this->user_managers = new ArrayCollection();
+        $this->clusters = new ArrayCollection();
+        $this->managers = new ArrayCollection();
     }
 
     /**
@@ -139,11 +145,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = json_decode($this->roles);
+        if (!is_null($this->roles))
+        {
+            $roles = json_decode($this->roles);
+        }
+
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        if ($this->getUserMember() != null)
+        if ($this->getMember() != null)
         {
             $roles[] = 'ROLE_MEMBER';
         }
@@ -184,18 +194,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return string|null
      */
-    public function getUserFirstname(): ?string
+    public function getTheme(): ?string
     {
-        return $this->user_firstname;
+        return $this->theme;
     }
 
     /**
-     * @param string|null $user_firstname
+     * @param string|null $theme
+     *
      * @return $this
      */
-    public function setUserFirstname(?string $user_firstname): self
+    public function setTheme(?string $theme): self
     {
-        $this->user_firstname = $user_firstname;
+        $this->theme = $theme;
 
         return $this;
     }
@@ -203,18 +214,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return string|null
      */
-    public function getUserRealName(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->user_real_name;
+        return $this->firstname;
     }
 
     /**
-     * @param string|null $user_real_name
+     * @param string|null $firstname
+     *
      * @return $this
      */
-    public function setUserRealName(?string $user_real_name): self
+    public function setFirstname(?string $firstname): self
     {
-        $this->user_real_name = $user_real_name;
+        $this->firstname = $firstname;
 
         return $this;
     }
@@ -222,18 +234,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return string|null
      */
-    public function getUserEmail(): ?string
+    public function getName(): ?string
     {
-        return $this->user_email;
+        return $this->name;
     }
 
     /**
-     * @param string|null $user_email
+     * @param string|null $name
+     *
      * @return $this
      */
-    public function setUserEmail(?string $user_email): self
+    public function setName(?string $name): self
     {
-        $this->user_email = $user_email;
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFullName(): ?string
+    {
+        return $this->firstname . ' ' . $this->name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     *
+     * @return $this
+     */
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
@@ -241,18 +282,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Member|null
      */
-    public function getUserMember(): ?Member
+    public function getMember(): ?Member
     {
-        return $this->user_member;
+        return $this->member;
     }
 
     /**
-     * @param Member|null $user_member
+     * @param Member|null $member
+     *
      * @return $this
      */
-    public function setUserMember(?Member $user_member): self
+    public function setMember(?Member $member): self
     {
-        $this->user_member = $user_member;
+        $this->member = $member;
 
         return $this;
     }
@@ -288,7 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
@@ -297,9 +339,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection
      */
-    public function getUserClusters(): Collection
+    public function getClusters(): Collection
     {
-        return $this->user_clusters;
+        return $this->clusters;
     }
 
     /**
@@ -308,8 +350,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function addUserClusters(ClusterMember $clusterMember): self
     {
-        if (!$this->user_clusters->contains($clusterMember)) {
-            $this->user_clusters[] = $clusterMember;
+        if (!$this->clusters->contains($clusterMember)) {
+            $this->clusters[] = $clusterMember;
             $clusterMember->setClusterMemberUser($this);
         }
 
@@ -322,8 +364,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function removeUserClusters(ClusterMember $clusterMember): self
     {
-        if ($this->user_clusters->contains($clusterMember)) {
-            $this->user_clusters->removeElement($clusterMember);
+        if ($this->clusters->contains($clusterMember)) {
+            $this->clusters->removeElement($clusterMember);
             // set the owning side to null (unless already changed)
             if ($clusterMember->getClusterMemberUser() === $this) {
                 $clusterMember->setClusterMemberUser(null);
@@ -336,9 +378,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection
      */
-    public function getUserManagers(): Collection
+    public function getManagers(): Collection
     {
-        return $this->user_managers;
+        return $this->managers;
     }
 
     /**
@@ -347,8 +389,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function addUserManagers(ClubManager $clubManager): self
     {
-        if (!$this->user_managers->contains($clubManager)) {
-            $this->user_managers[] = $clubManager;
+        if (!$this->managers->contains($clubManager)) {
+            $this->managers[] = $clubManager;
             $clubManager->setClubManagerUser($this);
         }
 
@@ -361,8 +403,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function removeUserManagers(ClubManager $clubManager): self
     {
-        if ($this->user_managers->contains($clubManager)) {
-            $this->user_managers->removeElement($clubManager);
+        if ($this->managers->contains($clubManager)) {
+            $this->managers->removeElement($clubManager);
             // set the owning side to null (unless already changed)
             if ($clubManager->getClubManagerUser() === $this) {
                 $clubManager->setClubManagerUser(null);
@@ -383,25 +425,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $clubList[] = array();
 
-        if (!is_null($this->getUserMember()?->getMemberTeachers()))
+        if (!is_null($this->getMember()?->getMemberClubTeachers()))
         {
-            foreach ($this->getUserMember()->getMemberTeachers() as $teacher)
+            foreach ($this->getMember()->getMemberClubTeachers() as $teacher)
             {
-                $clubList[] = $teacher->getClubTeacher();
+                $clubList[] = $teacher->getClubTeacherClub();
             }
         }
 
-        if (!is_null($this->getUserMember()?->getMemberManagers()))
+        if (!is_null($this->getMember()?->getMemberClubManagers()))
         {
-            foreach ($this->getUserMember()->getMemberManagers() as $manager)
+            foreach ($this->getMember()->getMemberClubManagers() as $manager)
             {
                 $clubList[] = $manager->getClubManagerClub();
             }
         }
 
-        if (!is_null($this->getUserManagers()))
+        if (!is_null($this->getManagers()))
         {
-            foreach ($this->getUserManagers() as $manager)
+            foreach ($this->getManagers() as $manager)
             {
                 $clubList[] = $manager->getClubManagerClub();
             }

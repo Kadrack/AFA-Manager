@@ -1,0 +1,18 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Modification du Thème</h5>
+        </div>
+        <div class="modal-body">
+            <label for="themeList" class="form-label">Choississez un Thème</label>
+            <select class="form-select" id="themeList" onchange="window.open('{{ path('common-themeChange') }}/' + this.value, '_self')">
+                {% for theme in themeList %}
+                    <option value="{{ loop.index }}"{% if app.user.theme == theme %} selected="selected"{% endif %}>{{ theme|title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>

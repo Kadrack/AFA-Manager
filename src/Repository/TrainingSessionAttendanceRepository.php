@@ -2,17 +2,11 @@
 // src/Repository/TrainingSessionAttendanceRepository.php
 namespace App\Repository;
 
-use App\Entity\Club;
-use App\Entity\Member;
-use App\Entity\MemberLicence;
-use App\Entity\TrainingAttendance;
-use App\Entity\TrainingSession;
 use App\Entity\TrainingSessionAttendance;
-
-use DateTime;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -34,27 +28,47 @@ class TrainingSessionAttendanceRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Club $club
+     * @param array $ids
+     *
      * @return array|null
+     * @throws Exception
      */
-    public function getClubAttendanceTotalHour(Club $club): ?array
+    public function getClubTrainingTotal(array $ids): ?array
     {
-        $lowLimit  = new DateTime();
-        $highLimit = new DateTime('+1 year today');
+        $query = 'SELECT m.memberId as Id, sum(s.trainingSessionDuration) as Total
+                    FROM trainingSessionAttendance sa
+                    INNER JOIN trainingSession s ON s.trainingSessionId = sa.trainingSessionAttendance_join_trainingSession
+                    INNER JOIN trainingAttendance a ON a.trainingAttendanceId = sa.trainingSessionAttendance_join_trainingAttendance
+                    INNER JOIN member m ON m.memberId = a.trainingAttendance_join_member
+                    WHERE ';
 
-        $qb = $this->createQueryBuilder('sa');
+        $start = true;
 
-        return $qb->select('m.member_id AS Id', 'sum(s.training_session_duration) AS Total')
-            ->innerJoin(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('s.training_session_id', 'sa.training_session'))
-            ->innerJoin(TrainingAttendance::class, 'a', 'WITH', $qb->expr()->eq('a.training_attendance_id', 'sa.training_session_attendances'))
-            ->innerJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('a.training_attendance_member', 'm.member_id'))
-            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('l.member_licence', 'm.member_id'))
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->eq('a.training_attendance_status', 1))
-            ->andWhere($qb->expr()->gt('l.member_licence_deadline', "'".$lowLimit->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lte('l.member_licence_deadline', "'".$highLimit->format('Y-m-d')."'"))
-            ->groupBy('m.member_id')
-            ->getQuery()
-            ->getArrayResult();
+        foreach ($ids as $member)
+        {
+            if (is_null($member['GradeDate']))
+            {
+                continue;
+            }
+
+            $date = $member['GradeDate']->format('Y-m-d');
+
+            if ($start)
+            {
+                $start = false;
+            }
+            else
+            {
+                $query = $query . " OR ";
+            }
+
+            $id = $member['Id'];
+
+            $query = $query . "(m.memberId = $id AND s.trainingSessionDate > '$date')";
+        }
+
+        $query = $query . " AND a.trainingAttendanceStatus = 1 GROUP BY Id";
+
+        return $this->getEntityManager()->getConnection()->executeQuery($query)->fetchAllAssociative();
     }
 }

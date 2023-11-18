@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Formation;
 use App\Entity\Grade;
-use App\Entity\Lesson;
+use App\Entity\ClubLesson;
 use App\Entity\Member;
 use App\Entity\MemberLicence;
 use App\Entity\Title;
@@ -26,9 +26,9 @@ use Exception;
 
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+use Symfony\Component\ExpressionLanguage\Expression;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,15 +37,17 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+
 use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Class MemberController
  * @package App\Controller
- *
- * @IsGranted("ROLE_USER")
  */
 #[Route('/membre', name:'member-')]
+#[IsGranted(new Expression('is_granted("ROLE_USER")'))]
 class MemberController extends AbstractController
 {
     /**
@@ -58,9 +60,9 @@ class MemberController extends AbstractController
     #[Route('/rechercher-membres', name:'search')]
     public function search(Access $access, Request $request, SearchMember $search, Session $session): Response
     {
-        if (!$session->has('Id') && !is_null($this->getUser()->getUserMember()))
+        if (!$session->has('Id') && !is_null($this->getUser()->getMember()))
         {
-            return $this->redirectToRoute('member-index', array('member' => $this->getUser()->getUserMember()->getMemberId()));
+            return $this->redirectToRoute('member-index', array('member' => $this->getUser()->getMember()->getMemberId()));
         }
 
         if (!$access->check('Search-Member'))
@@ -98,7 +100,7 @@ class MemberController extends AbstractController
             die();
         }
 
-        if ($session->has('Club') && ($member->getMemberActualClub()->getClubId() != $session->get('Club')->getClubId()))
+        if ($session->has('Club') && ($member->getMemberOutdate() || ($member->getMemberActualClub()->getClubId() != $session->get('Club')->getClubId())))
         {
             die();
         }
@@ -218,7 +220,7 @@ class MemberController extends AbstractController
             }
         }
 
-        $data['LessonCount'] = $doctrine->getRepository(Lesson::class)->getLessonCount($data['Member']);
+        $data['LessonCount'] = $doctrine->getRepository(ClubLesson::class)->getLessonCount($data['Member']);
 
         return $this->render('Member/Tab/training.html.twig', array('data' => $data));
     }
@@ -301,7 +303,7 @@ class MemberController extends AbstractController
     #[Route('/{member<\d+>}/onglet-personnelle', name:'personalTab')]
     public function personalTab(Access $access, Member $member, Session $session): Response
     {
-        if (!$access->check('Member-PersonalTab'))
+        if (!$access->check('Member-PersonalTab') && $this->getUser()->getMember()->getMemberId() != $member->getMemberId())
         {
             die();
         }
@@ -352,7 +354,7 @@ class MemberController extends AbstractController
 
             $licence = new MemberLicence();
 
-            $licence->setMemberLicence($member);
+            $licence->setMemberLicenceMember($member);
             $licence->setMemberLicenceClub($member->getMemberLicences()[0]->getMemberLicenceClub());
         }
 
@@ -399,7 +401,7 @@ class MemberController extends AbstractController
             die();
         }
 
-        $licence = $doctrine->getRepository(MemberLicence::class)->findOneBy(['member_licence_id' => $licence->getMemberLicenceId()]);
+        $licence = $doctrine->getRepository(MemberLicence::class)->findOneBy(['memberLicenceId' => $licence->getMemberLicenceId()]);
 
         $formDelete = $this->createForm(MemberType::class, null, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('member-licencesEdit', array('member' => $member->getMemberId(), 'licence' => $licence->getMemberLicenceId()))));
 
@@ -441,7 +443,7 @@ class MemberController extends AbstractController
     #[Route('/{member<\d+>}/formulaire-renouvellement/', name:'licencesFormPrint')]
     public function licencesFormPrint(Access $access, FileGenerator $fileGenerator, Member $member, Session $session): BinaryFileResponse|Response
     {
-        if (!($access->check('Member-LicenceFormPrint')))
+        if (!($access->check('Member-LicenceFormPrint')) && $this->getUser()->getMember()->getMemberId() != $member->getMemberId())
         {
             die();
         }
@@ -475,7 +477,7 @@ class MemberController extends AbstractController
     #[Route('/{member<\d+>}/imprimer-timbres', name:'licencesStampPrint')]
     public function licencesStampPrint(Access $access, Member $member, Session $session): Response
     {
-        if (!($access->check('Member-LicenceStampPrint')))
+        if (!($access->check('Member-LicenceStampPrint')) && $this->getUser()->getMember()->getMemberId() != $member->getMemberId())
         {
             die();
         }
@@ -608,7 +610,7 @@ class MemberController extends AbstractController
             die();
         }
 
-        $grade = $doctrine->getRepository(Grade::class)->findOneBy(['grade_id' => $grade->getGradeId()]);
+        $grade = $doctrine->getRepository(Grade::class)->findOneBy(['gradeId' => $grade->getGradeId()]);
 
         $choices = array();
 
@@ -763,7 +765,7 @@ class MemberController extends AbstractController
             die();
         }
 
-        $title = $doctrine->getRepository(Title::class)->findOneBy(['title_id' => $title->getTitleId()]);
+        $title = $doctrine->getRepository(Title::class)->findOneBy(['titleId' => $title->getTitleId()]);
 
         $formDelete = $this->createForm(MemberType::class, $title, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('member-titlesEdit', array('member' => $member->getMemberId(), 'title' => $title->getTitleId()))));
 
@@ -859,7 +861,7 @@ class MemberController extends AbstractController
             die();
         }
 
-        $formation = $doctrine->getRepository(Formation::class)->findOneBy(['formation_id' => $formation->getFormationId()]);
+        $formation = $doctrine->getRepository(Formation::class)->findOneBy(['formationId' => $formation->getFormationId()]);
 
         $formDelete = $this->createForm(MemberType::class, $formation, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('member-formationsEdit', array('member' => $member->getMemberId(), 'formation' => $formation->getFormationId()))));
 
@@ -904,7 +906,7 @@ class MemberController extends AbstractController
     #[Route('/{member<\d+>}/modifier-donnees-personnelles/{data<\d+>}', name:'personalsDataEdit')]
     public function personalsDataEdit(Access $access, ManagerRegistry $doctrine, Member $member, PhotoUploader $photoUploader, Request $request, Session $session, int $data): Response
     {
-        if (!($access->check('Member-PersonalEdit')))
+        if (!$access->check('Member-PersonalTab') && $this->getUser()->getMember()->getMemberId() != $member->getMemberId())
         {
             die();
         }
@@ -946,6 +948,22 @@ class MemberController extends AbstractController
             if ($data == 1)
             {
                 $member->setMemberPhoto(is_null($form['MemberPhoto']->getData()) ?: $photoUploader->upload($form['MemberPhoto']->getData()));
+            }
+
+            if ($data == 6)
+            {
+                if (strlen($form['MemberPhone']->getData()) < 6)
+                {
+                    $member->setMemberPhone();
+                }
+            }
+
+            if ($data == 7)
+            {
+                if (strlen($form['MemberEmail']->getData()) < 6)
+                {
+                    $member->setMemberEmail();
+                }
             }
 
             $entityManager = $doctrine->getManager();

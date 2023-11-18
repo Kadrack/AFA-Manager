@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="table-active">
+                <tr>
                     <td class="align-middle text-center" onclick="window.open('{{ path('formation-index', {'formationSession': 1}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ data.Waiting.0.getFormationSessionCandidates|length }}</td>
                     <td class="align-middle text-center" onclick="window.open('{{ path('formation-index', {'formationSession': 2}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ data.Waiting.1.getFormationSessionCandidates|length }}</td>
                     <td class="align-middle text-center" onclick="window.open('{{ path('formation-index', {'formationSession': 3}) }}', '_self')" onmouseover="this.style.cursor='pointer'">{{ data.Waiting.2.getFormationSessionCandidates|length }}</td>
@@ -30,7 +30,7 @@
         <h1 class="text-center">Liste des sessions de formation</h1>
         {% if access.check('Formation-SessionAdd') %}
             <div class="text-center mb-3">
-                <button class="btn btn-sm btn-light" onclick="load('{{ path('formation-sessionAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+                <button class="btn btn-sm btn-primary" onclick="load('{{ path('formation-sessionAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
             </div>
         {% endif %}
         <table class="table table-sm table-hover">
@@ -45,7 +45,7 @@
             <tbody>
             {% for session in data.Sessions %}
                 {% if session.getFormationSessionDate is not null %}
-                    <tr class="table-active" {% if date() < session.getFormationSessionOpen or access.check('Formation-SessionManagement') %}onclick="window.open('{{ path('formation-index', {'formationSession': session.getFormationSessionId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                    <tr {% if date() < session.getFormationSessionOpen or access.check('Formation-SessionManagement') %}onclick="window.open('{{ path('formation-index', {'formationSession': session.getFormationSessionId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                         <td class="align-middle">{{ session.getFormationSessionDate|date("d/m/Y") }}</td>
                         <td class="align-middle">{{ listData.getFormationType(session.getFormationSessionType) }}</td>
                         <td class="align-middle">{{ session.getFormationSessionCandidates|length }}</td>

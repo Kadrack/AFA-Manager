@@ -20,7 +20,7 @@
         </thead>
         <tbody>
         {% for club in list %}
-            <tr class="table-active">
+            <tr>
                 <td class="align-middle">{{ club.Id }}</td>
                 <td class="align-middle">{{ club.Name|title }}</td>
                 <td class="align-middle">{{ club.Creation|date("Y") }} ({{ date()|date("Y") - club.Creation|date("Y") }} ans)</td>

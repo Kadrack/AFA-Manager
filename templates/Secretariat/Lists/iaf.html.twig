@@ -25,7 +25,7 @@
             </thead>
             <tbody>
             {% for member in data.List.First %}
-                <tr class="table-active" onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">                    <td class="align-middle">{{ loop.index }}</td>
+                <tr onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">                    <td class="align-middle">{{ loop.index }}</td>
                     <td class="align-middle">{{ member.FirstName|title }}</td>
                     <td class="align-middle">{{ member.Name|title }}</td>
                     <td class="align-middle">{{ listData.getGrade(member.Grade) }}</td>
@@ -51,7 +51,7 @@
             </thead>
             <tbody>
             {% for member in data.List.Second %}
-                <tr class="table-active" onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                <tr onclick="window.open('{{ path('member-index', {'member': member.Id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                     <td class="align-middle">{{ loop.index }}</td>
                     <td class="align-middle">{{ member.FirstName|title }}</td>
                     <td class="align-middle">{{ member.Name|title }}</td>

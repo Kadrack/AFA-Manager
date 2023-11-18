@@ -11,7 +11,7 @@
 <div class="container col col-lg-5">
     <h1 class="text-center">Liste des commissions/groupes</h1>
     <div class="text-center mb-3">
-        <button class="btn btn-sm btn-light text-center" onclick="load('{{ path('secretariat-clusterAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+        <button class="btn btn-sm btn-primary text-center" onclick="load('{{ path('secretariat-clusterAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
     </div>
     <table class="table table-sm table-hover">
         <thead>
@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         {% for cluster in data.Clusters %}
-            <tr class="table-active" onclick="window.open('{{ path('secretariat-clusterIndex', {'cluster': cluster.getClusterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+            <tr onclick="window.open('{{ path('secretariat-clusterIndex', {'cluster': cluster.getClusterId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                 <td class="align-middle">{{ cluster.getClusterName() }}</td>
                 <td class="align-middle text-center">{{ cluster.getClusterActiveMembers|length }}</td>
             </tr>

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class TrainingAttendance
  */
-#[ORM\Table(name: 'training_session_attendance')]
+#[ORM\Table(name: 'trainingSessionAttendance')]
 #[ORM\Entity(repositoryClass: TrainingSessionAttendanceRepository::class)]
 class TrainingSessionAttendance
 {
@@ -18,75 +18,78 @@ class TrainingSessionAttendance
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $training_session_attendance_id;
+    private int $trainingSessionAttendanceId;
 
     /**
-     * @var TrainingAttendance|null
+     * @var TrainingAttendance
      */
-    #[ORM\ManyToOne(targetEntity: TrainingAttendance::class, cascade: ['persist'], inversedBy: 'training_attendance_sessions')]
-    #[ORM\JoinColumn(name: 'training_session_attendance_join_training_attendance', referencedColumnName: 'training_attendance_id', nullable: true)]
-    private ?TrainingAttendance $training_session_attendances;
+    #[ORM\ManyToOne(targetEntity: TrainingAttendance::class, cascade: ['persist'], inversedBy: 'trainingAttendanceSessions')]
+    #[ORM\JoinColumn(name: 'trainingSessionAttendance_join_trainingAttendance', referencedColumnName: 'trainingAttendanceId')]
+    private TrainingAttendance $trainingSessionAttendanceTrainingAttendance;
 
     /**
-     * @var TrainingSession|null
+     * @var TrainingSession
      */
-    #[ORM\ManyToOne(targetEntity: TrainingSession::class, cascade: ['persist'], inversedBy: 'training_session_attendances')]
-    #[ORM\JoinColumn(name: 'training_session_attendance_join_training_session', referencedColumnName: 'training_session_id', nullable: true)]
-    private ?TrainingSession $training_session;
+    #[ORM\ManyToOne(targetEntity: TrainingSession::class, cascade: ['persist'], inversedBy: 'trainingSessionAttendances')]
+    #[ORM\JoinColumn(name: 'trainingSessionAttendance_join_trainingSession', referencedColumnName: 'trainingSessionId')]
+    private TrainingSession $trainingSessionAttendanceTrainingSession;
 
     /**
      * @return int
      */
     public function getTrainingSessionAttendanceId(): int
     {
-        return $this->training_session_attendance_id;
+        return $this->trainingSessionAttendanceId;
     }
 
     /**
-     * @param int $training_session_attendance_id
+     * @param int $trainingSessionAttendanceId
+     *
      * @return $this
      */
-    public function setTrainingSessionAttendanceId(int $training_session_attendance_id): self
+    public function setTrainingSessionAttendanceId(int $trainingSessionAttendanceId): self
     {
-        $this->training_session_attendance_id = $training_session_attendance_id;
+        $this->trainingSessionAttendanceId = $trainingSessionAttendanceId;
 
         return $this;
     }
 
     /**
-     * @return TrainingAttendance|null
+     * @return TrainingAttendance
      */
-    public function getTrainingSessionAttendances(): ?TrainingAttendance
+    public function getTrainingSessionAttendanceTrainingAttendance(): TrainingAttendance
     {
-        return $this->training_session_attendances;
+        return $this->trainingSessionAttendanceTrainingAttendance;
     }
 
     /**
-     * @param TrainingAttendance|null $training_session_attendances
+     * @param TrainingAttendance $set
+     *
      * @return $this
      */
-    public function setTrainingSessionAttendances(?TrainingAttendance $training_session_attendances): self
+    public function setTrainingSessionAttendanceTrainingAttendance(TrainingAttendance $set): self
     {
-        $this->training_session_attendances = $training_session_attendances;
+        $this->trainingSessionAttendanceTrainingAttendance = $set;
 
         return $this;
     }
 
     /**
-     * @return TrainingSession|null
+     * @return TrainingSession
      */
-    public function getTrainingSession(): ?TrainingSession
+    public function getTrainingSessionAttendanceTrainingSession(): TrainingSession
     {
-        return $this->training_session;
+        return $this->trainingSessionAttendanceTrainingSession;
     }
 
     /**
-     * @param TrainingSession|null $training_session
+     * @param TrainingSession $set
+     *
      * @return $this
      */
-    public function setTrainingSession(?TrainingSession $training_session): self
+    public function setTrainingSessionAttendanceTrainingSession(TrainingSession $set): self
     {
-        $this->training_session = $training_session;
+        $this->trainingSessionAttendanceTrainingSession = $set;
 
         return $this;
     }

@@ -6,18 +6,18 @@
 </thead>
 <tbody>
     {% if data.Open and access.check('Club-ListClose') %}
-        <tr class="table-active" onclick="load('{{ path('club-listClose') }}', 'clubList')" onmouseover="this.style.cursor='pointer'">
-            <td class="align-middle text-center" colspan="2"><button class="btn btn-sm btn-light" onmouseover="this.style.cursor='pointer'">Voir la liste des clubs fermés</button></td>
+        <tr onclick="load('{{ path('club-listClose') }}', 'clubList')" onmouseover="this.style.cursor='pointer'">
+            <td class="align-middle text-center" colspan="2"><button class="btn btn-sm btn-primary" onmouseover="this.style.cursor='pointer'">Voir la liste des clubs fermés</button></td>
         </tr>
     {% elseif not data.Open and access.check('Club-ListOpen') %}
-        <tr class="table-active" onclick="load('{{ path('club-listOpen') }}', 'clubList')" onmouseover="this.style.cursor='pointer'">
-            <td class="align-middle text-center" colspan="2"><button class="btn btn-sm btn-light" onmouseover="this.style.cursor='pointer'">Voir la liste des clubs actifs</button></td>
+        <tr onclick="load('{{ path('club-listOpen') }}', 'clubList')" onmouseover="this.style.cursor='pointer'">
+            <td class="align-middle text-center" colspan="2"><button class="btn btn-sm btn-primary" onmouseover="this.style.cursor='pointer'">Voir la liste des clubs actifs</button></td>
         </tr>
     {% endif %}
     {% for club in data.List %}
-        <tr class="table-active" onclick="window.open('{{ path('club-index', {'club': club.getClubId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+        <tr onclick="window.open('{{ path('club-index', {'club': club.getClubId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
             <td class="align-middle text-center">{{ club.getClubId }}</td>
-            <td class="align-middle">{{ club.getClubName|title }}</td>
+            <td class="align-middle">{{ club.getClubName }}</td>
         </tr>
     {% endfor %}
 </tbody>

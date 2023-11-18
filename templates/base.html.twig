@@ -8,9 +8,10 @@
 
         <link rel="icon" type="image/svg" href="{{ asset('images/favicon.svg') }}" />
 
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}" />
+        <!--suppress JSUnresolvedLibraryURL -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootswatch/dist/{% if app.user.theme is defined and app.user.theme is not null %}{{ app.user.theme }}{% else %}minty{% endif %}/bootstrap.min.css" />
 
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
         <style>
             @media print
@@ -81,13 +82,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mon Compte</a>
                             <div class="dropdown-menu">
+                                <a class="dropdown-item" onclick="load('{{ path('common-themeChange') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modification Thème</a>
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" onclick="load('{{ path('loginEdit') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modification Login</a>
                                 <a class="dropdown-item" onclick="load('{{ path('passwordEdit') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modification Mot de Passe</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ path('logout') }}">Déconnexion</a>
                             </div>
                         </li>
-                        {% if access.getAccessList|length > 1 %}
+                        {% if access.getAccessList|length > 1 or access.isWebmaster %}
                             <li class="nav-item dropdown">
                                 <label>
                                     <select class="form-select" onchange='window.open("{{ path('common-changeCluster', {'id': 0}) }}".replace("/0", "/" + this.value), "_self")'>
@@ -124,9 +127,9 @@
         </main>
 
         <footer class="container-fluid">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
             <script src="https://cdn.tiny.cloud/1/2ux855hneh65oq06q262g2y9ixi12oqgmky42zyktf02p4f3/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
             <script type="text/javascript">
                 tinymce.init({
                     selector: 'textarea',

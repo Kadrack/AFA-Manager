@@ -23,52 +23,52 @@ class Cluster
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $cluster_id;
+    private int $clusterId;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    private string $cluster_name;
+    private string $clusterName;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $cluster_free_training = 0;
+    private int $clusterFreeTraining = 0;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $cluster_use_title = 0;
+    private int $clusterUseTitle = 0;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $cluster_use_email = 0;
+    private int $clusterUseEmail = 0;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $cluster_give_access = 0;
+    private int $clusterGiveAccess = 0;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'cluster', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['cluster_member_date_in' => 'DESC', 'cluster_member_title' => 'ASC'])]
-    private ArrayCollection|Collection|null $cluster_members;
+    #[ORM\OneToMany(mappedBy: 'clusterMemberCluster', targetEntity: ClusterMember::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['clusterMemberTitle' => 'ASC', 'clusterMemberDateIn' => 'ASC'])]
+    private ArrayCollection|Collection|null $clusterMembers;
 
     /**
      * Cluster constructor.
      */
     public function __construct()
     {
-        $this->cluster_members = new ArrayCollection();
+        $this->clusterMembers = new ArrayCollection();
     }
 
     /**
@@ -76,35 +76,37 @@ class Cluster
      */
     public function getClusterId(): int
     {
-        return $this->cluster_id;
+        return $this->clusterId;
     }
 
     /**
-     * @param int $cluster_id
+     * @param int $set
+     *
      * @return $this
      */
-    public function setClusterId(int $cluster_id): self
+    public function setClusterId(int $set): self
     {
-        $this->cluster_id = $cluster_id;
+        $this->clusterId = $set;
 
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getClusterName(): ?string
+    public function getClusterName(): string
     {
-        return $this->cluster_name;
+        return $this->clusterName;
     }
 
     /**
-     * @param string $cluster_name
+     * @param string $set
+     *
      * @return $this
      */
-    public function setClusterName(string $cluster_name): self
+    public function setClusterName(string $set): self
     {
-        $this->cluster_name = $cluster_name;
+        $this->clusterName = $set;
 
         return $this;
     }
@@ -114,16 +116,17 @@ class Cluster
      */
     public function getClusterFreeTraining(): bool
     {
-        return $this->cluster_free_training;
+        return $this->clusterFreeTraining;
     }
 
     /**
-     * @param bool $cluster_free_training
+     * @param bool $set
+     *
      * @return $this
      */
-    public function setClusterFreeTraining(bool $cluster_free_training): self
+    public function setClusterFreeTraining(bool $set = false): self
     {
-        $this->cluster_free_training = $cluster_free_training;
+        $this->clusterFreeTraining = $set;
 
         return $this;
     }
@@ -133,16 +136,17 @@ class Cluster
      */
     public function getClusterUseTitle(): bool
     {
-        return $this->cluster_use_title;
+        return $this->clusterUseTitle;
     }
 
     /**
-     * @param bool $cluster_use_title
+     * @param bool $set
+     *
      * @return $this
      */
-    public function setClusterUseTitle(bool $cluster_use_title): self
+    public function setClusterUseTitle(bool $set = false): self
     {
-        $this->cluster_use_title = $cluster_use_title;
+        $this->clusterUseTitle = $set;
 
         return $this;
     }
@@ -152,16 +156,17 @@ class Cluster
      */
     public function getClusterUseEmail(): bool
     {
-        return $this->cluster_use_email;
+        return $this->clusterUseEmail;
     }
 
     /**
-     * @param bool $cluster_use_email
+     * @param bool $set
+     *
      * @return $this
      */
-    public function setClusterUseEmail(bool $cluster_use_email): self
+    public function setClusterUseEmail(bool $set = false): self
     {
-        $this->cluster_use_email = $cluster_use_email;
+        $this->clusterUseEmail = $set;
 
         return $this;
     }
@@ -171,16 +176,17 @@ class Cluster
      */
     public function getClusterGiveAccess(): bool
     {
-        return $this->cluster_give_access;
+        return $this->clusterGiveAccess;
     }
 
     /**
-     * @param bool $cluster_give_access
+     * @param bool $set
+     *
      * @return $this
      */
-    public function setClusterGiveAccess(bool $cluster_give_access): self
+    public function setClusterGiveAccess(bool $set = false): self
     {
-        $this->cluster_give_access = $cluster_give_access;
+        $this->clusterGiveAccess = $set;
 
         return $this;
     }
@@ -190,26 +196,8 @@ class Cluster
      */
     public function getClusterMembers(): Collection
     {
-        return $this->cluster_members;
+        return $this->clusterMembers;
     }
-
-    /**
-     * @param ClusterMember $clusterMember
-     * @return $this
-     */
-    public function addClusterMembers(ClusterMember $clusterMember): self
-    {
-        if (!$this->cluster_members->contains($clusterMember)) {
-            $this->cluster_members[] = $clusterMember;
-            $clusterMember->setCluster($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Custom function
-     */
 
     /**
      * @return array

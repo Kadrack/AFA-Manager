@@ -9,8 +9,12 @@
 
 {% block body %}
     <div class="container col col-lg-4">
-        <h1 class="text-center">Liste des clubs {% if access.check('Club-ClubAdd') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('club-clubAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>{% endif %}</h1>
-
+        <h1 class="text-center">Liste des clubs</h1>
+        {% if access.check('Club-ClubAdd') %}
+            <div class="text-center">
+                <button class="btn btn-lg btn-primary" onclick="load('{{ path('club-clubAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+            </div>
+        {% endif %}
         {% if access.check('Club-ListOpen') or access.check('Club-ListClose') %}
             <table id="clubList" class="table table-sm table-hover"></table>
         {% endif %}

@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-    <h3 class="text-center">Liste des présences du {{ data.Lesson.getLessonDate|date('d/m/Y') }} à {{ data.Lesson.getLessonStartingHour|date('H:i') }} {% if access.check('Club-LessonEdit') %}<button class="btn btn-sm btn-light" onclick="load('{{ path('club-lessonEdit', {'club': data.Club.getClubId, 'lesson': data.Lesson.getLessonId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}</h3>
+    <h3 class="text-center">Liste des présences du {{ data.Lesson.getClubLessonDate(true) }} à {{ data.Lesson.getClubLessonStart(true) }} {% if access.check('Club-LessonEdit') %}<button class="btn btn-sm btn-primary" onclick="load('{{ path('club-lessonEdit', {'club': data.Club.getClubId, 'lesson': data.Lesson.getClubLessonId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}</h3>
 
     <div class="container col col-lg-3">
         <table id="AttendanceList" class="table table-sm table-hover user-select-none">
@@ -18,14 +18,14 @@
             </thead>
             <tbody>
                 {% for id, attendance in data.Attendance %}
-                    <tr class="table-active" onclick="window.open('{{ path('club-attendanceDelete', {'club': data.Club.getClubId, 'lesson': data.Lesson.getLessonId, 'attendance': id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <tr onclick="window.open('{{ path('club-attendanceDelete', {'club': data.Club.getClubId, 'lesson': data.Lesson.getClubLessonId, 'attendance': id}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                         <td>{{ loop.index }}</td>
-                        {% if attendance is null %}
-                            <td colspan="3" class="text-center">Invité</td>
+                        {% if attendance.getMemberId is defined %}
+                            <td class="text-center">{{ attendance.getMemberFirstname }}</td>
+                            <td class="text-center">{{ attendance.getMemberName }}</td>
+                            <td>{% if attendance.getMemberSubscriptionStatus == 1 %}<i class="bi bi-check-lg text-success"></i> Jamais{% elseif attendance.getMemberSubscriptionStatus == 3 %}Ne pratique plus{% else %}{% if attendance.getMemberSubscriptionValidity > date() %}<i class="bi bi-check-lg text-success"></i>{% else %}<i class="bi bi-x-lg text-danger"></i>{% endif %} {{ attendance.getMemberSubscriptionValidity(true) }}{% endif %}</td>
                         {% else %}
-                            <td class="text-center">{{ attendance.getMemberFirstname|title }}</td>
-                            <td class="text-center">{{ attendance.getMemberName|title }}</td>
-                            <td>{% if attendance.getMemberSubscriptionStatus == 1 %}<img alt="" src=" {{ asset('images/pass.png') }}" /> Jamais{% elseif attendance.getMemberSubscriptionStatus == 3 %}Ne pratique plus{% else %}{% if attendance.getMemberSubscriptionValidity > date() %}<img alt="" src=" {{ asset('images/pass.png') }}" />{% else %}<img alt="" src=" {{ asset('images/fail.png') }}" />{% endif %} {{ attendance.getMemberSubscriptionValidity|date('d/m/Y') }}{% endif %}</td>
+                            <td colspan="3" class="text-center">Invité</td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -46,13 +46,13 @@
             </thead>
             <tbody>
             {% for member in data.ActiveMemberList %}
-                <tr class="table-active" onclick="window.open('{{ path('club-attendanceAdd', {'club': data.Club.getClubId, 'lesson': data.Lesson.getLessonId, 'member': member.getMemberId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
-                    <td class="text-center">{{ member.getMemberFirstname|title }}</td>
-                    <td class="text-center">{{ member.getMemberName|title }}</td>
-                    <td>{% if member.getMemberSubscriptionStatus == 1 %}<img alt="" src=" {{ asset('images/pass.png') }}" /> Jamais{% elseif member.getMemberSubscriptionStatus == 3 %}Ne pratique plus{% else %}{% if member.getMemberSubscriptionValidity > date() %}<img alt="" src=" {{ asset('images/pass.png') }}" />{% else %}<img alt="" src=" {{ asset('images/fail.png') }}" />{% endif %} {{ member.getMemberSubscriptionValidity|date('d/m/Y') }}{% endif %}</td>
+                <tr onclick="window.open('{{ path('club-attendanceAdd', {'club': data.Club.getClubId, 'lesson': data.Lesson.getClubLessonId, 'member': member.getMemberId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <td class="text-center">{{ member.getMemberFirstname }}</td>
+                    <td class="text-center">{{ member.getMemberName }}</td>
+                    <td>{% if member.getMemberSubscriptionStatus == 1 %}<i class="bi bi-check-lg text-success"></i> Jamais{% elseif member.getMemberSubscriptionStatus == 3 %}Ne pratique plus{% else %}{% if member.getMemberSubscriptionValidity > date() %}<i class="bi bi-check-lg text-success"></i>{% else %}<i class="bi bi-x-lg text-danger"></i>{% endif %} {{ member.getMemberSubscriptionValidity(true) }}{% endif %}</td>
                 </tr>
             {% endfor %}
-                <tr class="table-active" onclick="window.open('{{ path('club-attendanceAdd', {'club': data.Club.getClubId, 'lesson': data.Lesson.getLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                <tr onclick="window.open('{{ path('club-attendanceAdd', {'club': data.Club.getClubId, 'lesson': data.Lesson.getClubLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                     <td colspan="3" class="text-center">Invité</td>
                 </tr>
             </tbody>

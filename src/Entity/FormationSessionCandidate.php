@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Grade
  */
-#[ORM\Table(name: 'formation_session_candidate')]
+#[ORM\Table(name: 'formationSessionCandidate')]
 #[ORM\Entity(repositoryClass: FormationSessionCandidateRepository::class)]
 class FormationSessionCandidate
 {
@@ -23,137 +23,137 @@ class FormationSessionCandidate
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $formation_session_candidate_id;
+    private int $formationSessionCandidateId;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
-    private string $formation_session_candidate_firstname;
+    private string $formationSessionCandidateFirstname;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
-    private string $formation_session_candidate_name;
+    private string $formationSessionCandidateName;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $formation_session_candidate_sex;
+    private ?int $formationSessionCandidateSex;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $formation_session_candidate_address;
+    private ?string $formationSessionCandidateAddress;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_zip;
+    private ?string $formationSessionCandidateZip;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_city;
+    private ?string $formationSessionCandidateCity;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_country;
+    private ?string $formationSessionCandidateCountry;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_email;
+    private ?string $formationSessionCandidateEmail;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_phone;
+    private ?string $formationSessionCandidatePhone;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $formation_session_candidate_birthday;
+    private ?DateTime $formationSessionCandidateBirthday;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $formation_session_candidate_grade;
+    private ?int $formationSessionCandidateGrade;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_club;
+    private ?string $formationSessionCandidateClub;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $formation_session_candidate_licence;
+    private ?string $formationSessionCandidateLicence;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $formation_session_candidate_date;
+    private ?DateTime $formationSessionCandidateDate;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $formation_session_candidate_payment_date;
+    private ?DateTime $formationSessionCandidatePaymentDate;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $formation_session_candidate_result;
+    private ?int $formationSessionCandidateResult;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $formation_session_candidate_status;
+    private ?int $formationSessionCandidateStatus;
 
     /**
      * @var FormationSession|null
      */
-    #[ORM\ManyToOne(targetEntity: FormationSession::class, cascade: ['persist'], inversedBy: 'formation_session_candidates')]
-    #[ORM\JoinColumn(name: 'formation_session_candidate_join_formation_session', referencedColumnName: 'formation_session_id', nullable: true)]
-    private ?FormationSession $formation_session_candidate_session;
+    #[ORM\ManyToOne(targetEntity: FormationSession::class, cascade: ['persist'], inversedBy: 'formationSessionCandidates')]
+    #[ORM\JoinColumn(name: 'formationSessionCandidate_join_formationSession', referencedColumnName: 'formationSessionId', nullable: true)]
+    private ?FormationSession $formationSessionCandidateSession;
 
     /**
      * @var Member|null
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_candidate_formations')]
-    #[ORM\JoinColumn(name: 'formation_session_candidate_join_member', referencedColumnName: 'member_id', nullable: true)]
-    private ?Member $formation_session_candidate_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberFormationSessionCandidates')]
+    #[ORM\JoinColumn(name: 'formationSessionCandidate_join_member', referencedColumnName: 'memberId', nullable: true)]
+    private ?Member $formationSessionCandidateMember;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'formation_session', targetEntity: Formation::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['formation_rank' => 'ASC'])]
-    private ArrayCollection|Collection|null $formation_session_candidate_formations;
+    #[ORM\OneToMany(mappedBy: 'formationSession', targetEntity: Formation::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['formationRank' => 'ASC'])]
+    private ArrayCollection|Collection|null $formationSessionCandidateFormations;
 
     /**
      * FormtionSession constructor.
      */
     public function __construct()
     {
-        $this->formation_session_candidate_formations = new ArrayCollection();
+        $this->formationSessionCandidateFormations = new ArrayCollection();
     }
 
     /**
@@ -161,7 +161,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateId(): int
     {
-        return $this->formation_session_candidate_id;
+        return $this->formationSessionCandidateId;
     }
 
     /**
@@ -170,7 +170,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidateId(int $formationSessionCandidateId): self
     {
-        $this->formation_session_candidate_id = $formationSessionCandidateId;
+        $this->formationSessionCandidateId = $formationSessionCandidateId;
 
         return $this;
     }
@@ -180,16 +180,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateFirstname(): string
     {
-        return ucwords(strtolower($this->formation_session_candidate_firstname));
+        return ucwords(strtolower($this->formationSessionCandidateFirstname));
     }
 
     /**
-     * @param string $formation_session_candidate_firstname
+     * @param string $formationSessionCandidateFirstname
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateFirstname(string $formation_session_candidate_firstname): self
+    public function setFormationSessionCandidateFirstname(string $formationSessionCandidateFirstname): self
     {
-        $this->formation_session_candidate_firstname = ucwords($formation_session_candidate_firstname);
+        $this->formationSessionCandidateFirstname = ucwords($formationSessionCandidateFirstname);
 
         return $this;
     }
@@ -199,16 +200,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateName(): string
     {
-        return ucwords(strtolower($this->formation_session_candidate_name));
+        return ucwords(strtolower($this->formationSessionCandidateName));
     }
 
     /**
-     * @param string $formation_session_candidate_name
+     * @param string $formationSessionCandidateName
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateName(string $formation_session_candidate_name): self
+    public function setFormationSessionCandidateName(string $formationSessionCandidateName): self
     {
-        $this->formation_session_candidate_name = ucwords($formation_session_candidate_name);
+        $this->formationSessionCandidateName = ucwords($formationSessionCandidateName);
 
         return $this;
     }
@@ -218,16 +220,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateSex(): ?int
     {
-        return $this->formation_session_candidate_sex;
+        return $this->formationSessionCandidateSex;
     }
 
     /**
-     * @param int|null $formation_session_candidate_sex
+     * @param int|null $formationSessionCandidateSex
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateSex(?int $formation_session_candidate_sex): self
+    public function setFormationSessionCandidateSex(?int $formationSessionCandidateSex): self
     {
-        $this->formation_session_candidate_sex = $formation_session_candidate_sex;
+        $this->formationSessionCandidateSex = $formationSessionCandidateSex;
 
         return $this;
     }
@@ -237,16 +240,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateAddress(): ?string
     {
-        return $this->formation_session_candidate_address;
+        return $this->formationSessionCandidateAddress;
     }
 
     /**
-     * @param string|null $formation_session_candidate_address
+     * @param string|null $formationSessionCandidateAddress
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateAddress(?string $formation_session_candidate_address): self
+    public function setFormationSessionCandidateAddress(?string $formationSessionCandidateAddress): self
     {
-        $this->formation_session_candidate_address = $formation_session_candidate_address;
+        $this->formationSessionCandidateAddress = $formationSessionCandidateAddress;
 
         return $this;
     }
@@ -256,16 +260,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateZip(): ?string
     {
-        return $this->formation_session_candidate_zip;
+        return $this->formationSessionCandidateZip;
     }
 
     /**
-     * @param string $formation_session_candidate_zip
+     * @param string $formationSessionCandidateZip
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateZip(string $formation_session_candidate_zip): self
+    public function setFormationSessionCandidateZip(string $formationSessionCandidateZip): self
     {
-        $this->formation_session_candidate_zip = $formation_session_candidate_zip;
+        $this->formationSessionCandidateZip = $formationSessionCandidateZip;
 
         return $this;
     }
@@ -275,16 +280,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateCity(): ?string
     {
-        return $this->formation_session_candidate_city;
+        return $this->formationSessionCandidateCity;
     }
 
     /**
-     * @param string|null $formation_session_candidate_city
+     * @param string|null $formationSessionCandidateCity
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateCity(?string $formation_session_candidate_city): self
+    public function setFormationSessionCandidateCity(?string $formationSessionCandidateCity): self
     {
-        $this->formation_session_candidate_city = $formation_session_candidate_city;
+        $this->formationSessionCandidateCity = $formationSessionCandidateCity;
 
         return $this;
     }
@@ -294,16 +300,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateCountry(): ?string
     {
-        return $this->formation_session_candidate_country;
+        return $this->formationSessionCandidateCountry;
     }
 
     /**
-     * @param string|null $formation_session_candidate_country
+     * @param string|null $formationSessionCandidateCountry
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateCountry(?string $formation_session_candidate_country): self
+    public function setFormationSessionCandidateCountry(?string $formationSessionCandidateCountry): self
     {
-        $this->formation_session_candidate_country = $formation_session_candidate_country;
+        $this->formationSessionCandidateCountry = $formationSessionCandidateCountry;
 
         return $this;
     }
@@ -313,16 +320,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateEmail(): ?string
     {
-        return $this->formation_session_candidate_email;
+        return $this->formationSessionCandidateEmail;
     }
 
     /**
-     * @param string|null $formation_session_candidate_email
+     * @param string|null $formationSessionCandidateEmail
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateEmail(?string $formation_session_candidate_email): self
+    public function setFormationSessionCandidateEmail(?string $formationSessionCandidateEmail): self
     {
-        $this->formation_session_candidate_email = $formation_session_candidate_email;
+        $this->formationSessionCandidateEmail = $formationSessionCandidateEmail;
 
         return $this;
     }
@@ -332,16 +340,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidatePhone(): ?string
     {
-        return $this->formation_session_candidate_phone;
+        return $this->formationSessionCandidatePhone;
     }
 
     /**
-     * @param string|null $formation_session_candidate_phone
+     * @param string|null $formationSessionCandidatePhone
+     *
      * @return $this
      */
-    public function setFormationSessionCandidatePhone(?string $formation_session_candidate_phone): self
+    public function setFormationSessionCandidatePhone(?string $formationSessionCandidatePhone): self
     {
-        $this->formation_session_candidate_phone = $formation_session_candidate_phone;
+        $this->formationSessionCandidatePhone = $formationSessionCandidatePhone;
 
         return $this;
     }
@@ -351,16 +360,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateBirthday(): ?DateTime
     {
-        return $this->formation_session_candidate_birthday;
+        return $this->formationSessionCandidateBirthday;
     }
 
     /**
-     * @param DateTime|null $formation_session_candidate_birthday
+     * @param DateTime|null $formationSessionCandidateBirthday
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateBirthday(?DateTime $formation_session_candidate_birthday): self
+    public function setFormationSessionCandidateBirthday(?DateTime $formationSessionCandidateBirthday): self
     {
-        $this->formation_session_candidate_birthday = $formation_session_candidate_birthday;
+        $this->formationSessionCandidateBirthday = $formationSessionCandidateBirthday;
 
         return $this;
     }
@@ -370,16 +380,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateGrade(): ?int
     {
-        return $this->formation_session_candidate_grade;
+        return $this->formationSessionCandidateGrade;
     }
 
     /**
-     * @param int|null $formation_session_candidate_grade
+     * @param int|null $formationSessionCandidateGrade
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateGrade(?int $formation_session_candidate_grade): self
+    public function setFormationSessionCandidateGrade(?int $formationSessionCandidateGrade): self
     {
-        $this->formation_session_candidate_grade = $formation_session_candidate_grade;
+        $this->formationSessionCandidateGrade = $formationSessionCandidateGrade;
 
         return $this;
     }
@@ -389,16 +400,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateClub(): ?string
     {
-        return $this->formation_session_candidate_club;
+        return $this->formationSessionCandidateClub;
     }
 
     /**
-     * @param string|null $formation_session_candidate_club
+     * @param string|null $formationSessionCandidateClub
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateClub(?string $formation_session_candidate_club): self
+    public function setFormationSessionCandidateClub(?string $formationSessionCandidateClub): self
     {
-        $this->formation_session_candidate_club = $formation_session_candidate_club;
+        $this->formationSessionCandidateClub = $formationSessionCandidateClub;
 
         return $this;
     }
@@ -408,16 +420,17 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateLicence(): ?string
     {
-        return $this->formation_session_candidate_licence;
+        return $this->formationSessionCandidateLicence;
     }
 
     /**
-     * @param string|null $formation_session_candidate_licence
+     * @param string|null $formationSessionCandidateLicence
+     *
      * @return $this
      */
-    public function setFormationSessionCandidateLicence(?string $formation_session_candidate_licence): self
+    public function setFormationSessionCandidateLicence(?string $formationSessionCandidateLicence): self
     {
-        $this->formation_session_candidate_licence = $formation_session_candidate_licence;
+        $this->formationSessionCandidateLicence = $formationSessionCandidateLicence;
 
         return $this;
     }
@@ -427,7 +440,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateDate(): ?DateTime
     {
-        return $this->formation_session_candidate_date;
+        return $this->formationSessionCandidateDate;
     }
 
     /**
@@ -436,7 +449,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidateDate(DateTime $formationSessionCandidateDate): self
     {
-        $this->formation_session_candidate_date = $formationSessionCandidateDate;
+        $this->formationSessionCandidateDate = $formationSessionCandidateDate;
 
         return $this;
     }
@@ -446,7 +459,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidatePaymentDate(): ?DateTime
     {
-        return $this->formation_session_candidate_payment_date;
+        return $this->formationSessionCandidatePaymentDate;
     }
 
     /**
@@ -455,7 +468,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidatePaymentDate(DateTime $formationSessionCandidatePaymentDate): self
     {
-        $this->formation_session_candidate_payment_date = $formationSessionCandidatePaymentDate;
+        $this->formationSessionCandidatePaymentDate = $formationSessionCandidatePaymentDate;
 
         return $this;
     }
@@ -465,7 +478,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateResult(): ?int
     {
-        return $this->formation_session_candidate_result;
+        return $this->formationSessionCandidateResult;
     }
 
     /**
@@ -474,7 +487,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidateResult(?int $formationSessionCandidateResult): self
     {
-        $this->formation_session_candidate_result = $formationSessionCandidateResult;
+        $this->formationSessionCandidateResult = $formationSessionCandidateResult;
 
         return $this;
     }
@@ -484,7 +497,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateStatus(): ?int
     {
-        return $this->formation_session_candidate_status;
+        return $this->formationSessionCandidateStatus;
     }
 
     /**
@@ -493,7 +506,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidateStatus(?int $formationSessionCandidateStatus): self
     {
-        $this->formation_session_candidate_status = $formationSessionCandidateStatus;
+        $this->formationSessionCandidateStatus = $formationSessionCandidateStatus;
 
         return $this;
     }
@@ -503,7 +516,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateSession(): ?FormationSession
     {
-        return $this->formation_session_candidate_session;
+        return $this->formationSessionCandidateSession;
     }
 
     /**
@@ -512,7 +525,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidateSession(?FormationSession $formationSessionCandidateSession): self
     {
-        $this->formation_session_candidate_session = $formationSessionCandidateSession;
+        $this->formationSessionCandidateSession = $formationSessionCandidateSession;
 
         return $this;
     }
@@ -522,7 +535,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidateMember(): ?Member
     {
-        return $this->formation_session_candidate_member;
+        return $this->formationSessionCandidateMember;
     }
 
     /**
@@ -531,7 +544,7 @@ class FormationSessionCandidate
      */
     public function setFormationSessionCandidateMember(?Member $formationSessionCandidateMember): self
     {
-        $this->formation_session_candidate_member = $formationSessionCandidateMember;
+        $this->formationSessionCandidateMember = $formationSessionCandidateMember;
 
         return $this;
     }
@@ -541,7 +554,7 @@ class FormationSessionCandidate
      */
     public function getFormationSessionCandidates(): Collection
     {
-        return $this->formation_session_candidate_formations;
+        return $this->formationSessionCandidateFormations;
     }
 
     /**
@@ -550,8 +563,8 @@ class FormationSessionCandidate
      */
     public function addFormationSessionCandidates(Formation $formation): self
     {
-        if (!$this->formation_session_candidate_formations->contains($formation)) {
-            $this->formation_session_candidate_formations[] = $formation;
+        if (!$this->formationSessionCandidateFormations->contains($formation)) {
+            $this->formationSessionCandidateFormations[] = $formation;
             $formation->setFormationSession($this);
         }
 
@@ -564,8 +577,8 @@ class FormationSessionCandidate
      */
     public function removeFormationSessionCandidates(Formation $formation): self
     {
-        if ($this->formation_session_candidate_formations->contains($formation)) {
-            $this->formation_session_candidate_formations->removeElement($formation);
+        if ($this->formationSessionCandidateFormations->contains($formation)) {
+            $this->formationSessionCandidateFormations->removeElement($formation);
             // set the owning side to null (unless already changed)
             if ($formation->getFormationSession() === $this) {
                 $formation->setFormationSession(null);

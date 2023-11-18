@@ -6,8 +6,8 @@
         <div class="modal-body">
             {{ form_start(formEdit) }}
             {{ form_row(formEdit.TrainingSessionDate) }}
-            {{ form_row(formEdit.TrainingSessionStartingHour) }}
-            {{ form_row(formEdit.TrainingSessionEndingHour) }}
+            {{ form_row(formEdit.TrainingSessionStart) }}
+            {{ form_row(formEdit.TrainingSessionEnd) }}
             <div class="d-grid gap-0">{{ form_widget(formEdit.Submit) }}</div>
             {{ form_end(formEdit) }}
         </div>

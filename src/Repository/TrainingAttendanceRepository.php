@@ -2,12 +2,12 @@
 // src/Repository/TrainingAttendanceRepositorytory.php
 namespace App\Repository;
 
+use App\Entity\Member;
 use App\Entity\Training;
 use App\Entity\TrainingAttendance;
 
+use App\Entity\TrainingSessionAttendance;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,8 +19,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TrainingAttendanceRepository extends ServiceEntityRepository
 {
-    public int $attendancesPerPage = 15;
-
     /**
      * TrainingAttendanceRepository constructor.
      * @param ManagerRegistry $registry
@@ -39,9 +37,9 @@ class TrainingAttendanceRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
 
-        return $qb->select('a.training_attendance_id AS Id', 'a.training_attendance_name AS Name')
-            ->where($qb->expr()->eq('a.training', $training))
-            ->andWhere($qb->expr()->like('a.training_attendance_name', "'%".$search."%'"))
+        return $qb->select('a.trainingAttendanceId AS Id', 'a.trainingAttendanceName AS Name')
+            ->where($qb->expr()->eq('a.trainingAttendanceTraining', $training))
+            ->andWhere($qb->expr()->like('a.trainingAttendanceName', "'%".$search."%'"))
             ->orderBy('Name', 'ASC')
             ->addOrderBy('Id', 'ASC')
             ->getQuery()
@@ -50,19 +48,20 @@ class TrainingAttendanceRepository extends ServiceEntityRepository
 
     /**
      * @param Training $training
-     * @param int $offset
-     * @return Paginator
+     *
+     * @return array|null
      */
-    public function getTrainingAttendances(Training $training, int $offset): Paginator
+    public function getTrainingAttendances(Training $training): ?array
     {
         $qb = $this->createQueryBuilder('a');
 
-        $qb->where($qb->expr()->eq('a.training', $training->getTrainingId()))
-            ->orderBy('a.training_attendance_id', 'DESC')
-            ->setMaxResults($this->attendancesPerPage)
-            ->setFirstResult($offset)
-            ->getQuery();
-
-        return new Paginator($qb);
+        return $qb->select('a.trainingAttendanceId as AttendanceId', 'm.memberId as Id', 'm.memberFirstname as Firstname', 'm.memberName as Name', 'a.trainingAttendanceName as FullName', 'a.trainingAttendancePaymentCash as Cash', 'a.trainingAttendancePaymentCard as Card', 'a.trainingAttendancePaymentTransfert as Transfert', 'a.trainingAttendancePaymentDiscount as Discount', 'a.trainingAttendanceStatus as Status', 'count(sa.trainingSessionAttendanceTrainingAttendance) as Attendance')
+            ->leftJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 'a.trainingAttendanceMember'))
+            ->leftJoin(TrainingSessionAttendance::class, 'sa', 'WITH', $qb->expr()->eq('sa.trainingSessionAttendanceTrainingAttendance', 'a.trainingAttendanceId'))
+            ->where($qb->expr()->eq('a.trainingAttendanceTraining', $training->getTrainingId()))
+            ->groupBy('AttendanceId')
+            ->orderBy('a.trainingAttendanceId', 'DESC')
+            ->getQuery()
+            ->getArrayResult();
     }
 }

@@ -9,9 +9,9 @@
 
 {% block body %}
 <div class="container col col-lg-7">
-    <h1 class="text-center">{{ data.Cluster.getClusterName }} <button class="btn btn-sm btn-light" onclick="load('{{ path('secretariat-clusterEdit', {'cluster': data.Cluster.getClusterId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button></h1>
+    <h1 class="text-center">{{ data.Cluster.getClusterName }} <button class="btn btn-sm btn-primary" onclick="load('{{ path('secretariat-clusterEdit', {'cluster': data.Cluster.getClusterId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button></h1>
     <div class="text-center mb-3">
-        <button class="btn btn-sm btn-light text-center" onclick="load('{{ path('secretariat-clusterMemberAdd', {'cluster': data.Cluster.clusterId()}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+        <button class="btn btn-sm btn-primary text-center" onclick="load('{{ path('secretariat-clusterMemberAdd', {'cluster': data.Cluster.clusterId()}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
     </div>
     {% if data.Cluster.ClusterFutureMembers|length > 0 %}
         <h2 class="text-center">Futur membres</h2>
@@ -27,7 +27,7 @@
             </thead>
             <tbody>
             {% for member in data.Cluster.ClusterFutureMembers %}
-                <tr class="table-active" onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                <tr onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
                     {% if data.Cluster.getClusterUseTitle %}<td class="align-middle">{% if member.getClusterMemberTitle is null %}A définir{% else %}{{ listData.getClusterTitle(member.getClusterMemberTitle) }}{% endif %}</td>{% endif %}
                     <td class="align-middle">{% if member.getClusterMember is null %}{{ member.getClusterMemberUser.getUserFirstname|title }} {{ member.getClusterMemberUser.getUserRealName|title }}{% else %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% endif %}</td>
                     {% if data.Cluster.getClusterUseEmail %}<td class="align-middle">{% if member.getClusterMemberEmail is null %}A définir{% else %}{{ member.getClusterMemberEmail }}{% endif %}</td>{% endif %}
@@ -52,9 +52,9 @@
         </thead>
         <tbody>
         {% for member in data.Cluster.ClusterActiveMembers %}
-            <tr class="table-active" onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+            <tr onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
                 {% if data.Cluster.getClusterUseTitle %}<td class="align-middle">{% if member.getClusterMemberTitle is null %}A définir{% else %}{{ listData.getClusterTitle(member.getClusterMemberTitle) }}{% endif %}</td>{% endif %}
-                <td class="align-middle">{% if member.getClusterMember is not null %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% elseif member.getClusterMemberUser is not null %}{{ member.getClusterMemberUser.getUserFirstname|title }} {{ member.getClusterMemberUser.getUserRealName|title }}{% else %}{{ member.getClusterMemberFirstname|title }} {{ member.getClusterMemberName|title }}{% endif %}</td>
+                <td class="align-middle">{% if member.getClusterMember is not null %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% elseif member.getClusterMemberUser is not null %}{{ member.getClusterMemberUser.getFirstname|title }} {{ member.getClusterMemberUser.getName|title }}{% else %}{{ member.getClusterMemberFirstname|title }} {{ member.getClusterMemberName|title }}{% endif %}</td>
                 {% if data.Cluster.getClusterUseEmail %}<td class="align-middle">{% if member.getClusterMemberEmail is null %}A définir{% else %}{{ member.getClusterMemberEmail }}{% endif %}</td>{% endif %}
                 <td class="align-middle">{{ member.getClusterMemberDateIn|date("d/m/Y") }}</td>
                 <td class="align-middle">{% if member.getClusterMemberDateOut is null %}Non Défini{% else %}{{ member.getClusterMemberDateOut|date("d/m/Y") }}{% endif %}</td>
@@ -77,7 +77,7 @@
             </thead>
             <tbody>
             {% for member in data.Cluster.ClusterOldMembers %}
-                <tr class="table-active" onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                <tr onclick="load('{{ path('secretariat-clusterMemberEdit', {'cluster': data.Cluster.getClusterId, 'clusterMember': member.getClusterMemberId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
                     {% if data.Cluster.getClusterUseTitle %}<td class="align-middle">{% if member.getClusterMemberTitle is null %}A définir{% else %}{{ listData.getClusterTitle(member.getClusterMemberTitle) }}{% endif %}</td>{% endif %}
                     <td class="align-middle">{% if member.getClusterMember is null %}{{ member.getClusterMemberUser.getUserFirstname|title }} {{ member.getClusterMemberUser.getUserRealName|title }}{% else %}{{ member.getClusterMember.getMemberFirstname|title }} {{ member.getClusterMember.getMemberName|title }}{% endif %}</td>
                     {% if data.Cluster.getClusterUseEmail %}<td class="align-middle">{% if member.getClusterMemberEmail is null %}A définir{% else %}{{ member.getClusterMemberEmail }}{% endif %}</td>{% endif %}

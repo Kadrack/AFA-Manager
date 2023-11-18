@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class ClubHistory
  */
-#[ORM\Table(name: 'club_history')]
+#[ORM\Table(name: 'clubHistory')]
 #[ORM\Entity(repositoryClass: ClubHistoryRepository::class)]
 class ClubHistory
 {
@@ -20,95 +20,109 @@ class ClubHistory
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $club_history_id;
+    private int $clubHistoryId;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'date')]
-    private DateTime $club_history_update;
+    private DateTime $clubHistoryUpdate;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
-    private int $club_history_status;
+    private int $clubHistoryStatus;
 
     /**
-     * @var Club|null
+     * @var Club
      */
-    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'club_histories')]
-    #[ORM\JoinColumn(name: 'club_history_join_club', referencedColumnName: 'club_id', nullable: false)]
-    private ?Club $club_history;
+    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'clubHistories')]
+    #[ORM\JoinColumn(name: 'clubHistory_join_club', referencedColumnName: 'clubId')]
+    private Club $clubHistoryClub;
 
     /**
      * @return int
      */
     public function getClubHistoryId(): int
     {
-        return $this->club_history_id;
+        return $this->clubHistoryId;
     }
 
     /**
-     * @param int $club_history_id
+     * @param int $set
+     *
      * @return $this
      */
-    public function setClubHistoryId(int $club_history_id): self
+    public function setClubHistoryId(int $set): self
     {
-        $this->club_history_id = $club_history_id;
+        $this->clubHistoryId = $set;
 
         return $this;
     }
 
     /**
-     * @return DateTime
+     * @param bool $format
+     *
+     * @return DateTime|string
      */
-    public function getClubHistoryUpdate(): DateTime
+    public function getClubHistoryUpdate(bool $format = false): DateTime|string
     {
-        return $this->club_history_update;
+        return $format ? $this->clubHistoryUpdate->format('d/m/Y') : $this->clubHistoryUpdate;
     }
 
     /**
-     * @param DateTime $club_history_update
+     * @param DateTime $set
+     *
      * @return $this
      */
-    public function setClubHistoryUpdate(DateTime $club_history_update): self
+    public function setClubHistoryUpdate(DateTime $set): self
     {
-        $this->club_history_update = $club_history_update;
+        $this->clubHistoryUpdate = $set;
 
         return $this;
     }
 
     /**
+     * @param bool $format
+     *
      * @return int|null
      */
-    public function getClubHistoryStatus(): ?int
+    public function getClubHistoryStatus(bool $format = false): ?int
     {
-        return $this->club_history_status;
+        $text = array('Ouvert', 'En attente', 'Fermé');
+
+        return $format ? $text[$this->clubHistoryStatus] : $this->clubHistoryStatus;
     }
 
     /**
-     * @param int $club_history_status
+     * @param int $set
+     *
      * @return $this
      */
-    public function setClubHistoryStatus(int $club_history_status): self
+    public function setClubHistoryStatus(int $set): self
     {
-        $this->club_history_status = $club_history_status;
+        $this->clubHistoryStatus = $set;
 
         return $this;
     }
 
     /**
-     * @return Club|null
+     * @return Club
      */
-    public function getClubHistory(): ?Club
+    public function getClubHistoryClub(): Club
     {
-        return $this->club_history;
+        return $this->clubHistoryClub;
     }
 
-    public function setClubHistory(?Club $club_history): self
+    /**
+     * @param Club $set
+     *
+     * @return $this
+     */
+    public function setClubHistoryClub(Club $set): self
     {
-        $this->club_history = $club_history;
+        $this->clubHistoryClub = $set;
 
         return $this;
     }

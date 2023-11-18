@@ -39,6 +39,85 @@ class MemberRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Club     $club
+     * @param int|null $year
+     *
+     * @return array
+     */
+    public function getClubMemberListTest(Club $club, ?int $year = null): array
+    {
+        if (is_null($year))
+        {
+            $today = new DateTime();
+
+            if (intval($today->format('m')) >= 8)
+            {
+                $year = intval((new DateTime())->format('Y'));
+            }
+            else
+            {
+                $year = intval((new DateTime())->format('Y')) - 1;
+            }
+        }
+
+        $qb = $this->createQueryBuilder('m');
+
+        return $qb->select('m.memberId as Id', 'm.memberFirstname as Firstname', 'm.memberName as Name', 'm.memberSubscriptionList as List', 'm.memberSubscriptionStatus as Status', 'm.memberSubscriptionValidity as Validity', 'max(l.memberLicenceDeadline) as Deadline', 'max(l.memberLicencePaymentDate) as Payment', 'max(l.memberLicencePrintoutDone) as Stamp')
+            ->distinct()
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gte('l.memberLicenceDeadline', "'" . $year   . "-08-01" . "'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'" . $year+2 . "-07-31" . "'"))
+            ->groupBy('Id')
+            ->orderBy('Firstname')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
+     * @param Club          $club
+     * @param bool|null     $adult
+     * @param DateTime|null $date
+     *
+     * @return array
+     */
+    public function getClubMemberList(Club $club, ?bool $adult = null, ?DateTime $date = null): array
+    {
+        if (is_null($date))
+        {
+            $date = new DateTime();
+        }
+
+        $limitLow  = date_sub(clone $date, DateInterval::createFromDateString('3 month'));
+        $limitHigh = date_add(clone $date, DateInterval::createFromDateString('1 year'));
+
+        $qb = $this->createQueryBuilder('m');
+
+        $qb->select('m.memberId as Id', 'm.memberFirstname as Firstname', 'm.memberName as Name')
+            ->distinct()
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gt('l.memberLicenceDeadline', "'".$limitLow->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$limitHigh->format('Y-m-d')."'"));
+
+        if (!is_null($adult))
+        {
+            if ($adult)
+            {
+                $qb->andWhere($qb->expr()->neq('m.memberSubscriptionList', 2));
+            }
+            else
+            {
+                $qb->andWhere($qb->expr()->neq('m.memberSubscriptionList', 1));
+            }
+        }
+
+        return $qb->orderBy('m.memberFirstname')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
      * @param Club $club
      * @param bool|null $adult
      * @param DateTime|null $date
@@ -57,24 +136,24 @@ class MemberRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('m');
 
         $qb->distinct()
-            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->gte('l.member_licence_deadline', "'".$limitLow->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lte('l.member_licence_deadline', "'".$limitHigh->format('Y-m-d')."'"));
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gte('l.memberLicenceDeadline', "'".$limitLow->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$limitHigh->format('Y-m-d')."'"));
 
         if (!is_null($adult))
         {
             if ($adult)
             {
-                $qb->andWhere($qb->expr()->neq('m.member_subscription_list', 2));
+                $qb->andWhere($qb->expr()->neq('m.memberSubscriptionList', 2));
             }
             else
             {
-                $qb->andWhere($qb->expr()->neq('m.member_subscription_list', 1));
+                $qb->andWhere($qb->expr()->neq('m.memberSubscriptionList', 1));
             }
         }
 
-        return $qb->orderBy('m.member_firstname')
+        return $qb->orderBy('m.memberFirstname')
             ->getQuery()
             ->getResult();
     }
@@ -88,14 +167,14 @@ class MemberRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('m');
 
         return $qb->select('m As Member')
-            ->addSelect('s.grade_session_candidate_rank As Grade')
-            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->innerJoin(GradeSessionCandidate::class, 's', 'WITH', $qb->expr()->eq('m.member_id', 's.grade_session_candidate_member'))
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->isNull('s.grade_session_candidate_payment_date'))
-            ->andWhere($qb->expr()->neq('s.grade_session_candidate_status', 2))
-            ->orderBy('m.member_firstname', 'ASC')
-            ->addOrderBy('m.member_name', 'ASC')
+            ->addSelect('s.gradeSessionCandidateRank As Grade')
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->innerJoin(GradeSessionCandidate::class, 's', 'WITH', $qb->expr()->eq('m.memberId', 's.gradeSessionCandidateMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->isNull('s.gradeSessionCandidatePaymentDate'))
+            ->andWhere($qb->expr()->neq('s.gradeSessionCandidateStatus', 2))
+            ->orderBy('m.memberFirstname', 'ASC')
+            ->addOrderBy('m.memberName', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -108,11 +187,11 @@ class MemberRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->where($qb->expr()->isNull('l.member_licence_printout_done'))
-            ->andWhere($qb->expr()->isNotNull('l.member_licence_printout_creation'))
-            ->andWhere($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->orderBy('l.member_licence_printout_creation', 'ASC')
+        return $qb->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->isNull('l.memberLicencePrintoutDone'))
+            ->andWhere($qb->expr()->isNotNull('l.memberLicencePrintoutCreation'))
+            ->andWhere($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->orderBy('l.memberLicencePrintoutCreation', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -128,15 +207,13 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('m As Member')
-            ->addSelect('max(l.member_licence_deadline) As Deadline')
-            ->distinct()
-            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->andWhere($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->having($qb->expr()->gte('max(l.member_licence_deadline)', "'".$limitLow->format('Y-m-d')."'"))
-            ->andHaving($qb->expr()->lt('max(l.member_licence_deadline)', "'".$limitHigh->format('Y-m-d')."'"))
-            ->groupBy('m.member_id')
-            ->orderBy('l.member_licence_deadline')
+        return $qb->distinct()
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->andWhere($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->having($qb->expr()->gte('max(l.memberLicenceDeadline)', "'".$limitLow->format('Y-m-d')."'"))
+            ->andHaving($qb->expr()->lt('max(l.memberLicenceDeadline)', "'".$limitHigh->format('Y-m-d')."'"))
+            ->groupBy('m.memberId')
+            ->orderBy('l.memberLicenceDeadline')
             ->getQuery()
             ->getResult();
     }
@@ -152,15 +229,13 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('m As Member')
-            ->addSelect('max(l.member_licence_deadline) As Deadline')
-            ->distinct()
-            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->andWhere($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->having($qb->expr()->gte('max(l.member_licence_deadline)', "'".$limitLow->format('Y-m-d')."'"))
-            ->andHaving($qb->expr()->lt('max(l.member_licence_deadline)', "'".$limitHigh->format('Y-m-d')."'"))
-            ->groupBy('m.member_id')
-            ->orderBy('l.member_licence_deadline')
+        return $qb->distinct()
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->andWhere($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->having($qb->expr()->gte('max(l.memberLicenceDeadline)', "'".$limitLow->format('Y-m-d')."'"))
+            ->andHaving($qb->expr()->lt('max(l.memberLicenceDeadline)', "'".$limitHigh->format('Y-m-d')."'"))
+            ->groupBy('m.memberId')
+            ->orderBy('l.memberLicenceDeadline')
             ->getQuery()
             ->getResult();
     }
@@ -173,13 +248,13 @@ class MemberRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('t.training_id AS Id', 't.training_name AS Name', 's.training_session_date AS Date', 'sum(s.training_session_duration) AS Duration')
-            ->join(TrainingAttendance::class, 'a', 'WITH', $qb->expr()->eq('m.member_id', 'a.training_attendance_member'))
-            ->join(TrainingSessionAttendance::class, 'sa', 'WITH', $qb->expr()->eq('a.training_attendance_id', 'sa.training_session_attendances'))
-            ->join(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('s.training_session_id', 'sa.training_session'))
-            ->join(Training::class, 't', 'WITH', $qb->expr()->eq('a.training', 't.training_id'))
-            ->where($qb->expr()->eq('m.member_id', $member_id))
-            ->andWhere($qb->expr()->eq('a.training_attendance_status', 1))
+        return $qb->select('t.trainingId AS Id', 't.trainingName AS Name', 's.trainingSessionDate AS Date', 'sum(s.trainingSessionDuration) AS Duration')
+            ->join(TrainingAttendance::class, 'a', 'WITH', $qb->expr()->eq('m.memberId', 'a.trainingAttendanceMember'))
+            ->join(TrainingSessionAttendance::class, 'sa', 'WITH', $qb->expr()->eq('a.trainingAttendanceId', 'sa.trainingSessionAttendanceTrainingAttendance'))
+            ->join(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('s.trainingSessionId', 'sa.trainingSessionAttendanceTrainingSession'))
+            ->join(Training::class, 't', 'WITH', $qb->expr()->eq('a.trainingAttendanceTraining', 't.trainingId'))
+            ->where($qb->expr()->eq('m.memberId', $member_id))
+            ->andWhere($qb->expr()->eq('a.trainingAttendanceStatus', 1))
             ->groupBy('Id')
             ->orderBy('Date', 'DESC')
             ->getQuery()
@@ -198,19 +273,20 @@ class MemberRepository extends ServiceEntityRepository
 
         if (ctype_digit($search))
         {
-            $qb->andWhere($qb->expr()->eq('m.member_id', $search));
+            $qb->andWhere($qb->expr()->eq('m.memberId', $search));
         }
         elseif (str_contains($search, '@'))
         {
-            $qb->andWhere($qb->expr()->eq('m.member_email', "'".$search."'"));
+            $qb->andWhere($qb->expr()->eq('m.memberEmail', "'".$search."'"));
         }
         else
         {
-            $qb->andWhere($qb->expr()->like("concat(m.member_name, ' ', m.member_firstname)", "'%".$search."%'"));
+            $qb->andWhere($qb->expr()->like("concat(m.memberName, ' ', m.memberFirstname)", "'%".$search."%'"));
+            $qb->orWhere($qb->expr()->like("concat(m.memberFirstname, ' ', m.memberName)", "'%".$search."%'"));
         }
 
-        return $qb->orderBy('m.member_firstname', 'ASC')
-            ->addOrderBy('m.member_name', 'ASC')
+        return $qb->orderBy('m.memberFirstname', 'ASC')
+            ->addOrderBy('m.memberName', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -237,14 +313,14 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('sum(s.training_session_duration) AS Total')
-            ->join(TrainingAttendance::class, 'a', 'WITH', $qb->expr()->eq('m.member_id', 'a.training_attendance_member'))
-            ->join(TrainingSessionAttendance::class, 'sa', 'WITH', $qb->expr()->eq('a.training_attendance_id', 'sa.training_session_attendances'))
-            ->join(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('s.training_session_id', 'sa.training_session'))
-            ->join(Training::class, 't', 'WITH', $qb->expr()->eq('a.training', 't.training_id'))
-            ->where($qb->expr()->eq('m.member_id', $member_id))
-            ->andWhere($qb->expr()->gte('s.training_session_date', "'".$start."'"))
-            ->andWhere($qb->expr()->lte('s.training_session_date', "'".$end."'"))
+        return $qb->select('sum(s.trainingSessionDuration) AS Total')
+            ->join(TrainingAttendance::class, 'a', 'WITH', $qb->expr()->eq('m.memberId', 'a.trainingAttendanceMember'))
+            ->join(TrainingSessionAttendance::class, 'sa', 'WITH', $qb->expr()->eq('a.trainingAttendanceId', 'sa.trainingSessionAttendanceTrainingAttendance'))
+            ->join(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('s.trainingSessionId', 'sa.trainingSessionAttendanceTrainingSession'))
+            ->join(Training::class, 't', 'WITH', $qb->expr()->eq('a.trainingAttendanceTraining', 't.trainingId'))
+            ->where($qb->expr()->eq('m.memberId', $member_id))
+            ->andWhere($qb->expr()->gte('s.trainingSessionDate', "'".$start."'"))
+            ->andWhere($qb->expr()->lte('s.trainingSessionDate', "'".$end."'"))
             ->getQuery()
             ->getArrayResult();
     }
@@ -259,12 +335,12 @@ class MemberRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->where($qb->expr()->eq('l.member_licence_club', $club->getClubId()))
-            ->andWhere($qb->expr()->gte('l.member_licence_deadline', "'".$start."'"))
-            ->andWhere($qb->expr()->lte('l.member_licence_deadline', "'".$end."'"))
-            ->orderBy('m.member_firstname', 'ASC')
-            ->addOrderBy('m.member_name', 'ASC')
+        return $qb->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->eq('l.memberLicenceClub', $club->getClubId()))
+            ->andWhere($qb->expr()->gte('l.memberLicenceDeadline', "'".$start."'"))
+            ->andWhere($qb->expr()->lt('l.memberLicenceDeadline', "'".$end."'"))
+            ->orderBy('m.memberFirstname', 'ASC')
+            ->addOrderBy('m.memberName', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -278,12 +354,12 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'l.member_licence_deadline AS Deadline', 'l.member_licence_payment_date AS Date', 'c.club_id AS ClubId', 'c.club_name AS ClubName', 'l.member_licence_id AS RenewId')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->where($qb->expr()->gte('l.member_licence_payment_date', "'".$limit->format('Y-m-d')."'"))
+        return $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'l.memberLicenceDeadline AS Deadline', 'l.memberLicencePaymentDate AS Date', 'c.clubId AS ClubId', 'c.clubName AS ClubName', 'l.memberLicenceId AS RenewId')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.memberLicenceClub', 'c.clubId'))
+            ->where($qb->expr()->gte('l.memberLicencePaymentDate', "'".$limit->format('Y-m-d')."'"))
             ->orderBy('Date', 'DESC')
-            ->addOrderBy('l.member_licence_id', 'DESC')
+            ->addOrderBy('l.memberLicenceId', 'DESC')
             ->getQuery()
             ->getArrayResult();
     }
@@ -295,11 +371,11 @@ class MemberRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'c.club_name AS Club', 'c.club_id AS ClubId')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->where($qb->expr()->gte('m.member_start_practice', "'".'2022-02-19'."'"))
-            ->andWhere($qb->expr()->neq('c.club_id', 5000))
+        return $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'c.clubName AS Club', 'c.clubId AS ClubId')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.memberLicenceClub', 'c.clubId'))
+            ->where($qb->expr()->gte('m.memberStartPractice', "'".'2022-02-19'."'"))
+            ->andWhere($qb->expr()->neq('c.clubId', 5000))
             ->setMaxResults(376)
             ->groupBy('Id')
             ->orderBy('ClubId', 'ASC')
@@ -315,12 +391,12 @@ class MemberRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('m.member_start_practice AS Start', 'm.member_birthday AS Birthday', 'm.member_sex AS Sex', 'c.club_name AS Club', 'd.club_dojo_zip AS Zip', 'm.member_id AS Id')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(ClubDojo::class, 'd', 'WITH', $qb->expr()->eq('d.club_dojo_club', 'c.club_id'))
-            ->where($qb->expr()->gte('m.member_start_practice', "'".'2022-02-19'."'"))
-            ->andWhere($qb->expr()->neq('c.club_id', 5000))
+        return $qb->select('m.memberStartPractice AS Start', 'm.memberBirthday AS Birthday', 'm.memberSex AS Sex', 'c.clubName AS Club', 'd.clubDojoZip AS Zip', 'm.memberId AS Id')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.memberLicenceClub', 'c.clubId'))
+            ->join(ClubDojo::class, 'd', 'WITH', $qb->expr()->eq('d.clubDojoClub', 'c.clubId'))
+            ->where($qb->expr()->gte('m.memberStartPractice', "'".'2022-02-19'."'"))
+            ->andWhere($qb->expr()->neq('c.clubId', 5000))
             ->setMaxResults(376)
             ->groupBy('Id')
             ->orderBy('Start', 'ASC')
@@ -340,10 +416,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $list['First'] = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate', 'm.member_phone As Phone', 'm.member_email AS Email', 'm.member_birthday AS Birthday')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->between('m.member_birthday', "'".$limitLow->format('Y-m-d')."'", "'".$limitHigh->format('Y-m-d')."'"))
+        $list['First'] = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate', 'm.memberPhone As Phone', 'm.memberEmail AS Email', 'm.memberBirthday AS Birthday')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->between('m.memberBirthday', "'".$limitLow->format('Y-m-d')."'", "'".$limitHigh->format('Y-m-d')."'"))
             ->having($qb->expr()->gt('Deadline', "'".$today->format('Y-m-d')."'"))
             ->andHaving($qb->expr()->gte('Grade', 9))
             ->andHaving($qb->expr()->lte('Grade', 14))
@@ -357,11 +433,11 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $list['Second'] = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate', 'm.member_email AS Email', 'm.member_birthday AS Birthday')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->between('m.member_birthday', "'".$limitLow->format('Y-m-d')."'", "'".$limitHigh->format('Y-m-d')."'"))
+        $list['Second'] = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate', 'm.memberEmail AS Email', 'm.memberBirthday AS Birthday')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.memberLicenceClub', 'c.clubId'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->between('m.memberBirthday', "'".$limitLow->format('Y-m-d')."'", "'".$limitHigh->format('Y-m-d')."'"))
             ->having($qb->expr()->gt('Deadline', "'".$today->format('Y-m-d')."'"))
             ->andHaving($qb->expr()->gte('Grade', 7))
             ->groupBy('Id')
@@ -382,14 +458,13 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(l.member_licence_deadline) AS Deadline', 'm.member_start_practice AS Start', 'count(distinct c.club_id) AS Aware')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->having($qb->expr()->gte('max(l.member_licence_deadline)', "'".$limitLow->format('Y-m-d')."'"))
-            ->andHaving($qb->expr()->lte('max(l.member_licence_deadline)', "'".$limitHigh->format('Y-m-d')."'"))
+        return $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'c.clubName AS Club', 'c.clubId AS ClubId', 'max(l.memberLicenceDeadline) AS Deadline', 'm.memberStartPractice AS Start', 'count(distinct c.clubId) AS Aware')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.memberLicenceClub', 'c.clubId'))
+            ->having($qb->expr()->gte('max(l.memberLicenceDeadline)', "'".$limitLow->format('Y-m-d')."'"))
+            ->andHaving($qb->expr()->lte('max(l.memberLicenceDeadline)', "'".$limitHigh->format('Y-m-d')."'"))
             ->groupBy('Id')
-            ->orderBy('ClubId', 'ASC')
-            ->addOrderBy('FirstName', 'ASC')
+            ->orderBy('Start', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }
@@ -415,10 +490,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade',  18))
             ->andHaving($qb->expr()->lt('GradeDate', "'".$limitNanadan."'"))
@@ -434,10 +509,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade', 16))
             ->andHaving($qb->expr()->lt('GradeDate', "'".$limitRokudan."'"))
@@ -453,10 +528,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade', 14))
             ->andHaving($qb->expr()->lt('GradeDate', "'".$limitGodan."'"))
@@ -472,10 +547,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade', 12))
             ->andHaving($qb->expr()->lt('GradeDate', "'".$limitYondan."'"))
@@ -491,10 +566,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade', 10))
             ->andHaving($qb->expr()->lt('GradeDate', "'".$limitSandan."'"))
@@ -510,10 +585,10 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
             ->andHaving($qb->expr()->eq('Grade', 8))
             ->andHaving($qb->expr()->lt('GradeDate', "'".$limitNidan."'"))
@@ -529,13 +604,13 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        $result = $qb->select('m.member_id AS Id', 'm.member_firstname AS FirstName', 'm.member_name AS Name', 'max(l.member_licence_deadline) AS Deadline', 'max(g.grade_rank) AS Grade', 'max(g.grade_date) AS GradeDate')
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.grade_member', 'm.member_id'))
-            ->where($qb->expr()->eq('m.member_last_kagami', 0))
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade', 'max(g.gradeDate) AS GradeDate')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->eq('m.memberLastKagami', 0))
             ->having($qb->expr()->gt('Deadline', "'".$deadline."'"))
-            ->andHaving($qb->expr()->eq('max(g.grade_rank)', 6))
-            ->andHaving($qb->expr()->lt('max(g.grade_date)', "'".$limitShodan."'"))
+            ->andHaving($qb->expr()->eq('max(g.gradeRank)', 6))
+            ->andHaving($qb->expr()->lt('max(g.gradeDate)', "'".$limitShodan."'"))
             ->groupBy('Id')
             ->orderBy('FirstName', 'ASC')
             ->getQuery()
@@ -560,17 +635,152 @@ class MemberRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('m');
 
-        return $qb->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->innerJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.member_id', 'g.grade_member'))
-            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.member_id', 'f.formation_member'))
-            ->where($qb->expr()->gte('l.member_licence_deadline', "'".$limitLicence->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->lte('m.member_birthday', "'".$limitBirthday->format('Y-m-d')."'"))
-            ->andWhere($qb->expr()->isNotNull('m.member_email'))
-            ->groupBy('m.member_id')
-            ->having($qb->expr()->lt('max(f.formation_rank)', 4))
-            ->orHaving($qb->expr()->isNull('max(f.formation_rank)'))
-            ->andHaving($qb->expr()->gte('max(g.grade_rank)', 5))
+        return $qb->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicence'))
+            ->innerJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.memberId', 'g.gradeMember'))
+            ->leftJoin(Formation::class, 'f', 'WITH', $qb->expr()->eq('m.memberId', 'f.formationMember'))
+            ->where($qb->expr()->gte('l.memberLicenceDeadline', "'".$limitLicence->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('m.memberBirthday', "'".$limitBirthday->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->isNotNull('m.memberEmail'))
+            ->groupBy('m.memberId')
+            ->having($qb->expr()->lt('max(f.formationRank)', 4))
+            ->orHaving($qb->expr()->isNull('max(f.formationRank)'))
+            ->andHaving($qb->expr()->gte('max(g.gradeRank)', 5))
             ->getQuery()
             ->getResult();
+    }
+
+    public function getStatGrade(): array
+    {
+        $lowLimit = new DateTime();
+
+        $highLimit = new DateTime('+1 year today');
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 7))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 8))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['1er Dan'] = sizeof($result);
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 9))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 10))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['2ème Dan'] = sizeof($result);
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 11))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 12))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['3ème Dan'] = sizeof($result);
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 13))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 14))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['4ème Dan'] = sizeof($result);
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 15))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 16))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['5ème Dan'] = sizeof($result);
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 17))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 18))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['6ème Dan'] = sizeof($result);
+
+        $qb = $this->createQueryBuilder('m');
+
+        $result = $qb->select('m.memberId AS Id', 'm.memberFirstname AS FirstName', 'm.memberName AS Name', 'max(l.memberLicenceDeadline) AS Deadline', 'max(g.gradeRank) AS Grade')
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('g.gradeMember', 'm.memberId'))
+            ->where($qb->expr()->gt('l.memberLicenceDeadline', "'".$lowLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lte('l.memberLicenceDeadline', "'".$highLimit->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->lt('g.gradeStatus', 4))
+            ->having($qb->expr()->eq('max(g.gradeRank)', 19))
+            ->orHaving($qb->expr()->eq('max(g.gradeRank)', 20))
+            //->andHaving($qb->expr()->gt('Deadline', "'".$deadline."'"))
+            ->groupBy('Id')
+            ->orderBy('FirstName', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $stat['7ème Dan'] = sizeof($result);
+
+        return $stat;
     }
 }

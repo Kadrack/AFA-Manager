@@ -11,39 +11,6 @@ use Symfony\Component\Intl\Countries;
 class ListData
 {
     /**
-     * @param int $type
-     * @return array|bool|int|string
-     */
-    public function getClubType(int $type): array|bool|int|string
-    {
-        $types = array('ASBL' => 1, 'Association de fait' => 2, 'Autres' => 3);
-
-        if ($type == 0)
-        {
-            return $types;
-        }
-        else if ($type > sizeof($types))
-        {
-            return "Autre";
-        }
-        else
-        {
-            return array_search($type, $types);
-        }
-    }
-
-    /**
-     * @param string $country
-     * @return string
-     */
-    public function getCountryName(string $country): string
-    {
-        $countries = Countries::getNames('fr');
-
-        return $countries[$country];
-    }
-
-    /**
      * @param int $day
      * @return array|bool|int|string
      */

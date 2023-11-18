@@ -41,9 +41,9 @@ class FormationController extends AbstractController
             die();
         }
 
-        $data['Sessions'] = $doctrine->getRepository(FormationSession::class)->findBy(array(), array('formation_session_date' => 'DESC', 'formation_session_type' => 'ASC'));
+        $data['Sessions'] = $doctrine->getRepository(FormationSession::class)->findBy(array(), array('formationSessionDate' => 'DESC', 'formationSessionType' => 'ASC'));
 
-        $data['Waiting'] = $doctrine->getRepository(FormationSession::class)->findBy(array('formation_session_date' => null), array('formation_session_date' => 'DESC', 'formation_session_type' => 'ASC'));
+        $data['Waiting'] = $doctrine->getRepository(FormationSession::class)->findBy(array('formationSessionDate' => null), array('formationSessionDate' => 'DESC', 'formationSessionType' => 'ASC'));
 
         return $this->render('Formation/list.html.twig', array('data' => $data));
     }
@@ -131,7 +131,7 @@ class FormationController extends AbstractController
 
         $entityManager = $doctrine->getManager();
 
-        $sessions = $doctrine->getRepository(FormationSession::class)->findBy(array('formation_session_type' => $type), array('formation_session_date' => 'DESC'));
+        $sessions = $doctrine->getRepository(FormationSession::class)->findBy(array('formationSessionType' => $type), array('formationSessionDate' => 'DESC'));
 
         if ($sessions[array_key_first($sessions)]->getFormationSessionOpen() >= new DateTime() || $sessions[array_key_first($sessions)]->getFormationSessionIsOpen())
         {
@@ -164,7 +164,7 @@ class FormationController extends AbstractController
         {
             if ($formType == 1)
             {
-                $member = $doctrine->getRepository(Member::class)->findOneBy(array('member_id' => $form->get('FormationSessionCandidateMember')->getData()));
+                $member = $doctrine->getRepository(Member::class)->findOneBy(array('memberId' => $form->get('FormationSessionCandidateMember')->getData()));
 
                 if (!is_null($member))
                 {
@@ -173,6 +173,8 @@ class FormationController extends AbstractController
                     if (strtolower($member->getMemberFirstname()) == strtolower($form->get('FormationSessionCandidateFirstname')->getData()))
                     {
                         $check = true;
+
+                        $member->setMemberEmail($form->get('FormationSessionCandidateEmail')->getData());
                     }
 
                     if ($check && (strtolower($member->getMemberName()) != strtolower($form->get('FormationSessionCandidateName')->getData())))

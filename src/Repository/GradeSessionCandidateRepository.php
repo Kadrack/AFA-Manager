@@ -37,14 +37,14 @@ class GradeSessionCandidateRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        return $qb->select('m.member_id AS Id', 'm.member_firstname AS Firstname', 'm.member_name AS Name', 'm.member_photo AS Photo', 'm.member_birthday AS Birthday', 'c.club_name AS Club', 'c.club_id AS ClubId', 'max(g.grade_rank) AS ActualGrade', 'max(g.grade_date) AS ActualGradeDate', 'm.member_start_practice AS StartPractice', 's.grade_session_candidate_rank AS Grade', 's.grade_session_candidate_jury AS Jury', 's.grade_session_candidate_position AS Position')
-            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 's.grade_session_candidate_member'))
-            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.member_id', 'l.member_licence'))
-            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.member_id', 'g.grade_member'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.member_licence_club', 'c.club_id'))
-            ->where($qb->expr()->eq('s.grade_session_candidate_exam', $session))
-            ->andWhere($qb->expr()->eq('s.grade_session_candidate_status', 1))
-            ->andWhere($qb->expr()->isNull('s.grade_session_candidate_result'))
+        return $qb->select('m.memberId AS Id', 'm.memberFirstname AS Firstname', 'm.memberName AS Name', 'm.memberPhoto AS Photo', 'm.memberBirthday AS Birthday', 'c.clubName AS Club', 'c.clubId AS ClubId', 'max(g.gradeRank) AS ActualGrade', 'max(g.gradeDate) AS ActualGradeDate', 'm.memberStartPractice AS StartPractice', 's.gradeSessionCandidateRank AS Grade', 's.gradeSessionCandidateJury AS Jury', 's.gradeSessionCandidatePosition AS Position')
+            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 's.gradeSessionCandidateMember'))
+            ->join(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->join(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.memberId', 'g.gradeMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('l.memberLicenceClub', 'c.clubId'))
+            ->where($qb->expr()->eq('s.gradeSessionCandidateExam', $session))
+            ->andWhere($qb->expr()->eq('s.gradeSessionCandidateStatus', 1))
+            ->andWhere($qb->expr()->isNull('s.gradeSessionCandidateResult'))
             ->groupBy('Id')
             ->orderBy('Grade', 'ASC')
             ->addOrderBy('Firstname', 'ASC')

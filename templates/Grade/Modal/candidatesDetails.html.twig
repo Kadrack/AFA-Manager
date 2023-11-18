@@ -4,9 +4,9 @@
             <h5 class="modal-title">Détails pratiquant (<a href="{{ path('member-index', {'member': candidate.Member.getMemberId}) }}">Voir profil complet</a>)</h5>
         </div>
         <div class="modal-body">
-            <div class="card text-white bg-primary container col gx-0">
-                <div class="card-header text-center user-select-none">
-                    <h2>{{ candidate.Member.getMemberFirstname|title }} {{ candidate.Member.getMemberName|title }}</h2>
+            <div class="card container col gx-0">
+                <div class="card-header bg-primary text-white text-center user-select-none">
+                    <h2 class="m-0">{{ candidate.Member.getMemberFirstname|title }} {{ candidate.Member.getMemberName|title }}</h2>
                 </div>
                 <div class="card-body row align-items-center">
                     <div class="col text-center">
@@ -38,7 +38,7 @@
                             <div class="col text-center"><strong>Remarque</strong></div>
                         </div>
                         <div class="row border-bottom border-dark pb-3">
-                            <div class="col text-start">{% if candidate.Session.GradeSessionCandidateComment is null %}Aucune{% else %}{{ candidate.Session.GradeSessionCandidateComment }}{% endif %}</div>
+                            <div class="col text-start">{% if candidate.Session.GradeSessionCandidateComment is null %}Aucune{% else %}{{ candidate.Session.GradeSessionCandidateComment|raw }}{% endif %}</div>
                         </div>
                     </div>
                 </div>

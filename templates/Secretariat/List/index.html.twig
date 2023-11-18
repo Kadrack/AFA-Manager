@@ -20,7 +20,7 @@
             </thead>
             <tbody>
                 {% for number, list in data.List %}
-                    <tr class="table-active" onclick="window.open('{{ path('secretariat-listIndex', {'list': number}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
+                    <tr onclick="window.open('{{ path('secretariat-listIndex', {'list': number}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                         <td class="align-middle">{{ loop.index }}</td>
                         <td class="align-middle">{{ list }}</td>
                     </tr>

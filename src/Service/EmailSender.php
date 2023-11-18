@@ -14,12 +14,13 @@ use Doctrine\Persistence\ManagerRegistry;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
+use Symfony\Bundle\SecurityBundle\Security;
+
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Class Tools
@@ -92,19 +93,19 @@ class EmailSender
 
         if (!is_null($user))
         {
-            if (is_null($user->getUserMember()))
+            if (is_null($user->getMember()))
             {
-                $this->email['Firstname'] = ucwords($user->getUserFirstname());
-                $this->email['Name']      = ucwords($user->getUserRealName());
+                $this->email['Firstname'] = ucwords($user->getFirstname());
+                $this->email['Name']      = ucwords($user->getName());
                 $this->email['Phone']     = null;
-                $this->email['ReplyTo']   = $user->getUserEmail();
+                $this->email['ReplyTo']   = $user->getEmail();
             }
             else
             {
-                $this->email['Firstname'] = ucwords($user->getUserMember()->getMemberFirstname());
-                $this->email['Name']      = ucwords($user->getUserMember()->getMemberName());
-                $this->email['Phone']     = $user->getUserMember()->getMemberPhone();
-                $this->email['ReplyTo']   = $user->getUserMember()->getMemberEmail();
+                $this->email['Firstname'] = ucwords($user->getMember()->getMemberFirstname());
+                $this->email['Name']      = ucwords($user->getMember()->getMemberName());
+                $this->email['Phone']     = $user->getMember()->getMemberPhone();
+                $this->email['ReplyTo']   = $user->getMember()->getMemberEmail();
             }
         }
 
@@ -113,14 +114,14 @@ class EmailSender
         if ($session->has('Club'))
         {
             $this->email['Title']    = null;
-            $this->email['ReplyTo']  = is_null($user->getUserEmail()) ? $user->getUserMember()->getMemberEmail() : $user->getUserEmail();
+            $this->email['ReplyTo']  = is_null($user->getEmail()) ? $user->getMember()->getMemberEmail() : $user->getEmail();
             $this->email['Official'] = false;
         }
         elseif ($session->has('Cluster'))
         {
             $this->email['Title']    = $session->get('Cluster')->getClusterMemberTitle();
             $this->email['ReplyTo']  = $session->get('Cluster')->getClusterMemberEmail();
-            $this->email['Cluster']  = $session->get('Cluster')->getCluster()->getClusterName();
+            $this->email['Cluster']  = $session->get('Cluster')->getClusterMemberCluster()->getClusterName();
             $this->email['Official'] = true;
         }
 
@@ -249,12 +250,12 @@ class EmailSender
 
         if ($manager && $dojoCho)
         {
-            $staffEmail = $club->getClubStaffEmail(true);
+            $staffEmail = $club->getClubData('EmailStaff');
         }
         else
         {
-            !$manager ?: $staffEmail = $club->getClubManagerMail(true);
-            !$dojoCho ?: $staffEmail = $club->getClubDojoChoEmail(true);
+            !$manager ?: $staffEmail = $club->getClubData('EmailManager');
+            !$dojoCho ?: $staffEmail = $club->getClubData('EmailDojoCho');
         }
 
         $this->email['To']       = [is_null($member->getMemberEmail()) ? null : new Address($member->getMemberEmail(), ucwords($member->getMemberFirstname()) . ' ' . ucwords($member->getMemberName()))];
@@ -293,7 +294,7 @@ class EmailSender
     public function toClubMember(Club $club, int $list): bool
     {
         $this->email['To']       = array($this->email['ReplyTo']);
-        $this->email['Cc']       = $club->getClubStaffEmail(true);
+        $this->email['Cc']       = $club->getClubData('Emailstaff');
         $this->email['Bcc']      = array();
         $this->email['Template'] = 'Mails/template.html.twig';
         $this->email['Context']  = array('data' => $this->email);
@@ -315,14 +316,14 @@ class EmailSender
 
                 break;
             case 3:
-                foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('club_teacher' => $club->getClubId())) as $teacher)
+                foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacher' => $club->getClubId())) as $teacher)
                 {
                     is_null($teacher->getClubTeacherEmail()) ?: $this->email['Bcc'][] = $teacher->getClubTeacherEmail(true);
                 }
 
                 break;
             case 4:
-                $this->email['Bcc'] = $club->getClubManagerMail(true);
+                $this->email['Bcc'] = $club->getClubData('EmailManagers');
 
                 break;
             case 5:
@@ -333,7 +334,7 @@ class EmailSender
                         continue;
                     }
 
-                    is_null($manager->getClubManagerEmail()) ?: $this->email['Bcc'][] = $manager->getClubManagerEmail();
+                    is_null($manager->getClubManagerEmail()) ?: $this->email['Bcc'][] = $manager->getClubManagerEmail(true);
                 }
 
                 break;
@@ -394,7 +395,7 @@ class EmailSender
             switch ($list)
             {
                 case 1:
-                    foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('club_teacher_title' => 1)) as $member)
+                    foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherTitle' => 1)) as $member)
                     {
                         is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
@@ -404,7 +405,7 @@ class EmailSender
                     foreach ($this->doctrine->getRepository(ClubManager::class)->findAll() as $member)
                     {
                         is_null($member->getClubManagerMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubManagerMember()?->getMemberEmail();
-                        is_null($member->getClubManagerUser()?->getUserEmail()) ?: $this->email['Bcc'][] = $member->getClubManagerUser()?->getUserEmail();
+                        is_null($member->getClubManagerUser()?->getEmail()) ?: $this->email['Bcc'][] = $member->getClubManagerUser()?->getEmail();
                     }
 
                     break;
@@ -446,7 +447,7 @@ class EmailSender
                 case 8:
                     foreach ($this->doctrine->getRepository(Member::class)->getCPAnimateurCandidate() as $member)
                     {
-                        !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
+                        $this->email['Bcc'][] = $member->getMemberEmail();
                     }
 
                     break;
@@ -473,13 +474,13 @@ class EmailSender
     public function examApplicationValidated(Member $member, GradeSession $gradeSession): bool
     {
         $this->email['Attach']   = [$this->parameters->get('kernel.project_dir').'/private/Consignes.doc'];
-        $this->email['Cc']       = $member->getMemberActualClub()->getClubStaffEmail(true);
+        $this->email['Cc']       = $member->getMemberActualClub()->getClubData('EmailStaff', true);
         $this->email['Context']  = ['dateExam' => $gradeSession->getGradeSessionDate(), 'address' => $gradeSession->getGradeSessionStreet(), 'zip' => $gradeSession->getGradeSessionZip(), 'city' => $gradeSession->getGradeSessionCity()];
         $this->email['From']     = new Address('ct@aikido.be', 'Secrétariat CT');
         $this->email['ReplyTo']  = $this->email['From'];
         $this->email['Subject']  = 'Candidature validée';
         $this->email['Template'] = 'Grade/Email/validation.html.twig';
-        $this->email['To']       = [is_null($member->getMemberEmail()) ? null : new Address($member->getMemberEmail(), ucwords($member->getMemberFirstname()) . ' ' . ucwords($member->getMemberName()))];
+        $this->email['To']       = [is_null($member->getMemberEmail()) ? null : $member->getMemberEmail(true)];
         $this->email['Bcc']      = array($this->email['From']);
 
         if (is_null($this->email['To'][0]))
@@ -501,7 +502,7 @@ class EmailSender
      */
     public function examApplicationRejected(Member $member, GradeSessionCandidate $gradeSession): bool
     {
-        $this->email['Cc']       = $member->getMemberActualClub()->getClubStaffEmail(true);
+        $this->email['Cc']       = $member->getMemberActualClub()->getClubData('Emailstaff');
         $this->email['Context']  = ['member' => $member, 'reason' => $gradeSession->getGradeSessionCandidateStaffComment()];
         $this->email['From']     = new Address('ct@aikido.be', 'Secrétariat CT');
         $this->email['ReplyTo']  = $this->email['From'];
@@ -599,10 +600,10 @@ class EmailSender
 
         if ($this->parameters->get('kernel.environment') == 'dev')
         {
-                $email->to(new Address('frederic.buchon@aikido.be', 'Test Email'));
+            $email->to(new Address('frederic.buchon@aikido.be', 'Test Email'));
 
-                $email->cc();
-                $email->bcc();
+            $email->cc();
+            $email->bcc();
         }
 
         $this->mailer->send($email);

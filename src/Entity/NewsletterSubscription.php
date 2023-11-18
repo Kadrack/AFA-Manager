@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class NewsletterSubscription
  */
-#[ORM\Table(name: 'newsletter_subscription')]
+#[ORM\Table(name: 'newsletterSubscription')]
 #[ORM\Entity(repositoryClass: NewsletterSubscriptionRepository::class)]
 class NewsletterSubscription
 {
@@ -18,19 +18,19 @@ class NewsletterSubscription
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $newsletter_subscription_id;
+    private int $newsletterSubscriptionId;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
-    private string $newsletter_subscription_email;
+    private string $newsletterSubscriptionEmail;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'string', length: 255)]
-    private string $newsletter_subscription_unique_id;
+    private string $newsletterSubscriptionUniqueId;
 
     public function __construct()
     {
@@ -42,16 +42,17 @@ class NewsletterSubscription
      */
     public function getNewsletterSubscriptionId(): int
     {
-        return $this->newsletter_subscription_id;
+        return $this->newsletterSubscriptionId;
     }
 
     /**
-     * @param int $newsletter_subscription_id
+     * @param int $newsletterSubscriptionId
+     *
      * @return $this
      */
-    public function setNewsletterSubscriptionId(int $newsletter_subscription_id): self
+    public function setNewsletterSubscriptionId(int $newsletterSubscriptionId): self
     {
-        $this->newsletter_subscription_id = $newsletter_subscription_id;
+        $this->newsletterSubscriptionId = $newsletterSubscriptionId;
 
         return $this;
     }
@@ -61,16 +62,17 @@ class NewsletterSubscription
      */
     public function getNewsletterSubscriptionEmail(): string
     {
-        return $this->newsletter_subscription_email;
+        return $this->newsletterSubscriptionEmail;
     }
 
     /**
-     * @param string $newsletter_subscription_email
+     * @param string $newsletterSubscriptionEmail
+     *
      * @return $this
      */
-    public function setNewsletterSubscriptionEmail(string $newsletter_subscription_email): self
+    public function setNewsletterSubscriptionEmail(string $newsletterSubscriptionEmail): self
     {
-        $this->newsletter_subscription_email = $newsletter_subscription_email;
+        $this->newsletterSubscriptionEmail = $newsletterSubscriptionEmail;
 
         return $this;
     }
@@ -80,16 +82,17 @@ class NewsletterSubscription
      */
     public function getNewsletterSubscriptionUniqueId(): string
     {
-        return $this->newsletter_subscription_unique_id;
+        return $this->newsletterSubscriptionUniqueId;
     }
 
     /**
-     * @param string $newsletter_subscription_unique_id
+     * @param string $newsletterSubscriptionUniqueId
+     *
      * @return $this
      */
-    public function setNewsletterSubscriptionUniqueId(string $newsletter_subscription_unique_id): self
+    public function setNewsletterSubscriptionUniqueId(string $newsletterSubscriptionUniqueId): self
     {
-        $this->newsletter_subscription_unique_id = $newsletter_subscription_unique_id;
+        $this->newsletterSubscriptionUniqueId = $newsletterSubscriptionUniqueId;
 
         return $this;
     }

@@ -22,107 +22,140 @@ class Grade
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $grade_id;
+    private int $gradeId;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $grade_date;
+    private ?DateTime $gradeDate;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
     #[Assert\NotBlank]
-    private int $grade_rank;
+    private int $gradeRank;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $grade_status;
+    private ?int $gradeStatus;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $grade_certificate;
+    private ?string $gradeCertificate;
 
     /**
      * @var Club|null
      */
-    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'club_grades')]
-    #[ORM\JoinColumn(name: 'grade_join_club', referencedColumnName: 'club_id', nullable: true)]
-    private ?Club $grade_club;
+    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'grade_join_club', referencedColumnName: 'clubId', nullable: true)]
+    private ?Club $gradeClub;
 
     /**
      * @var GradeSessionCandidate|null
      */
-    #[ORM\ManyToOne(targetEntity: GradeSessionCandidate::class, cascade: ['persist'], inversedBy: 'grade_session_candidate_grades')]
-    #[ORM\JoinColumn(name: 'grade_join_grade_session_candidate', referencedColumnName: 'grade_session_candidate_id', nullable: true)]
-    private ?GradeSessionCandidate $grade_session;
+    #[ORM\ManyToOne(targetEntity: GradeSessionCandidate::class, cascade: ['persist'], inversedBy: 'gradeSessionCandidateGrades')]
+    #[ORM\JoinColumn(name: 'grade_join_gradeSessionCandidate', referencedColumnName: 'gradeSessionCandidateId', nullable: true)]
+    private ?GradeSessionCandidate $gradeSession;
 
     /**
      * @var Member
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_grades')]
-    #[ORM\JoinColumn(name: 'grade_join_member', referencedColumnName: 'member_id', nullable: false)]
-    private Member $grade_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberGrades')]
+    #[ORM\JoinColumn(name: 'grade_join_member', referencedColumnName: 'memberId', nullable: false)]
+    private Member $gradeMember;
 
     /**
      * @return int
      */
     public function getGradeId(): int
     {
-        return $this->grade_id;
+        return $this->gradeId;
     }
 
     /**
-     * @param int $grade_id
+     * @param int $gradeId
+     *
      * @return $this
      */
-    public function setGradeId(int $grade_id): self
+    public function setGradeId(int $gradeId): self
     {
-        $this->grade_id = $grade_id;
+        $this->gradeId = $gradeId;
 
         return $this;
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getGradeDate(): ?DateTime
+    public function getGradeDate(bool $format = false): DateTime|string|null
     {
-        return $this->grade_date;
+        if (is_null($this->gradeDate))
+        {
+            return $format ? 'En attente' : null;
+        }
+
+        return $format ? $this->gradeDate->format('d/m/Y') : $this->gradeDate;
     }
 
     /**
-     * @param DateTime $grade_date
+     * @param DateTime $gradeDate
+     *
      * @return $this
      */
-    public function setGradeDate(DateTime $grade_date): self
+    public function setGradeDate(DateTime $gradeDate): self
     {
-        $this->grade_date = $grade_date;
+        $this->gradeDate = $gradeDate;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @param bool $format
+     *
+     * @return int|string
      */
-    public function getGradeRank(): int
+    public function getGradeRank(bool $format = false): int|string
     {
-        return $this->grade_rank;
+        return $format ? $this->getGradeText($this->gradeRank) : $this->gradeRank;
     }
 
     /**
-     * @param int $grade_rank
+     * @param int $id
+     *
+     * @return array|string
+     */
+    public function getGradeText(int $id = 0): array|string
+    {
+        $keys = array('6ème kyu' => 1, '5ème kyu' => 2, '4ème kyu' => 3, '3ème kyu' => 4, '2ème kyu' => 5, '1er kyu' => 6, '1er Dan National' => 7, '1er Dan Aïkikaï' => 8, '2ème Dan National' => 9, '2ème Dan Aïkikaï' => 10, '3ème Dan National' => 11, '3ème Dan Aïkikaï' => 12, '4ème Dan National' => 13, '4ème Dan Aïkikaï' => 14, '5ème Dan National' => 15, '5ème Dan Aïkikaï' => 16, '6ème Dan National' => 17, '6ème Dan Aïkikaï' => 18, '7ème Dan National' => 19, '7ème Dan Aïkikaï' => 20);
+
+        if ($id == 0)
+        {
+            return $keys;
+        }
+        else if ($id > sizeof($keys))
+        {
+            return 'Autre';
+        }
+
+        return array_search($id, $keys);
+    }
+
+    /**
+     * @param int $gradeRank
+     *
      * @return $this
      */
-    public function setGradeRank(int $grade_rank): self
+    public function setGradeRank(int $gradeRank): self
     {
-        $this->grade_rank = $grade_rank;
+        $this->gradeRank = $gradeRank;
 
         return $this;
     }
@@ -132,16 +165,17 @@ class Grade
      */
     public function getGradeStatus(): ?int
     {
-        return $this->grade_status;
+        return $this->gradeStatus;
     }
 
     /**
-     * @param int|null $grade_status
+     * @param int|null $gradeStatus
+     *
      * @return $this
      */
-    public function setGradeStatus(?int $grade_status): self
+    public function setGradeStatus(?int $gradeStatus): self
     {
-        $this->grade_status = $grade_status;
+        $this->gradeStatus = $gradeStatus;
 
         return $this;
     }
@@ -151,35 +185,37 @@ class Grade
      */
     public function getGradeCertificate(): ?string
     {
-        return $this->grade_certificate;
+        return $this->gradeCertificate;
     }
 
     /**
-     * @param string|null $grade_certificate
+     * @param string|null $gradeCertificate
+     *
      * @return $this
      */
-    public function setGradeCertificate(?string $grade_certificate): self
+    public function setGradeCertificate(?string $gradeCertificate): self
     {
-        $this->grade_certificate = $grade_certificate;
+        $this->gradeCertificate = $gradeCertificate;
 
         return $this;
     }
 
     /**
-     * @return Club|null
+     * @return Club
      */
-    public function getGradeClub(): ?Club
+    public function getGradeClub(): Club
     {
-        return $this->grade_club;
+        return $this->gradeClub;
     }
 
     /**
-     * @param Club|null $grade_club
+     * @param Club $set
+     *
      * @return $this
      */
-    public function setGradeClub(?Club $grade_club): self
+    public function setGradeClub(Club $set): self
     {
-        $this->grade_club = $grade_club;
+        $this->gradeClub = $set;
 
         return $this;
     }
@@ -189,16 +225,17 @@ class Grade
      */
     public function getGradeSession(): ?GradeSessionCandidate
     {
-        return $this->grade_session;
+        return $this->gradeSession;
     }
 
     /**
-     * @param GradeSessionCandidate|null $grade_session
+     * @param GradeSessionCandidate|null $gradeSession
+     *
      * @return $this
      */
-    public function setGradeSession(?GradeSessionCandidate $grade_session): self
+    public function setGradeSession(?GradeSessionCandidate $gradeSession): self
     {
-        $this->grade_session = $grade_session;
+        $this->gradeSession = $gradeSession;
 
         return $this;
     }
@@ -208,16 +245,17 @@ class Grade
      */
     public function getGradeMember(): Member
     {
-        return $this->grade_member;
+        return $this->gradeMember;
     }
 
     /**
-     * @param Member $grade_member
+     * @param Member $gradeMember
+     *
      * @return $this
      */
-    public function setGradeMember(Member $grade_member): self
+    public function setGradeMember(Member $gradeMember): self
     {
-        $this->grade_member = $grade_member;
+        $this->gradeMember = $gradeMember;
 
         return $this;
     }

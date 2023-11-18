@@ -12,7 +12,7 @@
         <h1 class="text-center">Liste des sessions d'examens</h1>
         {% if access.check('Grade-SessionAdd') %}
         <div class="text-center mb-3">
-            <button class="btn btn-sm btn-light" onclick="load('{{ path('grade-sessionAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
+            <button class="btn btn-lg btn-primary" onclick="load('{{ path('grade-sessionAdd') }}', 'popup')" onmouseover="this.style.cursor='pointer'">Ajouter</button>
         </div>
         {% endif %}
         <table class="table table-sm table-hover">
@@ -26,7 +26,7 @@
             </thead>
             <tbody>
             {% for session in data.Sessions %}
-                <tr class="table-active"{% if (session.getGradeSessionType == 1 and access.check('Grade-Index')) or (session.getGradeSessionType == 2 and access.check('Grade-Kagami')) %} onclick="window.open('{{ path('grade-index', {'gradeSession': session.getGradeSessionId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <tr{% if (session.getGradeSessionType == 1 and access.check('Grade-Index')) or (session.getGradeSessionType == 2 and access.check('Grade-Kagami')) %} onclick="window.open('{{ path('grade-index', {'gradeSession': session.getGradeSessionId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                     <td class="align-middle">{{ session.getGradeSessionDate|date("d/m/Y") }}</td>
                     <td class="align-middle">{{ listData.getSessionType(session.getGradeSessionType) }}</td>
                     <td class="align-middle">{% if session.getGradeSessionType == 2 %}--{% else %}{{ session.getGradeSessionCandidates|length }}{% endif %}</td>

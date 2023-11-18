@@ -1,0 +1,46 @@
+<div class="container text-center col col-lg-6{% if data.Attendances.ForeignList %} float-start{% endif %}">
+    <h2 class="text-center">{{ data.Attendances.AFACount }} Pratiquants AFA</h2>
+    <table id="ListMembers" class="table table-sm table-hover user-select-none">
+        <thead>
+            <tr onmouseover="this.style.cursor='pointer'">
+                <th scope="col" onclick="sortTable('ListMembers', 0)"></th>
+                <th scope="col" onclick="sortTable('ListMembers', 1)"># Licence</th>
+                <th scope="col" onclick="sortTable('ListMembers', 2)">Nom</th>
+                <th scope="col" onclick="sortTable('ListMembers', 3)"># Cours</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for member in data.Attendances.AFA %}
+            <tr>
+                <td class="align-middle">{{ loop.index }}</td>
+                <td class="align-middle">{{ member.Id }}</td>
+                <td class="align-middle">{{ member.FullName }}</td>
+                <td class="align-middle">{{ member.Attendance }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if data.Attendances.ForeignList %}
+    <div class="container text-center col col-lg-6 float-end">
+        <h2 class="text-center">{{ data.Attendances.ForeignCount }} Pratiquants hors AFA</h2>
+        <table id="ListForeignMembers" class="table table-sm table-hover user-select-none">
+            <thead>
+                <tr onmouseover="this.style.cursor='pointer'">
+                    <th scope="col" onclick="sortTable('ListForeignMembers', 0)"></th>
+                    <th scope="col" onclick="sortTable('ListForeignMembers', 1)">Nom</th>
+                    <th scope="col" onclick="sortTable('ListForeignMembers', 2)"># Cours</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for member in data.Attendances.Foreign %}
+                <tr>
+                    <td class="align-middle">{{ loop.index }}</td>
+                    <td class="align-middle">{{ member.FullName }}</td>
+                    <td class="align-middle">{{ member.Attendance }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

@@ -9,15 +9,22 @@ use App\Entity\ClubHistory;
 use App\Entity\ClubManager;
 use App\Entity\ClubTeacher;
 use App\Entity\Grade;
-use App\Entity\Lesson;
-use App\Entity\LessonAttendance;
+use App\Entity\ClubLesson;
+use App\Entity\ClubLessonAttendance;
 use App\Entity\Member;
 use App\Entity\MemberLicence;
 use App\Entity\NewsletterSubscription;
-use App\Entity\TrainingSessionAttendance;
 use App\Entity\User;
 
 use App\Form\ClubType;
+
+use App\Repository\ClubLessonAttendanceRepository;
+use App\Repository\ClubLessonRepository;
+use App\Repository\ClubRepository;
+use App\Repository\GradeRepository;
+use App\Repository\MemberLicenceRepository;
+use App\Repository\MemberRepository;
+use App\Repository\TrainingSessionAttendanceRepository;
 
 use App\Service\Access;
 use App\Service\EmailSender;
@@ -27,13 +34,15 @@ use App\Service\PhotoUploader;
 use DateInterval;
 use DateTime;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use Doctrine\Persistence\ManagerRegistry;
 
 use Exception;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+use Symfony\Component\ExpressionLanguage\Expression;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -43,22 +52,26 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+
 use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 use ZipArchive;
 
 /**
  * Class ClubController
- * @package App\Controller
  *
- * @IsGranted("ROLE_USER")
+ * @package App\Controller
  */
 #[Route('/club', name:'club-')]
+#[IsGranted(new Expression('is_granted("ROLE_USER")'))]
 class ClubController extends AbstractController
 {
     /**
-     * @param Access $access
+     * @param Access  $access
      * @param Session $session
+     *
      * @return Response
      */
     #[Route('/', name:'list')]
@@ -70,9 +83,9 @@ class ClubController extends AbstractController
             {
                 return $this->redirectToRoute('club-index', array('club' => $session->get('Club')->getClubId()));
             }
-            elseif (!$session->has('Id') && !is_null($this->getUser()->getUserMember()))
+            elseif (!$session->has('Id') && !is_null($this->getUser()->getMember()))
             {
-                return $this->redirectToRoute('club-index', array('club' => $this->getUser()->getUserMember()->getMemberActualClub()->getClubId()));
+                return $this->redirectToRoute('club-index', array('club' => $this->getUser()->getMember()->getMemberActualClub()->getClubId()));
             }
             else
             {
@@ -84,78 +97,81 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param ManagerRegistry $doctrine
+     * @param Access         $access
+     * @param ClubRepository $clubs
+     *
      * @return Response
      */
     #[Route('/liste-club-ouvert', name:'listOpen')]
-    public function listOpen(Access $access, ManagerRegistry $doctrine): Response
+    public function listOpen(Access $access, ClubRepository $clubs): Response
     {
         if (!$access->check('Club-ListOpen'))
         {
             die();
         }
 
-        $data['List'] = $doctrine->getRepository(Club::class)->getClubList(null, null, true);
+        $data['List'] = $clubs->getClubList();
         $data['Open'] = true;
 
         return $this->render('Club/Load/listOpenClose.html.twig', array('data' => $data));
     }
 
     /**
-     * @param Access $access
-     * @param ManagerRegistry $doctrine
+     * @param Access         $access
+     * @param ClubRepository $clubs
+     *
      * @return Response
      */
     #[Route('/liste-club-ferme', name:'listClose')]
-    public function listClose(Access $access, ManagerRegistry $doctrine): Response
+    public function listClose(Access $access, ClubRepository $clubs): Response
     {
         if (!$access->check('Club-ListClose'))
         {
             die();
         }
 
-        $data['List'] = $doctrine->getRepository(Club::class)->getClubList(null, null, false);
+        $data['List'] = $clubs->getClubList(false);
         $data['Open'] = false;
 
         return $this->render('Club/Load/listOpenClose.html.twig', array('data' => $data));
     }
 
     /**
-     * @param Access $access
-     * @param ManagerRegistry $doctrine
-     * @param Request $request
+     * @param Access                 $access
+     * @param ClubRepository         $clubs
+     * @param EntityManagerInterface $em
+     * @param Request                $request
+     *
      * @return Response
      */
     #[Route('/ajouter-un-club', name:'clubAdd')]
-    public function clubAdd(Access $access, ManagerRegistry $doctrine, Request $request): Response
+    public function clubAdd(Access $access, ClubRepository $clubs, EntityManagerInterface $em, Request $request): Response
     {
         if (!$access->check('Club-ClubAdd'))
         {
             die();
         }
 
-        $club = new Club();
+        $newClub = new Club();
 
-        $form = $this->createForm(ClubType::class, $club, array('formData' => array('Form' => 'Club', 'Action' => 'Add'), 'data_class' => Club::class, 'action' => $this->generateUrl('club-clubAdd')));
+        $form = $this->createForm(ClubType::class, $newClub, array('formData' => array('Form' => 'Club', 'Action' => 'Add'), 'data_class' => Club::class, 'action' => $this->generateUrl('club-clubAdd')));
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid())
         {
-            if (is_null($doctrine->getRepository(Club::class)->findOneBy(array('club_id' => $club->getClubId()))))
+            if (is_null($clubs->findOneBy(array('clubId' => $newClub->getClubId()))))
             {
-                $history = new ClubHistory();
+                $newHistory = new ClubHistory();
 
-                $history->setClubHistory($club);
-                $history->setClubHistoryStatus(2);
-                $history->setClubHistoryUpdate(new DateTime());
+                $newHistory->setClubHistoryClub($newClub);
+                $newHistory->setClubHistoryStatus(2);
+                $newHistory->setClubHistoryUpdate(new DateTime());
 
-                $entityManager = $doctrine->getManager();
+                $em->persist($newClub);
+                $em->persist($newHistory);
 
-                $entityManager->persist($club);
-                $entityManager->persist($history);
-                $entityManager->flush();
+                $em->flush();
             }
             else
             {
@@ -169,15 +185,16 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Request $request
-     * @param Session $session
+     * @param Access                  $access
+     * @param Club                    $club
+     * @param MemberLicenceRepository $licences
+     * @param Request                 $request
+     * @param Session                 $session
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}', name:'index')]
-    public function index(Access $access, Club $club, ManagerRegistry $doctrine, Request $request, Session $session): Response
+    public function index(Access $access, Club $club, MemberLicenceRepository $licences, Request $request, Session $session): Response
     {
         if (!$access->check('Club-Index'))
         {
@@ -189,7 +206,7 @@ class ClubController extends AbstractController
             die();
         }
 
-        if ($session->has('activeClubTab') && ($session->get('activeClubTab') == 'attendanceTab'))
+        if ($session->has('activeClubTab') && (($session->get('activeClubTab') == 'attendanceTab') || ($session->get('activeClubTab') == 'secretariatTab')))
         {
             if ($request->query->has('season'))
             {
@@ -203,20 +220,21 @@ class ClubController extends AbstractController
 
         $data['Club'] = $club;
 
-        $data['ActiveMemberCount'] = $doctrine->getRepository(MemberLicence::class)->getClubActiveMemberCount($club);
+        $data['ActiveMemberCount'] = $licences->getClubActiveMemberCount($club);
 
         return $this->render('Club/index.html.twig', array('data' => $data));
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Session $session
+     * @param Access               $access
+     * @param Club                 $club
+     * @param ClubLessonRepository $lessons
+     * @param Session              $session
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}/onglet-presence', name:'attendanceTab')]
-    public function attendanceTab(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
+    public function attendanceTab(Access $access, Club $club, ClubLessonRepository $lessons, Session $session): Response
     {
         if (!$access->check('Club-AttendanceTab'))
         {
@@ -232,7 +250,7 @@ class ClubController extends AbstractController
 
         $today = new DateTime();
 
-        if ($session->has('season') && ($session->get('season') >= 2022) && ($session->get('season') < intval($today->format('Y'))))
+        if ($session->has('season') && ($session->get('season') >= 2020) && ($session->get('season') < intval($today->format('Y'))))
         {
             $data['Season'] = $session->get('season');
         }
@@ -250,53 +268,69 @@ class ClubController extends AbstractController
 
         $data['SeasonList'] = array();
 
-        for ($i = intval($today->format('Y')) < 8 ? intval($today->format('Y')) - 1 : intval($today->format('Y')); $i >= 2022; $i--)
+        for ($i = intval($today->format('Y')) < 8 ? intval($today->format('Y')) - 1 : intval($today->format('Y')); $i >= 2020; $i--)
         {
             $data['SeasonList'][] = $i;
         }
 
-        $data['Club']    = $club;
-        $data['Lesson']  = $doctrine->getRepository(Lesson::class)->getLesson($data['Club'], $data['Season']);
+        $data['Club']   = $club;
+        $data['Lesson'] = $lessons->getLesson($data['Club'], $data['Season']);
 
-        foreach ($doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']) as $lesson)
+        foreach ($lessons->getSummary($data['Club'], $data['Season']) as $lesson)
         {
             $licence = $lesson['Id'];
             $month   = intval($lesson['Date']->format('m'));
-            $type    = $lesson['Type'] == 1 ? 'Adult' : 'Child';
 
-            if (!isset($data['Summary'][$type][$month][$licence]['Total']))
+            do
             {
-                $data['Summary'][$type][$month][$licence]['Firstname'] = $lesson['Firstname'];
-                $data['Summary'][$type][$month][$licence]['Name']      = $lesson['Name'];
-                $data['Summary'][$type][$month][$licence]['Total']     = 0;
+                if ($lesson['Type'] == 3)
+                {
+                    $lesson['Type']--;
+                }
+
+                $type = $lesson['Type'] == 1 ? 'Adult' : 'Child';
+
+                if (!isset($data['Summary'][$type][$month][$licence]['Total']))
+                {
+                    $data['Summary'][$type][$month][$licence]['Firstname'] = ucwords(strtolower($lesson['Firstname']));
+                    $data['Summary'][$type][$month][$licence]['Name']      = ucwords(strtolower($lesson['Name']));
+                    $data['Summary'][$type][$month][$licence]['Total']     = 0;
+                }
+
+                if (!isset($data['Summary'][$type]['Season'][$licence]['Total']))
+                {
+                    $data['Summary'][$type]['Season'][$licence]['Firstname'] = ucwords(strtolower($lesson['Firstname']));
+                    $data['Summary'][$type]['Season'][$licence]['Name']      = ucwords(strtolower($lesson['Name']));
+                    $data['Summary'][$type]['Season'][$licence]['Total']     = 0;
+                }
+
+                $data['Summary'][$type][$month][$licence]['Total'] = $data['Summary'][$type][$month][$licence]['Total'] + $lesson['Duration'];
+
+                $data['Summary'][$type]['Season'][$licence]['Total'] = $data['Summary'][$type]['Season'][$licence]['Total'] + $lesson['Duration'];
             }
-
-            if (!isset($data['Summary'][$type]['Season'][$licence]['Total']))
-            {
-                $data['Summary'][$type]['Season'][$licence]['Firstname'] = $lesson['Firstname'];
-                $data['Summary'][$type]['Season'][$licence]['Name']      = $lesson['Name'];
-                $data['Summary'][$type]['Season'][$licence]['Total']     = 0;
-            }
-
-            $data['Summary'][$type][$month][$licence]['Total'] = $data['Summary'][$type][$month][$licence]['Total'] + $lesson['Duration'];
-
-            $data['Summary'][$type]['Season'][$licence]['Total'] = $data['Summary'][$type]['Season'][$licence]['Total'] + $lesson['Duration'];
+            while ($lesson['Type']-- > 1);
         }
 
         return $this->render('Club/Tab/attendance.html.twig', array('data' => $data));
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Session $session
+     * @param Access                              $access
+     * @param Club                                $club
+     * @param ClubLessonRepository                $lessons
+     * @param GradeRepository                     $grades
+     * @param MemberRepository                    $members
+     * @param Session                             $session
+     * @param TrainingSessionAttendanceRepository $trainings
+     * @param int                                 $type
+     *
      * @return Response
+     * @throws \Doctrine\DBAL\Exception
      */
-    #[Route('/{club<\d+>}/onglet-adulte', name:'adultTab')]
-    public function adultTab(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
+    #[Route('/{club<\d+>}/onglet-membre/{type<\d+>}', name:'memberTab')]
+    public function memberTab(Access $access, Club $club, ClubLessonRepository $lessons, GradeRepository $grades, MemberRepository $members, Session $session, TrainingSessionAttendanceRepository $trainings, int $type): Response
     {
-        if (!$access->check('Club-AdultTab'))
+        if (($type == 1 and !$access->check('Club-AdultTab')) or ($type == 2 and !$access->check('Club-ChildTab')))
         {
             die();
         }
@@ -306,116 +340,67 @@ class ClubController extends AbstractController
             die();
         }
 
-        $session->set('activeClubTab', 'adultTab');
+        $session->set('activeClubTab', $type == 1 ? 'adultTab' : 'childTab');
 
-        $data['Club']             = $club;
-        $data['ActiveMemberList'] = $doctrine->getRepository(Member::class)->getClubActiveMemberList($club, true);
-        $data['AttendanceTotal']  = $doctrine->getRepository(TrainingSessionAttendance::class)->getClubAttendanceTotalHour($club);
+        $data['Club'] = $club;
 
-        foreach ($data['AttendanceTotal'] as $member)
+        $query = $members->getClubMemberList($club, $type == 1);
+
+        foreach ($query as $member)
         {
-            $total[$member['Id']] = $member['Total'];
+            $data['List'][$member['Id']]['Id']        = $member['Id'];
+            $data['List'][$member['Id']]['Firstname'] = ucwords(strtolower($member['Firstname']));
+            $data['List'][$member['Id']]['Name']      = ucwords(strtolower($member['Name']));
+
+            $data['Ids'][] = $member['Id'];
         }
 
-        $data['AttendanceTotal'] = $total;
+        $query = $grades->findBy(array('gradeMember' => $data['Ids']), array('gradeRank' => 'DESC'));
 
-        $today = new DateTime();
+        foreach ($query as $grade)
+        {
+            $id = $grade->getGradeMember()->getMemberId();
 
-        if (intval($today->format('n')) < 8)
-        {
-            $data['Season'] = intval($today->format('Y')) - 1;
-        }
-        else
-        {
-            $data['Season'] = intval($today->format('Y'));
-        }
-
-        foreach ($doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']) as $lesson)
-        {
-            if ($lesson['Type'] == 2)
+            if (!isset($data['List'][$id]['GradeRank']))
             {
-                continue;
-            }
+                $data['List'][$id]['GradeRank']     = $grade->getGradeRank(true);
+                $data['List'][$id]['GradeDate']     = $grade->getGradeDate();
+                $data['List'][$id]['GradeDateText'] = $grade->getGradeDate(true);
 
-            if (!isset($data['LessonTotal'][$lesson['Id']]))
-            {
-                $data['LessonTotal'][$lesson['Id']] = 0;
+                !is_null($grade->getGradeDate()) ?: $data['List'][$id]['AttendanceTotal'] = 'En attente';
             }
+        }
 
-            $data['LessonTotal'][$lesson['Id']] = $data['LessonTotal'][$lesson['Id']] + $lesson['Duration'];
+        $query = $trainings->getClubTrainingTotal($data['List']);
+
+        foreach ($query as $training)
+        {
+            isset($data['List'][$training['Id']]['AttendanceTotal']) ?: $data['List'][$training['Id']]['AttendanceTotal'] = $training['Total'] / 60;
+        }
+
+        $query = $lessons->getLessonHourCount($data['List'], $type);
+
+        foreach ($query as $lesson)
+        {
+            $data['List'][$lesson['Id']]['LessonHourCount'] = $lesson['Total'] / 60;
+        }
+
+        foreach ($data['List'] as $member)
+        {
+            isset($member['LessonHourCount']) ?: $data['List'][$member['Id']]['LessonHourCount'] = 'Aucune';
+            isset($member['AttendanceTotal']) ?: $data['List'][$member['Id']]['AttendanceTotal'] = 'Aucune';
         }
 
         return $this->render('Club/Tab/memberList.html.twig', array('data' => $data));
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Session $session
-     * @return Response
-     */
-    #[Route('/{club<\d+>}/onglet-enfant', name:'childTab')]
-    public function childTab(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
-    {
-        if (!$access->check('Club-ChildTab'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $session->set('activeClubTab', 'childTab');
-
-        $data['Club']             = $club;
-        $data['ActiveMemberList'] = $doctrine->getRepository(Member::class)->getClubActiveMemberList($club, false);
-        $data['AttendanceTotal']  = $doctrine->getRepository(TrainingSessionAttendance::class)->getClubAttendanceTotalHour($club);
-
-        foreach ($data['AttendanceTotal'] as $member)
-        {
-            $total[$member['Id']] = $member['Total'];
-        }
-
-        $data['AttendanceTotal'] = $total;
-
-        $today = new DateTime();
-
-        if (intval($today->format('n')) < 8)
-        {
-            $data['Season'] = intval($today->format('Y')) - 1;
-        }
-        else
-        {
-            $data['Season'] = intval($today->format('Y'));
-        }
-
-        foreach ($doctrine->getRepository(Lesson::class)->getSummary($data['Club'], $data['Season']) as $lesson)
-        {
-            if ($lesson['Type'] == 1)
-            {
-                continue;
-            }
-
-            if (!isset($data['LessonTotal'][$lesson['Id']]))
-            {
-                $data['LessonTotal'][$lesson['Id']] = 0;
-            }
-
-            $data['LessonTotal'][$lesson['Id']] = $data['LessonTotal'][$lesson['Id']] + $lesson['Duration'];
-        }
-
-        return $this->render('Club/Tab/memberList.html.twig', array('data' => $data));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
+     * @param Access      $access
+     * @param Club        $club
      * @param EmailSender $emailSender
-     * @param Request $request
-     * @param Session $session
+     * @param Request     $request
+     * @param Session     $session
+     *
      * @return Response
      * @throws TransportExceptionInterface
      */
@@ -456,9 +441,10 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
+     * @param Access  $access
+     * @param Club    $club
      * @param Session $session
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}/onglet-dojo', name:'dojoTab')]
@@ -482,15 +468,16 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Request $request
-     * @param Session $session
+     * @param Access                         $access
+     * @param Club                           $club
+     * @param ClubLessonAttendanceRepository $lessons
+     * @param MemberRepository               $members
+     * @param Session                        $session
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}/onglet-secretariat', name:'secretariatTab')]
-    public function secretariatTab(Access $access, Club $club, ManagerRegistry $doctrine, Request $request, Session $session): Response
+    public function secretariatTab(Access $access, Club $club, ClubLessonAttendanceRepository $lessons, MemberRepository $members, Session $session): Response
     {
         if (!$access->check('Club-SecretariatTab'))
         {
@@ -504,37 +491,69 @@ class ClubController extends AbstractController
 
         $session->set('activeClubTab', 'secretariatTab');
 
-        $data['Club']         = $club;
-        $data['Stamp']        = $doctrine->getRepository(Member::class)->getOnGoingStampMember($club);
-        $data['Payment']      = $doctrine->getRepository(MemberLicence::class)->getPaymentOnGoing($club);
-        $data['ToRenew']      = $doctrine->getRepository(Member::class)->getMemberToRenew($club);
-        $data['Inactive']     = $doctrine->getRepository(Member::class)->getRecentExpired($club);
-        $data['ExamToPay']    = $doctrine->getRepository(Member::class)->getUnpayedSession($club);
+        $today = new DateTime();
 
-        if ($request->query->has('date'))
+        if ($session->has('season') && ($session->get('season') >= 2020) && ($session->get('season') < intval($today->format('Y'))))
         {
-            $date = DateTime::createFromFormat("Ymd", (string)$request->query->get('date'));
+            $data['Season'] = $session->get('season');
         }
         else
         {
-            $date = null;
+            if (intval($today->format('n')) < 8)
+            {
+                $data['Season'] = intval($today->format('Y')) - 1;
+            }
+            else
+            {
+                $data['Season'] = intval($today->format('Y'));
+            }
         }
 
-        $data['Subscription'] = $doctrine->getRepository(Member::class)->getClubActiveMemberList($club, null, $date);
+        $data['SeasonList'] = array();
 
-        $ids = array();
-
-        foreach ($data['Subscription'] as $member)
+        for ($i = intval($today->format('Y')) < 8 ? intval($today->format('Y')) - 1 : intval($today->format('Y')); $i >= 2020; $i--)
         {
-            $ids[] = $member->getMemberId();
+            $data['SeasonList'][] = $i;
         }
 
-        $lastLesson = $doctrine->getRepository(LessonAttendance::class)->getLastLesson($ids);
+        $data['Club'] = $club;
 
-        foreach ($lastLesson as $id)
+        $limitLow  = new DateTime('-3 month today');
+        $limitHigh = new DateTime('+2 month today');
+
+        $text = new Member();
+
+        foreach ($members->getClubMemberListTest($club, $data['Season']) as $member)
         {
-            $data['LastLesson'][$id['Id']] = $id['Last'];
+            $ids[] = $member['Id'];
+
+            $member['Firstname']    = ucwords(strtolower($member['Firstname']));
+            $member['Name']         = ucwords(strtolower($member['Name']));
+            $member['Deadline']     = DateTime::createFromFormat('Y-m-d', $member['Deadline']);
+            $member['DeadlineText'] = $member['Deadline']->format('d/m/Y');
+            $member['DeadlineTest'] = $member['Deadline'] < $limitLow;
+            $member['LastLesson']   = 'Inconnu';
+            $member['ListText']     = $text->getMemberSubscriptionListText($member['List']);
+            $member['Payment']      = is_null($member['Payment']) ? null : DateTime::createFromFormat('Y-m-d', $member['Payment']);
+            $member['PaymentText']  = is_null($member['Payment']) ? 'En attente' : $member['Payment']->format('d/m/Y');
+            $member['PaymentTest']  = is_null($member['Payment']);
+            $member['RenewTest']    = ($member['Deadline'] > $limitLow) && ($member['Deadline'] < $limitHigh);
+            $member['Stamp']        = is_null($member['Stamp']) ? null : DateTime::createFromFormat('Y-m-d', $member['Stamp']);
+            $member['StampText']    = is_null($member['Stamp']) ? 'En attente' : $member['Stamp']->format('d/m/Y');
+            $member['StampTest']    = is_null($member['Stamp']);
+            $member['ValidityText'] = is_null($member['Validity']) ? 'Non défini' : $member['Validity']->format('d/m/Y');
+            $member['ValidityTest'] = ($member['Validity'] < new DateTime()) && ($member['Status'] == 2);
+            $member['StatusText']   = $member['Status'] == 2 ? $member['ValidityText'] : $text->getMemberSubscriptionStatusText($member['Status']);
+
+            $data['Members']['List'][$member['Id']] = $member;
         }
+
+        foreach ($lessons->getLastLesson($ids) as $member)
+        {
+            $data['Members']['List'][$member['Id']]['LastLesson'] = is_null($member['Last']) ? 'Inconnue' : DateTime::createFromFormat('Y-m-d', $member['Last'])->format('d/m/Y');
+        }
+
+        $data['ExamToPay'] = $members->getUnpayedSession($club);
 
         return $this->render('Club/Tab/secretariat.html.twig', array('data' => $data));
     }
@@ -603,22 +622,18 @@ class ClubController extends AbstractController
             {
                 $member->setMemberSubscriptionList(2);
             }
-            else
-            {
-                $member->setMemberSubscriptionList(1);
-            }
 
             $licence = new MemberLicence();
 
             $licence->setMemberLicenceClub($club);
+            $licence->setMemberLicenceMember($member);
             $licence->setMemberLicenceUpdate(new DateTime());
             $licence->setMemberLicenceDeadline(new DateTime('+1 year '.$form->get('MemberLicenceMedicalCertificate')->getData()->format('Y-m-d')));
-
-            $member->addMemberLicences($licence);
 
             $grade = new Grade();
 
             $grade->setGradeClub($club);
+            $grade->setGradeMember($member);
             $grade->setGradeRank($form->get('GradeRank')->getData());
             $grade->setGradeDate($member->getMemberStartPractice());
 
@@ -631,13 +646,11 @@ class ClubController extends AbstractController
                 $grade->setGradeStatus(3);
             }
 
-            $member->addMemberGrades($grade);
-
             $entityManager = $doctrine->getManager();
 
             if (!is_null($form['MemberEmail']->getData()))
             {
-                if (is_null($doctrine->getRepository(NewsletterSubscription::class)->findOneBy(array('newsletter_subscription_email' => $member->getMemberEmail()))))
+                if (is_null($doctrine->getRepository(NewsletterSubscription::class)->findOneBy(array('newsletterSubscriptionEmail' => $member->getMemberEmail()))))
                 {
                     $subscription = new NewsletterSubscription();
 
@@ -675,143 +688,6 @@ class ClubController extends AbstractController
         $data['Source'] = $source;
 
         return $this->render('Club/Modal/memberDetail.html.twig', array('data' => $data));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
-     * @param Session $session
-     * @return Response
-     */
-    #[Route('/{club<\d+>}/gestion-des-timbres', name:'printStamp')]
-    public function printStamp(Access $access, Club $club, Session $session): Response
-    {
-        if (!$access->check('Club-PrintStamp'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $data['Club'] = $club;
-
-        return $this->render('Club/Modal/printStamp.html.twig', array('data' => $data));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Session $session
-     * @return Response
-     */
-    #[Route('/{club<\d+>}/imprimer-les-timbres', name:'printStampView')]
-    public function printStampView(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): Response
-    {
-        if (!$access->check('Club-PrintStamp'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $data['Member'] = $doctrine->getRepository(Member::class)->getOnGoingStampMember($club);
-
-        return $this->render('Member/Print/stamps.html.twig', array('data' => $data));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Session $session
-     * @return RedirectResponse|Response
-     */
-    #[Route('/{club<\d+>}/valider-impression-des-timbres', name:'printStampValidate')]
-    public function printStampValidate(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): RedirectResponse|Response
-    {
-        if (!$access->check('Club-PrintStamp'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $list = $doctrine->getRepository(MemberLicence::class)->getOnGoingStampLicence($club);
-
-        $entityManager = $doctrine->getManager();
-
-        foreach ($list as $licence)
-        {
-            $licence->setMemberLicencePrintoutDone(new DateTime());
-
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
-     * @param ManagerRegistry $doctrine
-     * @param Request $request
-     * @param Session $session
-     * @return Response
-     */
-    #[Route('/{club<\d+>}/validation-paiement', name:'paymentAdd')]
-    public function paymentAdd(Access $access, Club $club, ManagerRegistry $doctrine, Request $request, Session $session): Response
-    {
-        if (!$access->check('Club-PaymentAdd'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $form = $this->createForm(ClubType::class, null, array('formData' => array('Form' => 'Payment', 'Action' => 'Add'), 'action' => $this->generateUrl('club-paymentAdd', array('club' => $club->getClubId()))));
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid())
-        {
-            $members = $doctrine->getRepository(Member::class)->findBy(['member_id' => explode(',', $form->get('LicenceNumber')->getData())]);
-
-            $entityManager = $doctrine->getManager();
-
-            foreach ($members as $member)
-            {
-                if ($member->getMemberActualClub() !== $club)
-                {
-                    continue;
-                }
-
-                if (is_null($member->getMemberLastLicence()->getMemberLicencePaymentDate()) && ($member->getMemberLastLicence()->getMemberLicenceDeadline() > new DateTime()))
-                {
-                    $member->getMemberLastLicence()->setMemberLicencePaymentDate($form->get('PaymentDate')->getData());
-                    $member->getMemberLastLicence()->setMemberLicencePrintoutCreation(new DateTime());
-                    $member->getMemberLastLicence()->setMemberLicencePaymentUpdate(new DateTime());
-                }
-
-                $entityManager->flush();
-            }
-
-            return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
-        }
-
-        return $this->render('Club/Modal/paymentAdd.html.twig', array('form' => $form->createView()));
     }
 
     /**
@@ -947,22 +823,39 @@ class ClubController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid())
         {
-            $teacher->setClubTeacher($club);
+            $teacher->setClubTeacherClub($club);
 
-            if (!is_null($form->get('ClubTeacherMember')->getData()))
+            $stop = false;
+
+            if ($form->has('ClubTeacherMember') && !is_null($form->get('ClubTeacherMember')->getData()))
             {
-                $member = $doctrine->getRepository(Member::class)->findOneBy(['member_id' => $form->get('ClubTeacherMember')->getData()]);
+                $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $form->get('ClubTeacherMember')->getData()]);
 
-                if ($member != null)
+                if (!is_null($member))
                 {
                     $teacher->setClubTeacherMember($member);
                 }
+                else
+                {
+                    $this->addFlash('warning', 'Ce numéro de licence n\'est pas attribué');
+
+                    $stop = true;
+                }
+            }
+            elseif (is_null($teacher->getClubTeacherMember()) && is_null($form->get('ClubTeacherGrade')->getData()))
+            {
+                $this->addFlash('warning', 'Un grade doit être attribué à ce professeur');
+
+                $stop = true;
             }
 
-            $entityManager = $doctrine->getManager();
+            if (!$stop)
+            {
+                $entityManager = $doctrine->getManager();
 
-            $entityManager->persist($teacher);
-            $entityManager->flush();
+                $entityManager->persist($teacher);
+                $entityManager->flush();
+            }
 
             return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
         }
@@ -992,7 +885,7 @@ class ClubController extends AbstractController
             die();
         }
 
-        if ($teacher->getClubTeacher() !== $club)
+        if ($teacher->getClubTeacherClub() !== $club)
         {
             die();
         }
@@ -1019,19 +912,36 @@ class ClubController extends AbstractController
 
         if ($formEdit->isSubmitted() && $formEdit->isValid())
         {
-            if (!is_null($formEdit->get('ClubTeacherMember')->getData()))
-            {
-                $member = $doctrine->getRepository(Member::class)->findOneBy(['member_id' => $formEdit->get('ClubTeacherMember')->getData()]);
+            $stop = false;
 
-                if ($member != null)
+            if ($formEdit->has('ClubTeacherMember') && !is_null($formEdit->get('ClubTeacherMember')->getData()))
+            {
+                $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $formEdit->get('ClubTeacherMember')->getData()]);
+
+                if (!is_null($member))
                 {
                     $teacher->setClubTeacherMember($member);
                 }
+                else
+                {
+                    $this->addFlash('warning', 'Ce numéro de licence n\'est pas attribué');
+
+                    $stop = true;
+                }
+            }
+            elseif (is_null($teacher->getClubTeacherMember()) && is_null($formEdit->get('ClubTeacherGrade')->getData()))
+            {
+                $this->addFlash('warning', 'Un grade doit être attribué à ce professeur');
+
+                $stop = true;
             }
 
-            $entityManager = $doctrine->getManager();
+            if (!$stop)
+            {
+                $entityManager = $doctrine->getManager();
 
-            $entityManager->flush();
+                $entityManager->flush();
+            }
 
             return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
         }
@@ -1290,7 +1200,7 @@ class ClubController extends AbstractController
                 {
                     $history = new ClubHistory();
 
-                    $history->setClubHistory($club);
+                    $history->setClubHistoryClub($club);
                     $history->setClubHistoryStatus(3);
                     $history->setClubHistoryUpdate($form->get('RetireDate')->getData());
 
@@ -1384,7 +1294,7 @@ class ClubController extends AbstractController
 
             if (!is_null($form->get('ClubManagerMember')->getData()))
             {
-                $member = $doctrine->getRepository(Member::class)->findOneBy(['member_id' => $form->get('ClubManagerMember')->getData()]);
+                $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $form->get('ClubManagerMember')->getData()]);
 
                 if (!is_null($member))
                 {
@@ -1399,7 +1309,7 @@ class ClubController extends AbstractController
             {
                 $user = $doctrine->getRepository(User::class)->findOneBy(['login' => $form->get('ClubManagerLogin')->getData()]);
 
-                if ((!is_null($user)) && (is_null($user->getUserMember())))
+                if ((!is_null($user)) && (is_null($user->getMember())))
                 {
                     $manager->setClubManagerClub($club);
                     $manager->setClubManagerUser($user);
@@ -1742,7 +1652,7 @@ class ClubController extends AbstractController
         {
             if ($member->getMemberSubscriptionStatus() != 2)
             {
-                $member->setMemberSubscriptionValidity(null);
+                $member->setMemberSubscriptionValidity();
             }
 
             $entityManager = $doctrine->getManager();
@@ -1752,7 +1662,7 @@ class ClubController extends AbstractController
             return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
         }
 
-        return $this->render('Club/Modal/subscriptionEdit.html.twig', array('form' => $form->createView()));
+        return $this->render('Club/Modal/subscriptionEdit.html.twig', array('form' => $form->createView(), 'member' => $member));
     }
 
     /**
@@ -1779,23 +1689,23 @@ class ClubController extends AbstractController
 
         $class = $club->getClubClasses();
 
-        $lesson = new Lesson();
+        $lesson = new ClubLesson();
 
-        $lesson->setLessonClub($club);
+        $lesson->setClubLessonClub($club);
 
         if (is_null($number))
         {
-            $form = $this->createForm(ClubType::class, $lesson, array('formData' => array('Form' => 'Lesson', 'Action' => 'Add'), 'data_class' => Lesson::class, 'action' => $this->generateUrl('club-lessonAdd', array('club' => $club->getClubId()))));
+            $form = $this->createForm(ClubType::class, $lesson, array('formData' => array('Form' => 'Lesson', 'Action' => 'Add'), 'data_class' => ClubLesson::class, 'action' => $this->generateUrl('club-lessonAdd', array('club' => $club->getClubId()))));
 
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid())
             {
-                $duration = date_diff($form->get('LessonEndingHour')->getData(), $lesson->getLessonStartingHour());
+                $duration = date_diff($form->get('ClubLessonEnd')->getData(), $lesson->getClubLessonStart());
 
-                $lesson->setLessonDuration($duration->h * 60 + $duration->i);
+                $lesson->setClubLessonDuration($duration->h * 60 + $duration->i);
 
-                if (is_null($doctrine->getRepository(Lesson::class)->findOneBy(array('lesson_club' => $club->getClubId(), 'lesson_date' => $lesson->getLessonDate(), 'lesson_starting_hour' => $lesson->getLessonStartingHour(), 'lesson_type' => $lesson->getLessonType()))))
+                if (is_null($doctrine->getRepository(ClubLesson::class)->findOneBy(array('clubLessonClub' => $club->getClubId(), 'clubLessonDate' => $lesson->getClubLessonDate(), 'clubLessonStart' => $lesson->getClubLessonStart(), 'clubLessonType' => $lesson->getClubLessonType()))))
                 {
                     $entityManager = $doctrine->getManager();
 
@@ -1816,48 +1726,48 @@ class ClubController extends AbstractController
         {
             $today = new DateTime();
 
-            $duration = date_diff($class[$number-1]->getClubClassEndingHour(), $class[$number-1]->getClubClassStartingHour());
+            $duration = date_diff($class[$number-1]->getClubClassEnd(), $class[$number-1]->getClubClassStart());
 
-            $lesson->setLessonStartingHour($class[$number-1]->getClubClassStartingHour());
-            $lesson->setLessonDuration($duration->h * 60 + $duration->i);
-            $lesson->setLessonType($class[$number-1]->getClubClassType());
+            $lesson->setClubLessonStart($class[$number-1]->getClubClassStart());
+            $lesson->setClubLessonDuration($duration->h * 60 + $duration->i);
+            $lesson->setClubLessonType($class[$number-1]->getClubClassType());
 
             $day = $class[$number-1]->getClubClassDay();
 
             if (intval($today->format('N')) == $day)
             {
-                $lesson->setLessonDate(new DateTime());
+                $lesson->setClubLessonDate(new DateTime());
             }
             elseif($day == 1)
             {
-                $lesson->setLessonDate(new DateTime('next monday'));
+                $lesson->setClubLessonDate(new DateTime('next monday'));
             }
             elseif($day == 2)
             {
-                $lesson->setLessonDate(new DateTime('next tuesday'));
+                $lesson->setClubLessonDate(new DateTime('next tuesday'));
             }
             elseif($day == 3)
             {
-                $lesson->setLessonDate(new DateTime('next wednesday'));
+                $lesson->setClubLessonDate(new DateTime('next wednesday'));
             }
             elseif($day == 4)
             {
-                $lesson->setLessonDate(new DateTime('next thursday'));
+                $lesson->setClubLessonDate(new DateTime('next thursday'));
             }
             elseif($day == 5)
             {
-                $lesson->setLessonDate(new DateTime('next friday'));
+                $lesson->setClubLessonDate(new DateTime('next friday'));
             }
             elseif($day == 6)
             {
-                $lesson->setLessonDate(new DateTime('next saturday'));
+                $lesson->setClubLessonDate(new DateTime('next saturday'));
             }
             elseif($day == 7)
             {
-                $lesson->setLessonDate(new DateTime('next sunday'));
+                $lesson->setClubLessonDate(new DateTime('next sunday'));
             }
 
-            if (is_null($doctrine->getRepository(Lesson::class)->findOneBy(array('lesson_club' => $club->getClubId(), 'lesson_date' => $lesson->getLessonDate(), 'lesson_starting_hour' => $lesson->getLessonStartingHour(), 'lesson_type' => $lesson->getLessonType()))))
+            if (is_null($doctrine->getRepository(ClubLesson::class)->findOneBy(array('clubLessonClub' => $club->getClubId(), 'clubLessonDate' => $lesson->getClubLessonDate(), 'clubLessonStart' => $lesson->getClubLessonStart(), 'clubLessonType' => $lesson->getClubLessonType()))))
             {
                 $entityManager = $doctrine->getManager();
 
@@ -1874,16 +1784,17 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param Lesson $lesson
+     * @param Access          $access
+     * @param Club            $club
+     * @param ClubLesson      $lesson
      * @param ManagerRegistry $doctrine
-     * @param Request $request
-     * @param Session $session
+     * @param Request         $request
+     * @param Session         $session
+     *
      * @return RedirectResponse|Response
      */
     #[Route('/{club<\d+>}/modifier-un-cours/{lesson<\d+>}', name:'lessonEdit')]
-    public function lessonEdit(Access $access, Club $club, Lesson $lesson, ManagerRegistry $doctrine, Request $request, Session $session): RedirectResponse|Response
+    public function lessonEdit(Access $access, Club $club, ClubLesson $lesson, ManagerRegistry $doctrine, Request $request, Session $session): RedirectResponse|Response
     {
         if (!$access->check('Club-LessonEdit'))
         {
@@ -1895,12 +1806,12 @@ class ClubController extends AbstractController
             die();
         }
 
-        if ($lesson->getLessonClub() !== $club)
+        if ($lesson->getClubLessonClub() !== $club)
         {
             die();
         }
 
-        $formDelete = $this->createForm(ClubType::class, null, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('club-lessonEdit', array('club' => $club->getClubId(), 'lesson' => $lesson->getLessonId()))));
+        $formDelete = $this->createForm(ClubType::class, null, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('club-lessonEdit', array('club' => $club->getClubId(), 'lesson' => $lesson->getClubLessonId()))));
 
         $formDelete->handleRequest($request);
 
@@ -1914,21 +1825,21 @@ class ClubController extends AbstractController
             return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));
         }
 
-        $formEdit = $this->createForm(ClubType::class, $lesson, array('formData' => array('Form' => 'Lesson', 'Action' => 'Edit'), 'data_class' => Lesson::class, 'action' => $this->generateUrl('club-lessonEdit', array('club' => $club->getClubId(), 'lesson' => $lesson->getLessonId()))));
+        $formEdit = $this->createForm(ClubType::class, $lesson, array('formData' => array('Form' => 'Lesson', 'Action' => 'Edit'), 'data_class' => ClubLesson::class, 'action' => $this->generateUrl('club-lessonEdit', array('club' => $club->getClubId(), 'lesson' => $lesson->getClubLessonId()))));
 
-        $endHour = date_add(clone $lesson->getLessonStartingHour(), DateInterval::createFromDateString($lesson->getLessonDuration() . ' minute'));
+        $endHour = date_add(clone $lesson->getClubLessonStart(), DateInterval::createFromDateString($lesson->getClubLessonDuration() . ' minute'));
 
-        $formEdit->get('LessonEndingHour')->setData($endHour);
+        $formEdit->get('ClubLessonEnd')->setData($endHour);
 
         $formEdit->handleRequest($request);
 
         if ($formEdit->isSubmitted() && $formEdit->isValid())
         {
-            if ((($lesson->getLessonDate() == $formEdit->get('LessonDate')->getData()) && ($lesson->getLessonStartingHour() == $formEdit->get('LessonStartingHour')->getData())) || (is_null($doctrine->getRepository(Lesson::class)->findOneBy(array('lesson_club' => $club->getClubId(), 'lesson_date' => $lesson->getLessonDate(), 'lesson_starting_hour' => $lesson->getLessonStartingHour())))))
+            if ((($lesson->getClubLessonDate() == $formEdit->get('ClubLessonDate')->getData()) && ($lesson->getClubLessonStart() == $formEdit->get('ClubLessonStart')->getData())) || (is_null($doctrine->getRepository(ClubLesson::class)->findOneBy(array('clubLessonClub' => $club->getClubId(), 'clubLessonDate' => $lesson->getClubLessonDate(), 'clubLessonStart' => $lesson->getClubLessonStart())))))
             {
-                $duration = date_diff($formEdit->get('LessonEndingHour')->getData(), $formEdit->get('LessonStartingHour')->getData());
+                $duration = date_diff($formEdit->get('ClubLessonEnd')->getData(), $formEdit->get('ClubLessonStart')->getData());
 
-                $lesson->setLessonDuration($duration->h * 60 + $duration->i);
+                $lesson->setClubLessonDuration($duration->h * 60 + $duration->i);
 
                 $entityManager = $doctrine->getManager();
 
@@ -1939,22 +1850,23 @@ class ClubController extends AbstractController
                 $this->addFlash('warning', 'Le prochain cours à ce moment existe déjà');
             }
 
-            return $this->redirectToRoute('club-lessonIndex', array('club' => $club->getClubId(), 'lesson' => $lesson->getLessonId()));
+            return $this->redirectToRoute('club-lessonIndex', array('club' => $club->getClubId(), 'lesson' => $lesson->getClubLessonId()));
         }
 
         return $this->render('Club/Modal/lessonEdit.html.twig', array('formEdit' => $formEdit->createView(), 'formDelete' => $formDelete->createView()));
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param Lesson $lesson
+     * @param Access          $access
+     * @param Club            $club
+     * @param ClubLesson      $lesson
      * @param ManagerRegistry $doctrine
-     * @param Session $session
+     * @param Session         $session
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}/details-des-presences/{lesson<\d+>}', name:'lessonIndex')]
-    public function lessonIndex(Access $access, Club $club, Lesson $lesson, ManagerRegistry $doctrine, Session $session): Response
+    public function lessonIndex(Access $access, Club $club, ClubLesson $lesson, ManagerRegistry $doctrine, Session $session): Response
     {
         if (!$access->check('Club-LessonIndex'))
         {
@@ -1968,14 +1880,14 @@ class ClubController extends AbstractController
 
         $data['Attendance'] = array();
 
-        foreach ($lesson->getLessonAttendances() as $attendance)
+        foreach ($lesson->getClubLessonAttendances() as $attendance)
         {
-            $data['Attendance'][$attendance->getLessonAttendanceId()] = $attendance->getLessonAttendanceMember();
+            $data['Attendance'][$attendance->getClubLessonAttendanceId()] = $attendance->getClubLessonAttendanceMember();
         }
 
         $data['ActiveMemberList'] = array();
 
-        foreach ($doctrine->getRepository(Member::class)->getClubActiveMemberList($club, null, $lesson->getLessonDate()) as $member)
+        foreach ($doctrine->getRepository(Member::class)->getClubActiveMemberList($club, null, $lesson->getClubLessonDate()) as $member)
         {
             if (in_array($member, $data['Attendance']))
             {
@@ -1985,7 +1897,7 @@ class ClubController extends AbstractController
             {
                 continue;
             }
-            elseif (($lesson->getLessonType() == 1 && $member->getMemberSubscriptionList() == 2) || ($lesson->getLessonType() == 2 && $member->getMemberSubscriptionList() == 1))
+            elseif (($lesson->getClubLessonType() == 1 && $member->getMemberSubscriptionList() == 2) || ($lesson->getClubLessonType() == 2 && $member->getMemberSubscriptionList() == 1))
             {
                 continue;
             }
@@ -2000,16 +1912,17 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param Lesson $lesson
+     * @param Access          $access
+     * @param Club            $club
+     * @param ClubLesson      $lesson
      * @param ManagerRegistry $doctrine
-     * @param Session $session
-     * @param Member|null $member
+     * @param Session         $session
+     * @param Member|null     $member
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}/details-des-presences/{lesson<\d+>}/ajouter/{member<\d+>}', name:'attendanceAdd')]
-    public function attendanceAdd(Access $access, Club $club, Lesson $lesson, ManagerRegistry $doctrine, Session $session, ?Member $member = null): Response
+    public function attendanceAdd(Access $access, Club $club, ClubLesson $lesson, ManagerRegistry $doctrine, Session $session, ?Member $member = null): Response
     {
         if (!$access->check('Club-AttendanceAdd'))
         {
@@ -2023,36 +1936,33 @@ class ClubController extends AbstractController
 
         $entityManager = $doctrine->getManager();
 
-        $attendance = new LessonAttendance();
+        $attendance = new ClubLessonAttendance();
 
-        $attendance->setLesson($lesson);
+        $attendance->setClubLessonAttendanceClubLesson($lesson);
 
-        if (is_null($member))
+        if (!is_null($member))
         {
-            $attendance->setLessonAttendanceName('Invité');
-        }
-        else
-        {
-            $attendance->setLessonAttendanceMember($member);
+            $attendance->setClubLessonAttendanceMember($member);
         }
 
         $entityManager->persist($attendance);
         $entityManager->flush();
 
-        return $this->redirectToRoute('club-lessonIndex', array('club' => $club->getClubId(), 'lesson' => $lesson->getLessonId()));
+        return $this->redirectToRoute('club-lessonIndex', array('club' => $club->getClubId(), 'lesson' => $lesson->getClubLessonId()));
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
-     * @param Lesson $lesson
-     * @param LessonAttendance $attendance
-     * @param ManagerRegistry $doctrine
-     * @param Session $session
+     * @param Access               $access
+     * @param Club                 $club
+     * @param ClubLesson           $lesson
+     * @param ClubLessonAttendance $attendance
+     * @param ManagerRegistry      $doctrine
+     * @param Session              $session
+     *
      * @return Response
      */
     #[Route('/{club<\d+>}/details-des-presences/{lesson<\d+>}/retirer/{attendance<\d+>}', name:'attendanceDelete')]
-    public function attendanceDelete(Access $access, Club $club, Lesson $lesson, LessonAttendance $attendance, ManagerRegistry $doctrine, Session $session): Response
+    public function attendanceDelete(Access $access, Club $club, ClubLesson $lesson, ClubLessonAttendance $attendance, ManagerRegistry $doctrine, Session $session): Response
     {
         if (!$access->check('Club-AttendanceDelete'))
         {
@@ -2069,42 +1979,6 @@ class ClubController extends AbstractController
         $entityManager->remove($attendance);
         $entityManager->flush();
 
-        return $this->redirectToRoute('club-lessonIndex', array('club' => $club->getClubId(), 'lesson' => $lesson->getLessonId()));
-    }
-
-    /**
-     * @param Access $access
-     * @param Club $club
-     * @param Request $request
-     * @param Session $session
-     * @return Response
-     */
-    #[Route('/{club<\d+>}/liste-anciens-membres', name:'secretariatOld')]
-    public function secretariatOld(Access $access, Club $club, Request $request, Session $session): Response
-    {
-        if (!$access->check('Club-SecretariatOld'))
-        {
-            die();
-        }
-
-        if ($session->has('Club') && ($club->getClubId() != $session->get('Club')->getClubId()))
-        {
-            die();
-        }
-
-        $form = $this->createForm(ClubType::class, null, array('formData' => array('Form' => 'SecretariatOld'), 'action' => $this->generateUrl('club-secretariatOld', array('club' => $club->getClubId()))));
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid())
-        {
-            $date = $form->get('Date')->getData();
-
-            return $this->redirectToRoute('club-index', array('club' => $club->getClubId(), 'date' => $date->format('Ymd')));
-        }
-
-        $data['Club'] = $club;
-
-        return $this->render('Club/Modal/secretariatOld.html.twig', array('form' => $form->createView(), 'data' => $data));
+        return $this->redirectToRoute('club-lessonIndex', array('club' => $club->getClubId(), 'lesson' => $lesson->getClubLessonId()));
     }
 }

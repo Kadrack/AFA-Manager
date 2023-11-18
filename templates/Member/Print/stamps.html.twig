@@ -118,10 +118,10 @@
         <div class="conteneurCarte float_left" style="width:321px;">
             <div>$nbsp;</div>
             <img class="licence" src="{{ asset('images/timbre.jpg') }}" alt="Background" />
-            <div class="nomPrenom">{{ data.Licence.getMemberLicence.getMemberFirstname|title }} {{ data.Licence.getMemberLicence.getMemberName|title }}</div>
-            <div class="club">N° {{ data.Licence.getMemberLicence.getMemberId }} - {{ data.Licence.getMemberLicenceClub.getClubId }}</div>
-            <div class="grade">{{ listData.getGrade(data.Licence.getMemberLicence.getMemberLastGrade.getGradeRank) }}</div>
-            <div class="echeance">Ech.: {{ data.Licence.memberLicenceDeadline|date("d/m/Y") }}</div>
+            <div class="nomPrenom">{{ data.Licence.getMemberLicenceMember.getMemberFirstname|title }} {{ data.Licence.getMemberLicenceMember.getMemberName|title }}</div>
+            <div class="club">N° {{ data.Licence.getMemberLicenceMember.getMemberId }} - {{ data.Licence.getMemberLicenceClub.getClubId }}</div>
+            <div class="grade">{{ data.Licence.getMemberLicenceMember.getMemberLastGrade(true) }}</div>
+            <div class="echeance">Ech.: {{ data.Licence.memberLicenceDeadline(true) }}</div>
         </div>
         {% else %}
         {% for member in data.Member %}
@@ -130,8 +130,8 @@
             <img class="licence" src="{{ asset('images/timbre.jpg') }}" alt="Background" />
             <div class="nomPrenom">{{ member.getMemberFirstname|title }} {{ member.getMemberName|title }}</div>
             <div class="club">N° {{ member.getMemberId }} - {{ member.getMemberActualClub.getClubId }}</div>
-            <div class="grade">{{ member.getMemberLastGradeName }}</div>
-            <div class="echeance">Ech.: {{ member.getMemberLastDeadline|date("d/m/Y") }}</div>
+            <div class="grade">{{ member.getMemberLastGrade(true) }}</div>
+            <div class="echeance">Ech.: {{ member.getMemberDeadline(true) }}</div>
         </div>
         {% endfor %}
         {% endif %}

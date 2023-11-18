@@ -37,12 +37,11 @@ class TrainingRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('t');
 
-        return $qb->innerJoin(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('t.training_id', 's.training'))
-            ->where($qb->expr()->gte('s.training_session_date', "'".$start."'"))
-            ->andWhere($qb->expr()->lte('s.training_session_date', "'".$end."'"))
-            ->andWhere($qb->expr()->eq('t.training_type', 1))
-            ->groupBy('t.training_id')
-            ->orderBy('s.training_session_date', 'DESC')
+        return $qb->innerJoin(TrainingSession::class, 's', 'WITH', $qb->expr()->eq('t.trainingId', 's.trainingSessionTraining'))
+            ->where($qb->expr()->gte('s.trainingSessionDate', "'".$start."'"))
+            ->andWhere($qb->expr()->lte('s.trainingSessionDate', "'".$end."'"))
+            ->groupBy('t.trainingId')
+            ->orderBy('s.trainingSessionDate', 'DESC')
             ->getQuery()
             ->getResult();
     }

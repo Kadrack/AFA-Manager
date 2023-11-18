@@ -25,25 +25,19 @@ class Training
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $training_id;
+    private int $trainingId;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $training_name;
+    private ?string $trainingName;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
-    private int $training_type;
-
-    /**
-     * @var int
-     */
-    #[ORM\Column(type: 'integer')]
-    private int $training_status;
+    private int $trainingStatus;
 
     /**
      * @var TrainingSession|null
@@ -53,33 +47,26 @@ class Training
     protected ?TrainingSession $session;
 
     /**
-     * @var Club|null
+     * @var ArrayCollection|Collection|null
      */
-    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'club_trainings')]
-    #[ORM\JoinColumn(name: 'training_join_club', referencedColumnName: 'club_id', nullable: true)]
-    private ?Club $training_club;
+    #[ORM\OneToMany(mappedBy: 'trainingAttendanceTraining', targetEntity: TrainingAttendance::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['trainingAttendanceId' => 'DESC'])]
+    private ArrayCollection|Collection|null $trainingAttendances;
 
     /**
      * @var ArrayCollection|Collection|null
      */
-    #[ORM\OneToMany(mappedBy: 'training', targetEntity: TrainingAttendance::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['training_attendance_id' => 'DESC'])]
-    private ArrayCollection|Collection|null $training_attendances;
-
-    /**
-     * @var ArrayCollection|Collection|null
-     */
-    #[ORM\OneToMany(mappedBy: 'training', targetEntity: TrainingSession::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['training_session_date' => 'ASC', 'training_session_starting_hour' => 'ASC'])]
-    private ArrayCollection|Collection|null $training_sessions;
+    #[ORM\OneToMany(mappedBy: 'trainingSessionTraining', targetEntity: TrainingSession::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['trainingSessionDate' => 'ASC', 'trainingSessionStart' => 'ASC'])]
+    private ArrayCollection|Collection|null $trainingSessions;
 
     /**
      * Training constructor.
      */
     public function __construct()
     {
-        $this->training_attendances = new ArrayCollection();
-        $this->training_sessions    = new ArrayCollection();
+        $this->trainingAttendances = new ArrayCollection();
+        $this->trainingSessions    = new ArrayCollection();
     }
 
     /**
@@ -87,16 +74,17 @@ class Training
      */
     public function getTrainingId(): int
     {
-        return $this->training_id;
+        return $this->trainingId;
     }
 
     /**
-     * @param int $training_id
+     * @param int $trainingId
+     *
      * @return $this
      */
-    public function setTrainingId(int $training_id): self
+    public function setTrainingId(int $trainingId): self
     {
-        $this->training_id = $training_id;
+        $this->trainingId = $trainingId;
 
         return $this;
     }
@@ -106,35 +94,17 @@ class Training
      */
     public function getTrainingName(): ?string
     {
-        return $this->training_name;
+        return $this->trainingName;
     }
 
     /**
-     * @param string|null $training_name
+     * @param string|null $trainingName
+     *
      * @return $this
      */
-    public function setTrainingName(?string $training_name): self
+    public function setTrainingName(?string $trainingName): self
     {
-        $this->training_name = $training_name;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTrainingType(): int
-    {
-        return $this->training_type;
-    }
-
-    /**
-     * @param int $training_type
-     * @return $this
-     */
-    public function setTrainingType(int $training_type): self
-    {
-        $this->training_type = $training_type;
+        $this->trainingName = $trainingName;
 
         return $this;
     }
@@ -144,16 +114,17 @@ class Training
      */
     public function getTrainingStatus(): int
     {
-        return $this->training_status;
+        return $this->trainingStatus;
     }
 
     /**
-     * @param int $training_status
+     * @param int $trainingStatus
+     *
      * @return $this
      */
-    public function setTrainingStatus(int $training_status): self
+    public function setTrainingStatus(int $trainingStatus): self
     {
-        $this->training_status = $training_status;
+        $this->trainingStatus = $trainingStatus;
 
         return $this;
     }
@@ -178,30 +149,11 @@ class Training
     }
 
     /**
-     * @return Club|null
-     */
-    public function getTrainingClub(): ?Club
-    {
-        return $this->training_club;
-    }
-
-    /**
-     * @param Club|null $training_club
-     * @return $this
-     */
-    public function setTrainingClub(?Club $training_club): self
-    {
-        $this->training_club = $training_club;
-
-        return $this;
-    }
-
-    /**
      * @return Collection
      */
     public function getTrainingAttendances(): Collection
     {
-        return $this->training_attendances;
+        return $this->trainingAttendances;
     }
 
     /**
@@ -210,9 +162,9 @@ class Training
      */
     public function addTrainingAttendances(TrainingAttendance $trainingAttendance): self
     {
-        if (!$this->training_attendances->contains($trainingAttendance)) {
-            $this->training_attendances[] = $trainingAttendance;
-            $trainingAttendance->setTraining($this);
+        if (!$this->trainingAttendances->contains($trainingAttendance)) {
+            $this->trainingAttendances[] = $trainingAttendance;
+            $trainingAttendance->setTrainingAttendanceTraining($this);
         }
 
         return $this;
@@ -224,11 +176,11 @@ class Training
      */
     public function removeTrainingAttendances(TrainingAttendance $trainingAttendance): self
     {
-        if ($this->training_attendances->contains($trainingAttendance)) {
-            $this->training_attendances->removeElement($trainingAttendance);
+        if ($this->trainingAttendances->contains($trainingAttendance)) {
+            $this->trainingAttendances->removeElement($trainingAttendance);
             // set the owning side to null (unless already changed)
-            if ($trainingAttendance->getTraining() === $this) {
-                $trainingAttendance->setTraining(null);
+            if ($trainingAttendance->getTrainingAttendanceTraining() === $this) {
+                $trainingAttendance->setTrainingAttendanceTraining(null);
             }
         }
 
@@ -240,7 +192,7 @@ class Training
      */
     public function getTrainingSessions(): Collection
     {
-        return $this->training_sessions;
+        return $this->trainingSessions;
     }
 
     /**
@@ -249,9 +201,9 @@ class Training
      */
     public function addTrainingSessions(TrainingSession $trainingSession): self
     {
-        if (!$this->training_sessions->contains($trainingSession)) {
-            $this->training_sessions[] = $trainingSession;
-            $trainingSession->setTraining($this);
+        if (!$this->trainingSessions->contains($trainingSession)) {
+            $this->trainingSessions[] = $trainingSession;
+            $trainingSession->setTrainingSessionTraining($this);
         }
 
         return $this;
@@ -263,11 +215,11 @@ class Training
      */
     public function removeTrainingSessions(TrainingSession $trainingSession): self
     {
-        if ($this->training_sessions->contains($trainingSession)) {
-            $this->training_sessions->removeElement($trainingSession);
+        if ($this->trainingSessions->contains($trainingSession)) {
+            $this->trainingSessions->removeElement($trainingSession);
             // set the owning side to null (unless already changed)
-            if ($trainingSession->getTraining() === $this) {
-                $trainingSession->setTraining(null);
+            if ($trainingSession->getTrainingSessionTraining() === $this) {
+                $trainingSession->setTrainingSessionTraining(null);
             }
         }
 
@@ -344,7 +296,7 @@ class Training
      */
     public function getTrainingSessionsTotal(): int
     {
-        return count($this->training_sessions);
+        return count($this->trainingSessions);
     }
 
     /**
@@ -354,7 +306,7 @@ class Training
     {
         $total = 0;
 
-        foreach ($this->training_sessions as $session)
+        foreach ($this->trainingSessions as $session)
         {
             $total = $total + $session->getTrainingSessionDuration();
         }
@@ -367,7 +319,7 @@ class Training
      */
     public function getTrainingFirstDate(): ?DateTime
     {
-        return $this->training_sessions[0]->getTrainingSessionDate();
+        return $this->trainingSessions[0]->getTrainingSessionDate();
     }
 
     /**
@@ -375,6 +327,6 @@ class Training
      */
     public function getTrainingLastDate(): ?DateTime
     {
-        return $this->training_sessions[$this->getTrainingSessionsTotal()-1]->getTrainingSessionDate();
+        return $this->trainingSessions[$this->getTrainingSessionsTotal()-1]->getTrainingSessionDate();
     }
 }

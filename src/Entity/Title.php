@@ -20,48 +20,49 @@ class Title
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $title_id;
+    private int $titleId;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $title_date;
+    private ?DateTime $titleDate;
 
     /**
      * @var int
      */
     #[ORM\Column(type: 'integer')]
-    private int $title_rank;
+    private int $titleRank;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $title_certificate;
+    private ?string $titleCertificate;
 
     /**
      * @var Member
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_titles')]
-    #[ORM\JoinColumn(name: 'title_join_member', referencedColumnName: 'member_id', nullable: false)]
-    private Member $title_member;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberTitles')]
+    #[ORM\JoinColumn(name: 'title_join_member', referencedColumnName: 'memberId', nullable: false)]
+    private Member $titleMember;
 
     /**
      * @return int
      */
     public function getTitleId(): int
     {
-        return $this->title_id;
+        return $this->titleId;
     }
 
     /**
-     * @param int $title_id
+     * @param int $titleId
+     *
      * @return $this
      */
-    public function setTitleId(int $title_id): self
+    public function setTitleId(int $titleId): self
     {
-        $this->title_id = $title_id;
+        $this->titleId = $titleId;
 
         return $this;
     }
@@ -71,16 +72,17 @@ class Title
      */
     public function getTitleDate(): ?DateTime
     {
-        return $this->title_date;
+        return $this->titleDate;
     }
 
     /**
-     * @param DateTime $title_date
+     * @param DateTime $titleDate
+     *
      * @return $this
      */
-    public function setTitleDate(DateTime $title_date): self
+    public function setTitleDate(DateTime $titleDate): self
     {
-        $this->title_date = $title_date;
+        $this->titleDate = $titleDate;
 
         return $this;
     }
@@ -90,16 +92,17 @@ class Title
      */
     public function getTitleRank(): int
     {
-        return $this->title_rank;
+        return $this->titleRank;
     }
 
     /**
-     * @param int $title_rank
+     * @param int $titleRank
+     *
      * @return $this
      */
-    public function setTitleRank(int $title_rank): self
+    public function setTitleRank(int $titleRank): self
     {
-        $this->title_rank = $title_rank;
+        $this->titleRank = $titleRank;
 
         return $this;
     }
@@ -109,16 +112,17 @@ class Title
      */
     public function getTitleCertificate(): ?string
     {
-        return $this->title_certificate;
+        return $this->titleCertificate;
     }
 
     /**
-     * @param string|null $title_certificate
+     * @param string|null $titleCertificate
+     *
      * @return $this
      */
-    public function setTitleCertificate(?string $title_certificate): self
+    public function setTitleCertificate(?string $titleCertificate): self
     {
-        $this->title_certificate = $title_certificate;
+        $this->titleCertificate = $titleCertificate;
 
         return $this;
     }
@@ -128,16 +132,17 @@ class Title
      */
     public function getTitleMember(): Member
     {
-        return $this->title_member;
+        return $this->titleMember;
     }
 
     /**
-     * @param Member $title_member
+     * @param Member $titleMember
+     *
      * @return $this
      */
-    public function setTitleMember(Member $title_member): self
+    public function setTitleMember(Member $titleMember): self
     {
-        $this->title_member = $title_member;
+        $this->titleMember = $titleMember;
 
         return $this;
     }

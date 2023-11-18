@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class MemberLicence
  */
-#[ORM\Table(name: 'member_licence')]
+#[ORM\Table(name: 'memberLicence')]
 #[ORM\Entity(repositoryClass: MemberLicenceRepository::class)]
 class MemberLicence
 {
@@ -20,136 +20,156 @@ class MemberLicence
      */
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    private int $member_licence_id;
+    private int $memberLicenceId;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_licence_update;
+    private ?DateTime $memberLicenceUpdate;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_licence_deadline;
+    private ?DateTime $memberLicenceDeadline;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_licence_payment_date;
+    private ?DateTime $memberLicencePaymentDate;
 
     /**
      * @var int|null
      */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $member_licence_payment_value;
+    private ?int $memberLicencePaymentValue;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_licence_payment_update;
+    private ?DateTime $memberLicencePaymentUpdate;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_licence_printout_creation;
+    private ?DateTime $memberLicencePrintoutCreation;
 
     /**
      * @var DateTime|null
      */
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $member_licence_printout_done;
+    private ?DateTime $memberLicencePrintoutDone;
 
     /**
      * @var Club|null
      */
-    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'], inversedBy: 'club_licences')]
-    #[ORM\JoinColumn(name: 'member_licence_join_club', referencedColumnName: 'club_id', nullable: true)]
-    private ?Club $member_licence_club;
+    #[ORM\ManyToOne(targetEntity: Club::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'memberLicence_join_club', referencedColumnName: 'clubId', nullable: true)]
+    private ?Club $memberLicenceClub;
 
     /**
      * @var Member
      */
-    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'member_licences')]
-    #[ORM\JoinColumn(name: 'member_licence_join_member', referencedColumnName: 'member_id', nullable: false)]
-    private Member $member_licence;
+    #[ORM\ManyToOne(targetEntity: Member::class, cascade: ['persist'], inversedBy: 'memberLicences')]
+    #[ORM\JoinColumn(name: 'memberLicence_join_member', referencedColumnName: 'memberId', nullable: false)]
+    private Member $memberLicenceMember;
 
     /**
      * @return int
      */
     public function getMemberLicenceId(): int
     {
-        return $this->member_licence_id;
+        return $this->memberLicenceId;
     }
 
     /**
-     * @param int $member_licence_id
+     * @param int $memberLicenceId
+     *
      * @return $this
      */
-    public function setMemberLicenceId(int $member_licence_id): self
+    public function setMemberLicenceId(int $memberLicenceId): self
     {
-        $this->member_licence_id = $member_licence_id;
+        $this->memberLicenceId = $memberLicenceId;
 
         return $this;
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLicenceUpdate(): ?DateTime
+    public function getMemberLicenceUpdate(bool $format = false): DateTime|string|null
     {
-        return $this->member_licence_update;
+        return $format ? $this->memberLicenceUpdate->format('d/m/Y') : $this->memberLicenceUpdate;
     }
 
     /**
-     * @param DateTime|null $member_licence_update
+     * @param DateTime|null $memberLicenceUpdate
+     *
      * @return $this
      */
-    public function setMemberLicenceUpdate(?DateTime $member_licence_update): self
+    public function setMemberLicenceUpdate(?DateTime $memberLicenceUpdate): self
     {
-        $this->member_licence_update = $member_licence_update;
+        $this->memberLicenceUpdate = $memberLicenceUpdate;
 
         return $this;
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLicenceDeadline(): ?DateTime
+    public function getMemberLicenceDeadline(bool $format = false): DateTime|string|null
     {
-        return $this->member_licence_deadline;
+        if (is_null($this->memberLicenceDeadline))
+        {
+            return $format ? '--/--/----' : null;
+        }
+
+        return $format ? $this->memberLicenceDeadline->format('d/m/Y') : $this->memberLicenceDeadline;
     }
 
     /**
-     * @param DateTime|null $member_licence_deadline
+     * @param DateTime|null $memberLicenceDeadline
+     *
      * @return $this
      */
-    public function setMemberLicenceDeadline(?DateTime $member_licence_deadline): self
+    public function setMemberLicenceDeadline(?DateTime $memberLicenceDeadline): self
     {
-        $this->member_licence_deadline = $member_licence_deadline;
+        $this->memberLicenceDeadline = $memberLicenceDeadline;
 
         return $this;
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLicencePaymentDate(): ?DateTime
+    public function getMemberLicencePaymentDate(bool $format = false): DateTime|string|null
     {
-        return $this->member_licence_payment_date;
+        if (is_null($this->memberLicencePaymentDate))
+        {
+            return $format ? 'En attente' : null;
+        }
+
+        return $format ? $this->memberLicencePaymentDate->format('d/m/Y') : $this->memberLicencePaymentDate;
     }
 
     /**
-     * @param DateTime|null $member_licence_payment_date
+     * @param DateTime|null $memberLicencePaymentDate
+     *
      * @return $this
      */
-    public function setMemberLicencePaymentDate(?DateTime $member_licence_payment_date): self
+    public function setMemberLicencePaymentDate(?DateTime $memberLicencePaymentDate): self
     {
-        $this->member_licence_payment_date = $member_licence_payment_date;
+        $this->memberLicencePaymentDate = $memberLicencePaymentDate;
 
         return $this;
     }
@@ -159,35 +179,43 @@ class MemberLicence
      */
     public function getMemberLicencePaymentValue(): ?int
     {
-        return $this->member_licence_payment_value;
+        return $this->memberLicencePaymentValue;
     }
 
     /**
-     * @param int|null $member_licence_payment_value
+     * @param int|null $memberLicencePaymentValue
+     *
      * @return $this
      */
-    public function setMemberLicencePaymentValue(?int $member_licence_payment_value): self
+    public function setMemberLicencePaymentValue(?int $memberLicencePaymentValue): self
     {
-        $this->member_licence_payment_value = $member_licence_payment_value;
+        $this->memberLicencePaymentValue = $memberLicencePaymentValue;
 
         return $this;
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLicencePaymentUpdate(): ?DateTime
+    public function getMemberLicencePaymentUpdate(bool $format = false): DateTime|string|null
     {
-        return $this->member_licence_payment_update;
+        if (is_null($this->memberLicencePaymentUpdate))
+        {
+            return $format ? '--/--/----' : null;
+        }
+        return $format ? $this->memberLicencePaymentUpdate->format('d/m/Y') : $this->memberLicencePaymentUpdate;
     }
 
     /**
-     * @param DateTime|null $member_licence_payment_update
+     * @param DateTime|null $memberLicencePaymentUpdate
+     *
      * @return $this
      */
-    public function setMemberLicencePaymentUpdate(?DateTime $member_licence_payment_update): self
+    public function setMemberLicencePaymentUpdate(?DateTime $memberLicencePaymentUpdate): self
     {
-        $this->member_licence_payment_update = $member_licence_payment_update;
+        $this->memberLicencePaymentUpdate = $memberLicencePaymentUpdate;
 
         return $this;
     }
@@ -197,16 +225,17 @@ class MemberLicence
      */
     public function getMemberLicencePrintoutCreation(): ?DateTime
     {
-        return $this->member_licence_printout_creation;
+        return $this->memberLicencePrintoutCreation;
     }
 
     /**
-     * @param DateTime|null $member_licence_printout_creation
+     * @param DateTime|null $memberLicencePrintoutCreation
+     *
      * @return $this
      */
-    public function setMemberLicencePrintoutCreation(?DateTime $member_licence_printout_creation): self
+    public function setMemberLicencePrintoutCreation(?DateTime $memberLicencePrintoutCreation): self
     {
-        $this->member_licence_printout_creation = $member_licence_printout_creation;
+        $this->memberLicencePrintoutCreation = $memberLicencePrintoutCreation;
 
         return $this;
     }
@@ -216,16 +245,17 @@ class MemberLicence
      */
     public function getMemberLicencePrintoutDone(): ?DateTime
     {
-        return $this->member_licence_printout_done;
+        return $this->memberLicencePrintoutDone;
     }
 
     /**
-     * @param DateTime|null $member_licence_printout_done
+     * @param DateTime|null $memberLicencePrintoutDone
+     *
      * @return $this
      */
-    public function setMemberLicencePrintoutDone(?DateTime $member_licence_printout_done): self
+    public function setMemberLicencePrintoutDone(?DateTime $memberLicencePrintoutDone): self
     {
-        $this->member_licence_printout_done = $member_licence_printout_done;
+        $this->memberLicencePrintoutDone = $memberLicencePrintoutDone;
 
         return $this;
     }
@@ -235,16 +265,17 @@ class MemberLicence
      */
     public function getMemberLicenceClub(): ?Club
     {
-        return $this->member_licence_club;
+        return $this->memberLicenceClub;
     }
 
     /**
-     * @param Club|null $member_licence_club
+     * @param Club|null $memberLicenceClub
+     *
      * @return $this
      */
-    public function setMemberLicenceClub(?Club $member_licence_club): self
+    public function setMemberLicenceClub(?Club $memberLicenceClub): self
     {
-        $this->member_licence_club = $member_licence_club;
+        $this->memberLicenceClub = $memberLicenceClub;
 
         return $this;
     }
@@ -252,18 +283,19 @@ class MemberLicence
     /**
      * @return Member
      */
-    public function getMemberLicence(): Member
+    public function getMemberLicenceMember(): Member
     {
-        return $this->member_licence;
+        return $this->memberLicenceMember;
     }
 
     /**
-     * @param Member $member_licence
+     * @param Member $memberLicenceMember
+     *
      * @return $this
      */
-    public function setMemberLicence(Member $member_licence): self
+    public function setMemberLicenceMember(Member $memberLicenceMember): self
     {
-        $this->member_licence = $member_licence;
+        $this->memberLicenceMember = $memberLicenceMember;
 
         return $this;
     }
@@ -277,7 +309,7 @@ class MemberLicence
      */
     public function getMemberId(): int
     {
-        return $this->member_licence->getMemberId();
+        return $this->memberLicenceMember->getMemberId();
     }
 
     /**
@@ -285,7 +317,7 @@ class MemberLicence
      */
     public function getMemberFirstname(): string
     {
-        return $this->member_licence->getMemberFirstname();
+        return $this->memberLicenceMember->getMemberFirstname();
     }
 
     /**
@@ -293,6 +325,6 @@ class MemberLicence
      */
     public function getMemberName(): string
     {
-        return $this->member_licence->getMemberName();
+        return $this->memberLicenceMember->getMemberName();
     }
 }

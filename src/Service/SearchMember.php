@@ -94,14 +94,14 @@ class SearchMember
                     continue;
                 }
 
-                if ($this->access->isTeacherChilds($club) && ($result->getMemberBirthday() > new DateTime('-14 year today')))
+                if ($this->access->isTeacherChilds($club) && ($result->getMemberSubscriptionList() > 1))
                 {
                     $searchResults[] = $this->fillArray($result);
 
                     continue;
                 }
 
-                if ($this->access->isTeacherAdults($club) && ($result->getMemberBirthday() <= new DateTime('-14 year today')))
+                if ($this->access->isTeacherAdults($club) && (($result->getMemberSubscriptionList() == 1) || ($result->getMemberSubscriptionList() == 3)))
                 {
                     $searchResults[] = $this->fillArray($result);
 
@@ -113,7 +113,7 @@ class SearchMember
             {
                 $searchResults[] = $this->fillArray($result);
             }
-            elseif (($this->access->check('Search-Adult')) && ($result->getMemberBirthday() < new DateTime('-14 year today')))
+            elseif (($this->access->check('Search-Adult')) && ($result->getMemberBirthday() < new DateTime('-12 year today')))
             {
                 $searchResults[] = $this->fillArray($result);
             }

@@ -1,33 +1,33 @@
 <div class="container col col-lg-8">
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 1}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 1}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Photo</strong></div>
         <div class="col-4 col-lg text-start user-select-none"><img class="rounded img-fluid user-select-none" alt="" src="{{ data.Member.getMemberPhoto }}" /></div>
     </div>
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 2}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 2}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Nom complet</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{{ data.Member.getMemberFirstname|title }} {{ data.Member.getMemberName|title }}</div>
     </div>
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 3}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 3}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Date de naissance</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{{ data.Member.getMemberBirthday|date("d/m/Y") }}</div>
     </div>
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 4}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 4}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Sexe</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{{ listData.sex(data.Member.getMemberSex) }}</div>
     </div>
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 5}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 5}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Adresse</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{{ data.Member.getMemberAddress }}<br />{{ data.Member.getMemberZip }} {{ data.Member.getMemberCity }}</div>
     </div>
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 6}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 6}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Téléphone</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{{ data.Member.getMemberPhone }}</div>
     </div>
-    <div class="row text-white align-items-center p-2"{% if access.check('Member-PersonalEdit') %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 7}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+    <div class="row align-items-center p-2"{% if access.check('Member-PersonalEdit') or app.user.member.memberId == data.Member.getMemberId %} onclick="load('{{ path('member-personalsDataEdit', {'member': data.Member.getMemberId, 'data': 7}) }}', 'popup')" onmouseover="this.style.cursor='pointer'"{% endif %}>
         <div class="col-4 col-lg text-end"><strong>Email</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{{ data.Member.getMemberEmail }}</div>
     </div>
-    <div class="row text-white align-items-center p-2">
+    <div class="row align-items-center p-2">
         <div class="col-4 col-lg text-end"><strong>Login</strong></div>
         <div class="col-4 col-lg text-start user-select-none">{% if data.Member.getMemberUser is not null %}{{ data.Member.getMemberUser.getLogin }}{% endif %}</div>
     </div>

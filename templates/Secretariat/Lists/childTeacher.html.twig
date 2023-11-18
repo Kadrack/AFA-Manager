@@ -23,12 +23,12 @@
             </thead>
             <tbody>
             {% for member in data.List %}
-                <tr class="table-active" {% if member.getClubTeacherMember is not null %}onclick="window.open('{{ path('member-index', {'member': member.getClubTeacherMember.getMemberId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
+                <tr {% if member.getClubTeacherMember is not null %}onclick="window.open('{{ path('member-index', {'member': member.getClubTeacherMember.getMemberId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
                     <td class="align-middle">{{ loop.index }}</td>
                     <td class="align-middle">{% if member.getClubTeacherMember is not null %}{{ member.getClubTeacherMember.getMemberFirstname|title }}{% else %}{{ member.getClubTeacherFirstname|title }}{% endif %}</td>
                     <td class="align-middle">{% if member.getClubTeacherMember is not null %}{{ member.getClubTeacherMember.getMemberName|title }}{% else %}{{ member.getClubTeacherName|title }}{% endif %}</td>
                     <td class="align-middle">{% if member.getClubTeacherMember is not null %}{{ listData.getGrade(member.getClubTeacherMember.getMemberLastGrade.getGradeRank) }}{% else %}{{ listData.getGrade(member.getClubTeacherGrade) }}{% endif %}</td>
-                    <td class="align-middle">{{ member.getClubTeacher.getClubName|title }}</td>
+                    <td class="align-middle">{{ member.getClubTeacherClub.getClubName|title }}</td>
                     <td class="align-middle">{% if member.getClubTeacherMember is not null and member.getClubTeacherMember.getMemberEmail is not null %}{{ member.getClubTeacherMember.getMemberEmail }}{% else %}Non disponible{% endif %}</td>
                 </tr>
             {% endfor %}

@@ -36,14 +36,14 @@ class ClubTeacherRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('t');
 
-        return $qb->select('m.member_firstname AS Firstname', 'm.member_name AS Name', 'c.club_name AS ClubName', 'm.member_start_practice AS Starting')
-            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 't.club_teacher_member'))
-            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('c.club_id', 't.club_teacher'))
-            ->join(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.club_history', 'c.club_id'))
-            ->where($qb->expr()->eq('t.club_teacher_title', 1))
-            ->andWhere($qb->expr()->eq('h.club_history_status', 1))
-            ->having($qb->expr()->eq('max(h.club_history_status)', 1))
-            ->groupBy('c.club_id')
+        return $qb->select('m.memberFirstname AS Firstname', 'm.memberName AS Name', 'c.clubName AS ClubName', 'm.memberStartPractice AS Starting')
+            ->join(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 't.clubTeacherMember'))
+            ->join(Club::class, 'c', 'WITH', $qb->expr()->eq('c.clubId', 't.clubTeacherClub'))
+            ->join(ClubHistory::class, 'h', 'WITH', $qb->expr()->eq('h.clubHistoryClub', 'c.clubId'))
+            ->where($qb->expr()->eq('t.clubTeacherTitle', 1))
+            ->andWhere($qb->expr()->eq('h.clubHistoryStatus', 1))
+            ->having($qb->expr()->eq('max(h.clubHistoryStatus)', 1))
+            ->groupBy('c.clubId')
             ->orderBy('Firstname', 'ASC')
             ->getQuery()
             ->getArrayResult();
@@ -59,24 +59,24 @@ class ClubTeacherRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t');
 
         $qb->select('m')
-            ->leftJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.member_id', 't.club_teacher_member'))
-            ->leftJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.member_id', 'g.grade_member'))
-            ->innerJoin(Club::class, 'c', 'WITH', $qb->expr()->eq('c.club_id', 't.club_teacher'))
-            ->where($qb->expr()->eq('t.club_teacher_title', 1));
+            ->leftJoin(Member::class, 'm', 'WITH', $qb->expr()->eq('m.memberId', 't.clubTeacherMember'))
+            ->leftJoin(Grade::class, 'g', 'WITH', $qb->expr()->eq('m.memberId', 'g.gradeMember'))
+            ->innerJoin(Club::class, 'c', 'WITH', $qb->expr()->eq('c.clubId', 't.clubTeacherClub'))
+            ->where($qb->expr()->eq('t.clubTeacherTitle', 1));
 
         if (!is_null($club))
         {
-            $qb->andWhere($qb->expr()->eq('t.club_teacher', $club));
+            $qb->andWhere($qb->expr()->eq('t.clubTeacherClub', $club));
         }
 
         if ($mail)
         {
-            $qb->andWhere($qb->expr()->isNotNull('m.member_email'));
+            $qb->andWhere($qb->expr()->isNotNull('m.memberEmail'));
         }
 
-        return $qb->groupBy('m.member_id')
-            ->orderBy('m.member_firstname', 'ASC')
-            ->addOrderBy('m.member_name', 'ASC')
+        return $qb->groupBy('m.memberId')
+            ->orderBy('m.memberFirstname', 'ASC')
+            ->addOrderBy('m.memberName', 'ASC')
             ->getQuery()
             ->getResult();
     }

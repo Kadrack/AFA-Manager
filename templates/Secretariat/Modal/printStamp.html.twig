@@ -5,10 +5,10 @@
         </div>
         <div class="modal-body">
             <div class="d-grid gap-0">
-                <a class="btn btn-light" href="{{ path('club-printStampView', {'club': data.Club.getClubId}) }}">Imprimer les timbres</a>
+                <a class="btn btn-primary" href="{{ path('secretariat-printStampView', {'club': data.Club.getClubId}) }}">Imprimer les timbres</a>
             </div>
             <div class="d-grid gap-0">
-                <a class="btn btn-light" href="{{ path('club-printStampValidate', {'club': data.Club.getClubId}) }}">Valider l'impression des timbres</a>
+                <a class="btn btn-primary" href="{{ path('secretariat-printStampValidate', {'club': data.Club.getClubId}) }}">Valider l'impression des timbres</a>
             </div>
         </div>
         <div class="modal-footer">
