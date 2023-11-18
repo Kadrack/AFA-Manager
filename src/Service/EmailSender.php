@@ -598,14 +598,6 @@ class EmailSender
 
         $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, DR, RN, NRN, AutoReply');
 
-        if ($this->parameters->get('kernel.environment') == 'dev')
-        {
-            $email->to(new Address('frederic.buchon@aikido.be', 'Test Email'));
-
-            $email->cc();
-            $email->bcc();
-        }
-
         $this->mailer->send($email);
 
         if ($clean && isset($this->email['Attach']))
