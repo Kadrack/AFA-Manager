@@ -283,12 +283,24 @@ class ClubController extends AbstractController
 
             do
             {
-                if ($lesson['Type'] == 3)
+                if (($lesson['Type'] == 3) && ($type == 2))
                 {
-                    $lesson['Type']--;
-                }
+                    $type = 1;
 
-                $type = $lesson['Type'] == 1 ? 'Adult' : 'Child';
+                    $stop = true;
+                }
+                elseif ($lesson['Type'] == 3)
+                {
+                    $type = 2;
+
+                    $stop = false;
+                }
+                else
+                {
+                    $type = $lesson['Type'] == 1 ? 'Adult' : 'Child';
+
+                    $stop = true;
+                }
 
                 if (!isset($data['Summary'][$type][$month][$licence]['Total']))
                 {
@@ -308,7 +320,7 @@ class ClubController extends AbstractController
 
                 $data['Summary'][$type]['Season'][$licence]['Total'] = $data['Summary'][$type]['Season'][$licence]['Total'] + $lesson['Duration'];
             }
-            while ($lesson['Type']-- > 1);
+            while (!$stop);
         }
 
         return $this->render('Club/Tab/attendance.html.twig', array('data' => $data));
