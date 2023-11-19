@@ -240,7 +240,7 @@ class FormationSessionCandidate
     {
         if (is_null($this->formationSessionCandidateMember) && is_null($this->formationSessionCandidateSex))
         {
-            return $format ? 'Non défini' : null;
+            return $format ? 'Non disponible' : null;
         }
         elseif (is_null($this->formationSessionCandidateMember))
         {
@@ -290,7 +290,7 @@ class FormationSessionCandidate
     {
         if (is_null($this->formationSessionCandidateMember))
         {
-            return $this->formationSessionCandidateAddress;
+            return is_null($this->formationSessionCandidateAddress) ? 'Non disponible' : $this->formationSessionCandidateAddress;
         }
 
         return $this->formationSessionCandidateMember->getMemberAddress();
@@ -495,7 +495,7 @@ class FormationSessionCandidate
     {
         if (is_null($this->formationSessionCandidateMember) && is_null($this->formationSessionCandidateGrade))
         {
-            return $format ? 'Non défini' : null;
+            return $format ? 'Non disponible' : null;
         }
         elseif (is_null($this->formationSessionCandidateMember))
         {
