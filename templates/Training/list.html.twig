@@ -29,21 +29,21 @@
         <table id="stageList" class="table table-sm table-hover mt-3">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Stage</th>
-                    <th scope="col"># Cours</th>
-                    {% if access.check('Training-TotalPayment') %}<th scope="col">Caisse</th>{% endif %}
+                    <th scope="col" class="text-center">#</th>
+                    <th scope="col" class="text-center">Date</th>
+                    <th scope="col" class="text-center">Stage</th>
+                    <th scope="col" class="text-center">Pratiquants</th>
+                    {% if access.check('Training-TotalPayment') %}<th scope="col" class="text-center">Caisse</th>{% endif %}
                 </tr>
             </thead>
             <tbody>
             {% if access.check('Training-TotalPayment') %}{% set total = 0 %}{% endif %}
             {% for training in data.Trainings %}
                 <tr {% if access.check('Training-Index') %}onclick="window.open('{{ path('training-index', {'training': training.getTrainingId}) }}', '_self')" onmouseover="this.style.cursor='pointer'"{% endif %}>
-                    <td class="align-middle">{{ loop.index }}</td>
-                    <td class="align-middle">{{ training.getTrainingFirstDate|date("d/m/Y") }}</td>
+                    <td class="align-middle text-center">{{ loop.index }}</td>
+                    <td class="align-middle text-center">{{ training.getTrainingFirstDate|date("d/m/Y") }}</td>
                     <td class="align-middle">{{ training.getTrainingName }}</td>
-                    <td class="align-middle">{{ training.getTrainingSessionsTotal }}</td>
+                    <td class="align-middle text-center">{{ training.getTrainingAttendances|length }}</td>
                     {% if access.check('Training-TotalPayment') %}<td class="align-middle text-end">{{ ((training.getTrainingPaymentsTotal.Cash + training.getTrainingPaymentsTotal.Card + training.getTrainingPaymentsTotal.Transfert) / 100)|number_format(2, ',', '.') }} €</td>{% endif %}
                 </tr>
                 {% if access.check('Training-TotalPayment') %}{% set total = total + ((training.getTrainingPaymentsTotal.Cash + training.getTrainingPaymentsTotal.Card + training.getTrainingPaymentsTotal.Transfert) / 100) %}{% endif %}
@@ -56,7 +56,7 @@
             <thead>
                 <tr>
                     <th scope="col" class="text-center">Total pour l'année</th>
-                    <th scope="col" class="text-center">{{ total|number_format(2, ',', '.') }} €</th>
+                    <th scope="col" class="text-end">{{ total|number_format(2, ',', '.') }} €</th>
                 </tr>
             </thead>
         </table>

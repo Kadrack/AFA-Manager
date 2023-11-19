@@ -596,7 +596,7 @@ class Access
                 $admin    = array_merge($admin, array());
                 $list     = array_merge($list, array('List-Licence'));
                 $mailing  = array_merge($mailing, array('Mailing-CA', 'Mailing-CT', 'Mailing-CJ', 'Mailing-CP', 'Mailing-DojoCho', 'Mailing-Manager', 'Mailing-Menu', 'Mailing-Preview', 'Mailing-Teacher'));
-                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-DiscountAdd', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
+                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-DiscountAdd', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit', 'Training-TotalPayment'));
             }
 
             if ($this->isCASecretary())
@@ -615,7 +615,7 @@ class Access
             {
                 $admin    = array_merge($admin, array('Admin-PaymentAdd'));
                 $list     = array_merge($list, array('List-Licence'));
-                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-DiscountAdd', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit'));
+                $training = array_merge($training, array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-DiscountAdd', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit', 'Training-TotalPayment'));
             }
 
             $this->access = array_merge($admin, $dojo, $grade, $list, $mailing, $member, $news, $search, $training);
