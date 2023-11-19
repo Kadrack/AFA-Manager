@@ -541,7 +541,7 @@ class TrainingController extends AbstractController
 
         $urlParam['training'] = $formData['Training']->getTrainingId();
         $urlParam['attendance'] = $formData['Edit'] ? $attendance->getTrainingAttendanceId() : null;
-        $urlParam['Member'] = is_null($formData['Member']) ?: $formData['Member']->getMemberId();
+        $urlParam['Member'] = is_null($formData['Member']) ? null : $formData['Member']->getMemberId();
 
         $form = $this->createForm(TrainingType::class, $attendance, array('formData' => $formData, 'data_class' => TrainingAttendance::class, 'action' => $this->generateUrl('training-attendance', $urlParam)));
 
