@@ -84,11 +84,11 @@ class ClusterStatJsonUpdate extends Command
             $content[$id] = array('GroupName' => $cluster->getClusterName(), 'Members' => $clusterMembers);
         }
 
-        file_put_contents('/home/fzns3054/aikido.be/wordpress/prod/wp-content/uploads/json/composition2.json', json_encode($content));
+        file_put_contents('/home/fzns3054/aikido.be/wordpress/prod/wp-content/uploads/json/composition.json', json_encode($content));
 
         $stat = $this->em->getRepository(Member::class)->getStatGrade();
 
-        file_put_contents('/home/fzns3054/aikido.be/wordpress/prod/wp-content/uploads/json/stat2.json', json_encode($stat));
+        file_put_contents('/home/fzns3054/aikido.be/wordpress/prod/wp-content/uploads/json/stat.json', json_encode($stat));
 
         return Command::SUCCESS;
     }
