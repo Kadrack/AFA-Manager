@@ -187,7 +187,7 @@ class ClubManager
             return $this->clubManagerUser->getFullName();
         }
 
-        return $this->clubManagerMember->getMemberFullName();
+        return $this->clubManagerMember->getMemberName(true);
     }
 
     /**

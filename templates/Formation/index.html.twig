@@ -16,15 +16,15 @@
                 <tr>
                     <th scope="col">Prénom</th>
                     <th scope="col">Nom</th>
-                    <th scope="col"># Licence</th>
+                    <th scope="col">Inscrit le</th>
                 </tr>
             </thead>
             <tbody>
             {% for candidate in data.Session.getFormationSessionCandidates %}
-                <tr>
-                    <td class="align-middle">{{ candidate.getFormationSessionCandidateFirstname|title }}</td>
-                    <td class="align-middle">{{ candidate.getFormationSessionCandidateName|title }}</td>
-                    <td class="align-middle">{% if candidate.getFormationSessionCandidateMember is null %}Aucun{% else %}{{ candidate.getFormationSessionCandidateMember.getMemberId }}{% endif %}</td>
+                <tr onclick="load('{{ path('formation-candidateDetails', {'formationSession': data.Session.getFormationSessionId, 'formationSessionCandidate': candidate.getFormationSessionCandidateId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">
+                    <td class="align-middle">{{ candidate.getFormationSessionCandidateFirstname }}</td>
+                    <td class="align-middle">{{ candidate.getFormationSessionCandidateName }}</td>
+                    <td class="align-middle">{{ candidate.getFormationSessionCandidateDate(true) }}</td>
                 </tr>
             {% endfor %}
             </tbody>

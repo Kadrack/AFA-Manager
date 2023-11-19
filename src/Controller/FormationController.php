@@ -221,4 +221,25 @@ class FormationController extends AbstractController
 
         return $this->render('Formation/index.html.twig', array('data' => $data));
     }
+
+    /**
+     * @param Access                    $access
+     * @param FormationSession          $formationSession
+     * @param FormationSessionCandidate $formationSessionCandidate
+     *
+     * @return Response
+     */
+    #[Route('/details-de-la-session/{formationSession<\d+>}/candidat/{formationSessionCandidate<\d+>}', name:'candidateDetails')]
+    public function candidateDetails(Access $access, FormationSession $formationSession, FormationSessionCandidate $formationSessionCandidate): Response
+    {
+        if (!$access->check('Formation-SessionManagement'))
+        {
+            die();
+        }
+
+        $data['Candidate'] = $formationSessionCandidate;
+        $data['Session']   = $formationSession;
+
+        return $this->render('Formation/Modal/candidateDetails.html.twig', array('data' => $data));
+    }
 }

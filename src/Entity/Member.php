@@ -59,25 +59,25 @@ class Member
     private int $memberSex;
 
     /**
-     * @var string
+     * @var string|null
      */
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'text', nullable: true)]
     #[Assert\NotBlank]
-    private string $memberAddress;
+    private string|null $memberAddress = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank]
-    private string $memberZip;
+    private string|null $memberZip = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank]
-    private string $memberCity;
+    private string|null $memberCity = null;
 
     /**
      * @var string
@@ -277,11 +277,13 @@ class Member
     }
 
     /**
+     * @param bool $format
+     *
      * @return string
      */
-    public function getMemberName(): string
+    public function getMemberName(bool $format = false): string
     {
-        return ucwords(strtolower($this->memberName));
+        return $format ? $this->getMemberFirstname() . ' ' . $this->getMemberName() : ucwords(strtolower($this->memberName));
     }
 
     /**
@@ -294,14 +296,6 @@ class Member
         $this->memberName = ucwords(strtolower($set));
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMemberFullName(): string
-    {
-        return ucwords(strtolower($this->memberFirstname)) . ' ' . ucwords(strtolower($this->memberName));
     }
 
     /**
@@ -368,19 +362,19 @@ class Member
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMemberAddress(): string
+    public function getMemberAddress(): string|null
     {
         return $this->memberAddress;
     }
 
     /**
-     * @param string $set
+     * @param string|null $set
      *
      * @return $this
      */
-    public function setMemberAddress(string $set): self
+    public function setMemberAddress(string|null $set = null): self
     {
         $this->memberAddress = $set;
 
@@ -388,19 +382,19 @@ class Member
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMemberZip(): string
+    public function getMemberZip(): string|null
     {
         return $this->memberZip;
     }
 
     /**
-     * @param string $set
+     * @param string|null $set
      *
      * @return $this
      */
-    public function setMemberZip(string $set): self
+    public function setMemberZip(string|null $set = null): self
     {
         $this->memberZip = $set;
 
@@ -408,19 +402,26 @@ class Member
     }
 
     /**
-     * @return string
+     * @param bool $format
+     *
+     * @return string|null
      */
-    public function getMemberCity(): string
+    public function getMemberCity(bool $format = false): string|null
     {
-        return ucwords(strtolower($this->memberCity));
+        if (is_null($this->memberCity))
+        {
+            return $format ? 'Non disponible' : null;
+        }
+
+        return $format ? $this->getMemberZip() . ' ' . $this->getMemberCity() : ucwords(strtolower($this->memberCity));
     }
 
     /**
-     * @param string $set
+     * @param string|null $set
      *
      * @return $this
      */
-    public function setMemberCity(string $set): self
+    public function setMemberCity(string|null $set = null): self
     {
         $this->memberCity = ucwords(strtolower($set));
 
@@ -456,7 +457,7 @@ class Member
     {
         if (is_null($this->memberEmail))
         {
-            return $format ? 'Aucune' : null;
+            return $format ? 'Non disponible' : null;
         }
 
         return $format ? new Address($this->memberEmail, $this->getMemberFirstname() . ' ' . $this->getMemberName()) : $this->memberEmail;
@@ -483,7 +484,7 @@ class Member
     {
         if (is_null($this->memberPhone))
         {
-            return $format ? 'Aucun' : null;
+            return $format ? 'Non disponible' : null;
         }
 
         return $this->memberPhone;
@@ -986,7 +987,7 @@ class Member
             return $format ? $this->getMemberLastLicence()->getMemberLicenceClub()->getClubName($format) : $this->getMemberLastLicence()->getMemberLicenceClub();
         }
 
-        return $format ? null : 'Aucun';
+        return $format ? 'Aucun' : null;
     }
 
     /**

@@ -167,7 +167,7 @@ class ListData
      */
     public function getGradeFormation(int $grade): array|bool|int|string
     {
-        $grades = array('1er kyu'  => 1, 'Shodan' => 2, 'Nidan' => 3, 'Sandan' => 4, 'Yondan' => 5, 'Godan' => 6, 'Rokudan' => 7, 'Nanadan' => 8);
+        $grades = array('2ème Kyu'  => 1, '1er Kyu'  => 2, '1er Dan' => 3, '2ème Dan' => 4, '3ème Dan' => 5, '4ème Dan' => 6, '5ème Dan' => 7, '6ème Dan' => 8, '7ème Dan' => 9);
 
         if ($grade == 0)
         {

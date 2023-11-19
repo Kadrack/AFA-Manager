@@ -1,0 +1,48 @@
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ data.Candidate.getFormationSessionCandidateName(true) }}</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Sexe</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateSex(true) }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Adresse</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateAddress }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Localité</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateCity(true) }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Email</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateEmail }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Téléphone</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidatePhone }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Date de naissance</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateBirthday(true) }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Grade</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateGrade(true) }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong>Club</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateClub(true) }}</div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-end px-1"><strong># Licence</strong></div>
+                <div class="col text-start px-1">{{ data.Candidate.getFormationSessionCandidateLicence(true) }}</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>
