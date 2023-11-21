@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AsEventListener(event: 'security.authentication.success')]
-class ControllerLogin
+class Login
 {
     private ParameterBagInterface $parameters;
 
