@@ -341,6 +341,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getClusters(): Collection
     {
+        if (!is_null($this->member))
+        {
+            return $this->member->getMemberClusterMembers();
+        }
+
         return $this->clusters;
     }
 

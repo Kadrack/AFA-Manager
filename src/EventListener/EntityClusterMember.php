@@ -1,5 +1,5 @@
 <?php
-// src/EventListener/ClubJsonUpdate.php
+// src/EventListener/EntityClubCluster.php
 namespace App\EventListener;
 
 use App\Entity\ClusterMember;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 #[AsEntityListener(event: Events::postPersist, method: 'clusterMember', entity: ClusterMember::class)]
 #[AsEntityListener(event: Events::postRemove, method: 'clusterMember', entity: ClusterMember::class)]
 #[AsEntityListener(event: Events::postUpdate, method: 'clusterMember', entity: ClusterMember::class)]
-class ClusterJsonUpdate
+class EntityClusterMember
 {
     private ParameterBagInterface $parameters;
 

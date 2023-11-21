@@ -97,22 +97,6 @@ class Access
                 }
             }
 
-            if (!is_null($security->getUser()->getMember()?->getMemberClusterMembers()))
-            {
-                foreach ($security->getUser()->getMember()->getMemberClusterMembers() AS $cluster)
-                {
-                    if ($cluster->getClusterMemberActive())
-                    {
-                        $this->clusters[] = $cluster;
-
-                        if (!$session->has('Id') && !$session->has('Club'))
-                        {
-                            $this->setListAccess($cluster->getClusterMemberCluster()->getClusterId());
-                        }
-                    }
-                }
-            }
-
             if ($session->has('Id') && $session->has('Club'))
             {
                 $this->setListAccess($session->get('Club')->getClubId());
