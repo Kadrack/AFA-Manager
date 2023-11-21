@@ -68,7 +68,7 @@ class TrainingController extends AbstractController
 
         $data['YearList'] = array();
 
-        for ($i = intval($today->format('Y')); $i >= 2005; $i--)
+        for ($i = intval($today->format('Y')) + 1; $i >= 2005; $i--)
         {
             $data['YearList'][] = $i;
         }
