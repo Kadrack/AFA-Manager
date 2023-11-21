@@ -673,6 +673,8 @@ class ClubController extends AbstractController
             }
 
             $entityManager->persist($member);
+            $entityManager->persist($licence);
+            $entityManager->persist($grade);
             $entityManager->flush();
 
             return $this->redirectToRoute('club-index', array('club' => $club->getClubId()));

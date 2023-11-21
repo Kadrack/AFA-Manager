@@ -647,7 +647,7 @@ class Access
             $member    = array('Member-AikikaiIdEdit', 'Member-EmailTab', 'Member-FormationAdd', 'Member-FormationEdit', 'Member-GradeAdd', 'Member-GradeKyuEdit', 'Member-GradeDanEdit', 'Member-GradeStartEdit', 'Member-GradeTab', 'Member-Index', 'Member-LicenceAdd', 'Member-LicenceCardPrint', 'Member-LicenceEdit', 'Member-LicenceFormPrint', 'Member-LicenceStampPrint', 'Member-LicenceTab', 'Member-ListGradeDan', 'Member-ListGradeKyu', 'Member-Menu', 'Member-PersonalEdit', 'Member-PersonalTab', 'Member-TitleAdd', 'Member-TitleEdit', 'Member-TitleTab', 'Member-TrainingTab');
             $news      = array('News-Create', 'News-Delete', 'News-Edit', 'News-FullList', 'News-Send');
             $search    = array('Search-FullAccess', 'Search-Member');
-            $training  = array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit');
+            $training  = array('Training-Add', 'Training-AttendanceAdd', 'Training-AttendancesDetails', 'Training-Edit', 'Training-FullAccess', 'Training-Index', 'Training-MemberPayment', 'Training-Menu', 'Training-SessionAdd', 'Training-SessionEdit', 'Training-TotalPayment');
 
             $this->access = array_merge($admin, $dojo, $formation, $grade, $list, $mailing, $member, $news, $search, $training);
         }
