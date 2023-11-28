@@ -250,7 +250,7 @@ class EmailSender
 
         if ($manager && $dojoCho)
         {
-            $staffEmail = $club->getClubData('EmailStaff');
+            $staffEmail = $club->getClubData('EmailStaff', true);
         }
         else
         {
@@ -294,7 +294,7 @@ class EmailSender
     public function toClubMember(Club $club, int $list): bool
     {
         $this->email['To']       = array($this->email['ReplyTo']);
-        $this->email['Cc']       = $club->getClubData('Emailstaff');
+        $this->email['Cc']       = $club->getClubData('EmailStaff', true);
         $this->email['Bcc']      = array();
         $this->email['Template'] = 'Mails/template.html.twig';
         $this->email['Context']  = array('data' => $this->email);
