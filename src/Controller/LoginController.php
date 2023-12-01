@@ -164,7 +164,7 @@ class LoginController extends AbstractController
         {
             $member = $doctrine->getRepository(Member::class)->findOneBy(['memberId' => $form->get('MemberId')->getData(), 'memberFirstname' => $form->get('Firstname')->getData(), 'memberName' => $form->get('Name')->getData(), 'memberEmail' => $form->get('Email')->getData()]);
 
-            $user = $doctrine->getRepository(User::class)->findOneBy(['userMember' => $member?->getMemberId()]);
+            $user = $doctrine->getRepository(User::class)->findOneBy(['member' => $member?->getMemberId()]);
 
             if (!is_null($member) && is_null($user))
             {
