@@ -136,10 +136,10 @@ class Member
     private int $memberSubscriptionList = 1;
 
     /**
-     * @var int
+     * @var bool
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $memberLastKagami = 0;
+    private bool $memberLastKagami = false;
 
     /**
      * @var ArrayCollection|Collection|null

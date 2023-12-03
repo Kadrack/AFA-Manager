@@ -33,28 +33,28 @@ class Cluster
     private string $clusterName;
 
     /**
-     * @var int
+     * @var bool
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $clusterFreeTraining = 0;
+    private bool $clusterFreeTraining = false;
 
     /**
-     * @var int
+     * @var bool
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $clusterUseTitle = 0;
+    private bool $clusterUseTitle = false;
 
     /**
-     * @var int
+     * @var bool
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $clusterUseEmail = 0;
+    private bool $clusterUseEmail = false;
 
     /**
-     * @var int
+     * @var bool
      */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private int $clusterGiveAccess = 0;
+    private bool $clusterGiveAccess = false;
 
     /**
      * @var ArrayCollection|Collection|null
