@@ -10,7 +10,7 @@
 {% block body %}
     <div class="container col col-lg-5">
         <h1 class="text-center">Session {{ listData.getFormationtype(data.Session.getFormationSessionType) }}{% if data.Session.getFormationSessionDate is null %} en attente{% else %} du {{ data.Session.getFormationSessionDate|date('d/m/Y') }}{% endif %} {% if access.check('Formation-SessionEdit') %}<button class="btn btn-sm btn-primary" onclick="load('{{ path('formation-sessionEdit', {'formationSession': data.Session.getFormationSessionId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}</h1>
-        <h2 class="text-center">Liste des candidats à la session</h2>
+        <h2 class="text-center">Liste des candidats à la session <a class="btn btn-sm btn-primary" href="{{ path('formation-csvList', {'formationSession': data.Session.getFormationSessionId}) }}"><i class="bi-download"></i> Liste CSV</a></h2>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>

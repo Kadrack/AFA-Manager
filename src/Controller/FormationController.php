@@ -4,20 +4,25 @@ namespace App\Controller;
 
 use App\Entity\FormationSession;
 use App\Entity\FormationSessionCandidate;
-
 use App\Entity\Member;
+
 use App\Form\FormationType;
 
 use App\Service\Access;
 
 use DateTime;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use Doctrine\Persistence\ManagerRegistry;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -188,7 +193,7 @@ class FormationController extends AbstractController
                         $member->setMemberEmail($form->get('FormationSessionCandidateEmail')->getData());
 
                         $candidate->setFormationSessionCandidateMember($member);
-                        $candidate->setFormationSessionCandidateEmail(null);
+                        $candidate->setFormationSessionCandidateEmail();
                     }
                 }
             }
@@ -226,11 +231,13 @@ class FormationController extends AbstractController
      * @param Access                    $access
      * @param FormationSession          $formationSession
      * @param FormationSessionCandidate $formationSessionCandidate
+     * @param EntityManagerInterface    $em
+     * @param Request                   $request
      *
      * @return Response
      */
     #[Route('/details-de-la-session/{formationSession<\d+>}/candidat/{formationSessionCandidate<\d+>}', name:'candidateDetails')]
-    public function candidateDetails(Access $access, FormationSession $formationSession, FormationSessionCandidate $formationSessionCandidate): Response
+    public function candidateDetails(Access $access, FormationSession $formationSession, FormationSessionCandidate $formationSessionCandidate, EntityManagerInterface $em, Request $request): Response
     {
         if (!$access->check('Formation-SessionManagement'))
         {
@@ -240,6 +247,68 @@ class FormationController extends AbstractController
         $data['Candidate'] = $formationSessionCandidate;
         $data['Session']   = $formationSession;
 
-        return $this->render('Formation/Modal/candidateDetails.html.twig', array('data' => $data));
+        $formDelete = $this->createForm(FormationType::class, null, array('formData' => array('Form' => 'Delete'), 'action' => $this->generateUrl('formation-candidateDetails', array('formationSession' => $formationSession->getFormationSessionId(), 'formationSessionCandidate' => $formationSessionCandidate->getFormationSessionCandidateId()))));
+
+        $formDelete->handleRequest($request);
+
+        if ($formDelete->isSubmitted() && $formDelete->isValid())
+        {
+            $em->remove($formationSessionCandidate);
+            $em->flush();
+
+            return $this->redirectToRoute('formation-index', array('formationSession' => $formationSession->getFormationSessionId()));
+        }
+
+        return $this->render('Formation/Modal/candidateDetails.html.twig', array('data' => $data, 'formDelete' => $formDelete->createView()));
+    }
+
+    /**
+     * @param Access           $access
+     * @param FormationSession $formationSession
+     *
+     * @return Response
+     */
+    #[Route('/details-de-la-session/{formationSession<\d+>}/liste-csv', name:'csvList')]
+    public function csvList(Access $access, FormationSession $formationSession): Response
+    {
+        if (!$access->check('Formation-SessionManagement'))
+        {
+            die();
+        }
+
+        $candidates = $formationSession->getFormationSessionCandidates();
+
+        $file = fopen('List.csv', 'w');
+
+        fwrite($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        fputcsv($file, ['Prénom', 'Nom', 'Sexe', 'Date de naissance', '# National', 'Nationalité', 'Adresse', 'Code Postal', 'Localité', 'Pays', 'Téléphone', 'Email'], ";");
+
+        foreach ($candidates as $candidate)
+        {
+            $entry['Firstname']        = $candidate->getFormationSessionCandidateFirstname();
+            $entry['Name']             = $candidate->getFormationSessionCandidateName();
+            $entry['Sex']              = $candidate->getFormationSessionCandidateSex(true);
+            $entry['Birthday']         = $candidate->getFormationSessionCandidateBirthday(true);
+            $entry['NationalID']       = 'Inconnu';
+            $entry['Nationality']      = 'Inconnue';
+            $entry['Address']          = $candidate->getFormationSessionCandidateAddress();
+            $entry['Zip']              = $candidate->getFormationSessionCandidateZip();
+            $entry['City']             = $candidate->getFormationSessionCandidateCity();
+            $entry['Country']          = $candidate->getFormationSessionCandidateCountry(true);
+            $entry['Phone']            = $candidate->getFormationSessionCandidatePhone();
+            $entry['Email']            = $candidate->getFormationSessionCandidateEmail();
+
+            fputcsv($file, $entry, ";");
+        }
+
+        fclose($file);
+
+        $stream = new Stream('List.csv');
+
+        $response = new BinaryFileResponse($stream);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
+
+        return $response->deleteFileAfterSend();
     }
 }
