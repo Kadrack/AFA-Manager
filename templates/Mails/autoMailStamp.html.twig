@@ -1,0 +1,145 @@
+<html lang="fr">
+<head>
+    <title>{{ subject }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div>
+        <p>Cher correspondant,<br />Chère correspondante</p>
+        <p>Par la présente, nous vous transmettons la liste des licences renouvelées et des nouvelles inscriptions qui ont été envoyées par pli postal à ce jour à l’adresse suivante :</p>
+        <p>
+            {{ data.Club.getClubAddress }}<br />
+            {{ data.Club.getClubCity(true) }}
+        </p>
+
+        <table>
+            <tr>
+                <td style="border: 1px solid #e8eae9; border-spacing: 0"><strong>Encodage</strong></td>
+                <td style="border: 1px solid #e8eae9;"><strong>Licence n°</strong></td>
+                <td style="border: 1px solid #e8eae9;"><strong>Prénom</strong></td>
+                <td style="border: 1px solid #e8eae9;"><strong>Nom</strong></td>
+                <td style="border: 1px solid #e8eae9;"><strong>Echéance</strong></td>
+            </tr>
+            {% for member in data.List %}
+            <tr>
+                <td style="border: 1px solid #e8eae9;">{{ member.getMemberLicencePrintoutDone(true) }}</td>
+                <td style="border: 1px solid #e8eae9;">{{ member.getMemberId }}</td>
+                <td style="border: 1px solid #e8eae9;">{{ member.getMemberFirstname }}</td>
+                <td style="border: 1px solid #e8eae9;">{{ member.getMemberName }}</td>
+                <td style="border: 1px solid #e8eae9;">{{ member.getMemberLicenceDeadline(true) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <p>Nous vous souhaitons bonne réception de la présente et restons à votre disposition pour tout renseignement complémentaire.</p>
+        <p><br />Cordialement,</p>
+        <table style="background: #ffffff; width: 263px; padding: 0; font-size: 12px !important; font-family: 'Montserrat', sans-serif !important;">
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr style="width: 263px;">
+                <td><img src="https://caractere-web.be/signaturemail/afa/images/logo-small.png" width="100%" height="108" alt=""></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <h2 style="color: #02324f; font-weight: 800; text-transform: uppercase; font-size:20px;">
+                        <strong style="font-weight:600;">NIMA HASSAN</strong><br />
+                        <span style="font-weight: 200; text-transform: capitalize; font-size: 13px;">SECRÉTAIRE ADMINISTRATIVE</span><br />
+                    </h2>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <a href="tel:+3225374762" style="color: #21EFCC; font-size: 18px; font-weight: 800; text-decoration: none !important;">T. +32 (02) 537 47 62</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9;"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <p style="color: #21EFCC; font-size: 13px; font-weight: 200;">
+                        Tour Sablon - Rue Joseph Stevens 7<br />
+                        B-1000 Bruxelles
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9;"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr style="display: block; border-right: 1px solid #e8eae9; margin-right: 4rem;">
+                <td style="padding: 0 1.5rem; margin-right: 3rem !important; display: inline-block; height: 20px">
+                    <a style="color:#21EFCC; font-size:20px; text-decoration: none !important;" href="https://www.aikido.be/">
+                        www.<strong style="color:#02324f;font-weight:600;">aikido</strong>.be
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 0 0 1.5rem;">
+                    <a style="text-decoration: none !important;" href="https://www.instagram.com/afa_aikido/">
+                        <img src="https://caractere-web.be/signaturemail/afa/images/img_rs_300_01.png" width="30" height="30" alt="">
+                    </a>
+                    <a style="text-decoration: none !important;" href="https://www.youtube.com/channel/UClEnAVJiY2eeFE48pyuWSBQ">
+                        <img src="https://caractere-web.be/signaturemail/afa/images/img_rs_300_02.png" width="30" height="30" alt="">
+                    </a>
+                    <a style="text-decoration: none !important;" href="https://www.facebook.com/aikido.be">
+                        <img src="https://caractere-web.be/signaturemail/afa/images/img_rs_300_03.png" width="30" height="30" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9;"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr style="width: 263px;">
+                <td style="padding: 0 1.5rem;">
+                    <img src="https://caractere-web.be/signaturemail/afa/images/img_logo_300.jpg" width="262.5" alt="">
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px;border-bottom: 1px solid #e8eae9"></td>
+            </tr>
+            <tr>
+                <td style="height: 7px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 0 1.5rem;">
+                    <span>
+                        <p style="color: #02324f; font-size: 9px; text-align: justify;">
+                            Avant d'imprimer une copie de cet e-mail, veuillez considérer l'environnement.
+                            Ce message et toutes les pièces jointes sont confidentiels et destinés uniquement à la ou aux adresse désignées.
+                            Si vous avez reçu ce message par erreur, veuillez en informer immédiatement l'expéditeur avant de le supprimer.
+                            Toutes modification, édition utilisation ou diffusion non autorisée est interdite.
+                            L'expéditeur ne saurait être responsable de ce message s'il a été modifié, altéré, falsifié, infecté par un virus ou encore édité ou diffusé sans autorisation
+                        </p>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 7px; border-bottom: 1px solid #e8eae9"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

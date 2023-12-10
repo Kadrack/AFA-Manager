@@ -782,14 +782,17 @@ class SecretariatController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Club $club
+     * @param Access          $access
+     * @param Club            $club
+     * @param EmailSender     $emailSender
      * @param ManagerRegistry $doctrine
-     * @param Session $session
+     * @param Session         $session
+     *
      * @return RedirectResponse|Response
+     * @throws TransportExceptionInterface
      */
     #[Route('/valider-impression-des-timbres/{club<\d+>}', name:'printStampValidate')]
-    public function printStampValidate(Access $access, Club $club, ManagerRegistry $doctrine, Session $session): RedirectResponse|Response
+    public function printStampValidate(Access $access, Club $club, EmailSender $emailSender, ManagerRegistry $doctrine, Session $session): RedirectResponse|Response
     {
         if (!$access->check('Club-PrintStamp'))
         {
@@ -801,16 +804,20 @@ class SecretariatController extends AbstractController
             die();
         }
 
-        $list = $doctrine->getRepository(MemberLicence::class)->getOnGoingStampLicence($club);
+        $data['Club'] = $club;
+
+        $data['List'] = $doctrine->getRepository(MemberLicence::class)->getOnGoingStampLicence($club);
 
         $entityManager = $doctrine->getManager();
 
-        foreach ($list as $licence)
+        foreach ($data['List'] as $licence)
         {
             $licence->setMemberLicencePrintoutDone(new DateTime());
 
             $entityManager->flush();
         }
+
+        $emailSender->stampToClub($data);
 
         return $this->redirectToRoute('secretariat-stampsToPrint', array('club' => $club->getClubId()));
     }

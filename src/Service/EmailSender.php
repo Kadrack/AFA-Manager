@@ -218,6 +218,27 @@ class EmailSender
      * @return bool
      * @throws TransportExceptionInterface
      */
+    public function stampToClub(array $data): bool
+    {
+        $this->email['From']     = new Address('afa@aikido.be', 'Secrétariat AFA');
+        $this->email['ReplyTo']  = new Address('afa@aikido.be', 'Secrétariat AFA');
+        $this->email['To']       = $data['Club']->getClubData('EmailManagers', true);
+        $this->email['Cc']       = array();
+        $this->email['Bcc']      = array(new Address('afa@aikido.be', 'Secrétariat AFA'));
+        $this->email['Subject']  = 'Envoie des timbres';
+        $this->email['Template'] = 'Mails/autoMailStamp.html.twig';
+        $this->email['Context']  = array('subject' => $this->email['Subject'], 'data' => $data);
+
+        $this->send();
+
+        return true;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     * @throws TransportExceptionInterface
+     */
     public function endTask(array $data): bool
     {
         $this->email['Attach']   = null;

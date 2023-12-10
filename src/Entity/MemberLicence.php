@@ -221,11 +221,18 @@ class MemberLicence
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLicencePrintoutCreation(): ?DateTime
+    public function getMemberLicencePrintoutCreation(bool $format = false): DateTime|string|null
     {
-        return $this->memberLicencePrintoutCreation;
+        if (is_null($this->memberLicencePrintoutCreation))
+        {
+            return $format ? '--/--/----' : null;
+        }
+
+        return $format ? $this->memberLicencePrintoutCreation->format('d/m/Y') : $this->memberLicencePrintoutCreation;
     }
 
     /**
@@ -241,11 +248,18 @@ class MemberLicence
     }
 
     /**
-     * @return DateTime|null
+     * @param bool $format
+     *
+     * @return DateTime|string|null
      */
-    public function getMemberLicencePrintoutDone(): ?DateTime
+    public function getMemberLicencePrintoutDone(bool $format = false): DateTime|string|null
     {
-        return $this->memberLicencePrintoutDone;
+        if (is_null($this->memberLicencePrintoutDone))
+        {
+            return $format ? '--/--/----' : null;
+        }
+
+        return $format ? $this->memberLicencePrintoutDone->format('d/m/Y') : $this->memberLicencePrintoutDone;
     }
 
     /**
