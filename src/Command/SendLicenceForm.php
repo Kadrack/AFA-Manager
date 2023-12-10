@@ -120,16 +120,16 @@ class SendLicenceForm extends Command
             {
                 $data['NoMail'] = array();
 
-                if (str_contains($club->getClubMainManagerMail(), '@aikido.be'))
+                if (str_contains($club->getClubData('EmailMainManager'), '@aikido.be'))
                 {
-                    $email['From'] = $club->getClubMainManagerMail(true);
+                    $email['From'] = $club->getClubData('EmailMainManager', true);
                 }
                 else
                 {
-                    $email['From'] = new Address('afa-manager@aikido.be', $club->getClubMainManagerName() . ' via AFA-Manager');
+                    $email['From'] = new Address('afa-manager@aikido.be', $club->getClubManagers('Main')->getClubManagerFullName() . ' via AFA-Manager');
                 }
 
-                $email['ReplyTo'] = $club->getClubMainManagerMail();
+                $email['ReplyTo'] = $club->getClubData('EmailMainManager');
 
                 foreach ($members as $member)
                 {

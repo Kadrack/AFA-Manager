@@ -57,10 +57,10 @@
             {% if data.Inactive|length > 0 %}
                 {% for member in data.Inactive %}
                     <tr>
-                        <td style="border: 1px solid #e8eae9;">{{ member.Member.getMemberId }}</td>
-                        <td style="border: 1px solid #e8eae9;">{{ member.Member.getMemberFirstname|title }}</td>
-                        <td style="border: 1px solid #e8eae9;">{{ member.Member.getMemberName|title }}</td>
-                        <td style="border: 1px solid #e8eae9;">{{ member.Member.getMemberLastDeadline|date('d/m/Y') }}</td>
+                        <td style="border: 1px solid #e8eae9;">{{ member.getMemberId }}</td>
+                        <td style="border: 1px solid #e8eae9;">{{ member.getMemberFirstname|title }}</td>
+                        <td style="border: 1px solid #e8eae9;">{{ member.getMemberName|title }}</td>
+                        <td style="border: 1px solid #e8eae9;">{{ member.getMemberDeadline(true) }}</td>
                         <td style="border: 1px solid #e8eae9;"></td>
                     </tr>
                 {% endfor %}

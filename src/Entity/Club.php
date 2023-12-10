@@ -945,9 +945,9 @@ class Club
      * @param string|null $search
      * @param bool|null   $format
      *
-     * @return array|Address|null
+     * @return Address|array|string|null
      */
-    public function getClubData(string|null $search = null, bool|null $format = false): array|Address|null
+    public function getClubData(string|null $search = null, bool|null $format = false): Address|array|string|null
     {
         return match ($search)
         {
@@ -1027,7 +1027,7 @@ class Club
         {
             if (is_null($manager->getClubManagerMember()))
             {
-                $email[$manager->getClubManagerUser()->getUserEmail()] = new Address($manager->getClubManagerUser()->getUserEmail(), ucwords($manager->getClubManagerUser()->getUserFirstname()) . ' ' . ucwords($manager->getClubManagerUser()->getUserRealName()));
+                $email[$manager->getClubManagerUser()->getEmail()] = new Address($manager->getClubManagerUser()->getEmail(), ucwords($manager->getClubManagerUser()->getFullName()));
             }
             else
             {

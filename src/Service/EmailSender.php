@@ -201,7 +201,7 @@ class EmailSender
         $this->email['Attach']   = $data['Attach'];
         $this->email['From']     = $data['From'];
         $this->email['ReplyTo']  = $data['ReplyTo'];
-        $this->email['To']       = $data['Club']->getClubManagerMail(true);
+        $this->email['To']       = $data['Club']->getClubData('EmailManagers', true);
         $this->email['Cc']       = array();
         $this->email['Bcc']      = array(new Address('afa@aikido.be', 'Secrétariat AFA'));
         $this->email['Subject']  = 'Renouvellement licences ' . $this->listData->getMonth($data['MonthStart']);
