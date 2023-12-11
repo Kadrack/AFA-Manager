@@ -432,14 +432,14 @@ class EmailSender
 
                     break;
                 case 3:
-                    foreach ($doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(1, 3))) as $member)
+                    foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(1, 3))) as $member)
                     {
                         is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
 
                     break;
                 case 4:
-                    foreach ($doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(2, 3))) as $member)
+                    foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(2, 3))) as $member)
                     {
                         is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
