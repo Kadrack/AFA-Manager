@@ -373,15 +373,16 @@ class EmailSender
     {
         $list = array();
 
-        !$this->access->check('Mailing-DojoCho')     ?: $list = array_merge($list, array('Dojo-Cho' => 1));
-        !$this->access->check('Mailing-Manager')     ?: $list = array_merge($list, array('Gestionnaires de club' => 2));
-        !$this->access->check('Mailing-Teacher')     ?: $list = array_merge($list, array('Professeur(s) et Assistant(s)' => 3));
-        !$this->access->check('Mailing-CA')          ?: $list = array_merge($list, array('Conseil d\'administration' => 4));
-        !$this->access->check('Mailing-CT')          ?: $list = array_merge($list, array('Commission technique' => 5));
-        !$this->access->check('Mailing-CJ')          ?: $list = array_merge($list, array('Commission junior' => 6));
-        !$this->access->check('Mailing-CP')          ?: $list = array_merge($list, array('Commission pédagogique' => 7));
-        !$this->access->check('Mailing-CPAnimateur') ?: $list = array_merge($list, array('Candidats Animateur' => 8));
-        !$this->access->check('Mailing-Preview')     ?: $list = array_merge($list, array('Secrétariat' => 100));
+        !$this->access->check('Mailing-DojoCho')      ?: $list = array_merge($list, array('Dojo-Cho' => 1));
+        !$this->access->check('Mailing-Manager')      ?: $list = array_merge($list, array('Gestionnaires de club' => 2));
+        !$this->access->check('Mailing-TeacherAdult') ?: $list = array_merge($list, array('Professeurs Adultes' => 3));
+        !$this->access->check('Mailing-TeacherChild') ?: $list = array_merge($list, array('Professeurs Enfants' => 4));
+        !$this->access->check('Mailing-CA')           ?: $list = array_merge($list, array('Conseil d\'administration' => 5));
+        !$this->access->check('Mailing-CT')           ?: $list = array_merge($list, array('Commission technique' => 6));
+        !$this->access->check('Mailing-CJ')           ?: $list = array_merge($list, array('Commission junior' => 7));
+        !$this->access->check('Mailing-CP')           ?: $list = array_merge($list, array('Commission pédagogique' => 8));
+        !$this->access->check('Mailing-CPAnimateur')  ?: $list = array_merge($list, array('Candidats Animateur' => 9));
+        !$this->access->check('Mailing-Preview')      ?: $list = array_merge($list, array('Secrétariat' => 100));
 
         return $list;
     }
@@ -431,41 +432,48 @@ class EmailSender
 
                     break;
                 case 3:
-                    foreach ($this->doctrine->getRepository(ClubTeacher::class)->findAll() as $member)
+                    foreach ($doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(1, 3))) as $member)
                     {
                         is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
 
                     break;
                 case 4:
+                    foreach ($doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(2, 3))) as $member)
+                    {
+                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
+                    }
+
+                    break;
+                case 5:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 3)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
-                case 5:
+                case 6:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 1)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
-                case 6:
+                case 7:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 2)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
-                case 7:
+                case 8:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 4)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
-                case 8:
+                case 9:
                     foreach ($this->doctrine->getRepository(Member::class)->getCPAnimateurCandidate() as $member)
                     {
                         $this->email['Bcc'][] = $member->getMemberEmail();
