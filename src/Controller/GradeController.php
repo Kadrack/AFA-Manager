@@ -777,7 +777,7 @@ class GradeController extends AbstractController
                     if (is_null($grade->getGradeSession()) || $grade->getGradeSession() === $candidate->getGradeSessionCandidateExam())
                     {
                         $grade->setGradeStatus($result);
-                        $grade->setGradeSession($candidate->getGradeSessionCandidateExam());
+                        $grade->setGradeSession($candidate);
 
                         $candidate->getGradeSessionCandidateRank() % 2 == 0 ?: $grade->setGradeDate($candidate->getGradeSessionCandidateExam()->getGradeSessionDate());
                     }
