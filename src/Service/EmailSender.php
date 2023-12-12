@@ -446,28 +446,28 @@ class EmailSender
 
                     break;
                 case 5:
-                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 3)) as $member)
+                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 3)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 6:
-                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 1)) as $member)
+                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 1)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 7:
-                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 2)) as $member)
+                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 2)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 8:
-                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('cluster' => 4)) as $member)
+                    foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 4)) as $member)
                     {
                         !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
                     }
