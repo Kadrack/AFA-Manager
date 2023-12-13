@@ -186,7 +186,7 @@ class EmailSender
         $this->email['Template'] = 'Mails/autoMailToMember.html.twig';
         $this->email['Context']  = array('subject' => $this->email['Subject'], 'data' => $data);
 
-        $this->send(false);
+        $this->send();
 
         return true;
     }
@@ -518,7 +518,7 @@ class EmailSender
             $this->email['Cc'] = array();
         }
 
-        $this->send(false);
+        $this->send();
 
         return true;
     }
@@ -601,11 +601,10 @@ class EmailSender
     }
 
     /**
-     * @param bool $clean
      * @return void
      * @throws TransportExceptionInterface
      */
-    private function send(bool $clean = true): void
+    private function send(): void
     {
         $email = (new TemplatedEmail())
             ->from($this->email['From'])
@@ -628,13 +627,5 @@ class EmailSender
         $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, DR, RN, NRN, AutoReply');
 
         $this->mailer->send($email);
-
-        if ($clean && isset($this->email['Attach']))
-        {
-            foreach ($this->email['Attach'] as $file)
-            {
-                unlink($file);
-            }
-        }
     }
 }
