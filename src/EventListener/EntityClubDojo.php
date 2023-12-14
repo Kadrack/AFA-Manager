@@ -28,6 +28,8 @@ class EntityClubDojo
 
     public function clubDojo(ClubDojo $clubDojo, PostPersistEventArgs|PostRemoveEventArgs|PostUpdateEventArgs $event): void
     {
+        $club = $clubDojo->getClubDojoClub();
+
         if ($club->getClubIsActive())
         {
             $clubs = json_decode(file_get_contents('/home/fzns3054/aikido.be/wordpress/prod/wp-content/uploads/json/clubs.json'), true);
