@@ -382,6 +382,7 @@ class EmailSender
         !$this->access->check('Mailing-CJ')           ?: $list = array_merge($list, array('Commission junior' => 7));
         !$this->access->check('Mailing-CP')           ?: $list = array_merge($list, array('Commission pédagogique' => 8));
         !$this->access->check('Mailing-CPAnimateur')  ?: $list = array_merge($list, array('Candidats Animateur' => 9));
+        !$this->access->check('Mailing-Global')       ?: $list = array_merge($list, array('Tous les membres' => 10));
         !$this->access->check('Mailing-Preview')      ?: $list = array_merge($list, array('Secrétariat' => 100));
 
         return $list;
@@ -477,6 +478,13 @@ class EmailSender
                     foreach ($this->doctrine->getRepository(Member::class)->getCPAnimateurCandidate() as $member)
                     {
                         $this->email['Bcc'][] = $member->getMemberEmail();
+                    }
+
+                    break;
+                case 10:
+                    foreach ($this->doctrine->getRepository(Member::class)->getActiveMemberEmailList() as $member)
+                    {
+                        $this->email['Bcc'][] = $member['Email'];
                     }
 
                     break;

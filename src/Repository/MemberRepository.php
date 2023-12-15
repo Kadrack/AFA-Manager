@@ -159,6 +159,22 @@ class MemberRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array
+     */
+    public function getActiveMemberEmailList(): array
+    {
+        $qb = $this->createQueryBuilder('m');
+
+        return $qb->select('m.memberEmail As Email')
+            ->distinct()
+            ->innerJoin(MemberLicence::class, 'l', 'WITH', $qb->expr()->eq('m.memberId', 'l.memberLicenceMember'))
+            ->where($qb->expr()->gte('l.memberLicenceDeadline', "'".(new DateTime())->format('Y-m-d')."'"))
+            ->andWhere($qb->expr()->isNotNull('m.memberEmail'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @param Club $club
      * @return array|null
      */
