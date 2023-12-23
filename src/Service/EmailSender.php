@@ -413,6 +413,8 @@ class EmailSender
         $this->email['Template'] = 'Mails/template.html.twig';
         $this->email['Context']  = array('data' => $this->email);
 
+        $Bcc = array();
+
         foreach ($lists as $list)
         {
             switch ($list)
@@ -420,84 +422,99 @@ class EmailSender
                 case 1:
                     foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherTitle' => 1)) as $member)
                     {
-                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
+                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $Bcc[] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
 
                     break;
                 case 2:
                     foreach ($this->doctrine->getRepository(ClubManager::class)->findAll() as $member)
                     {
-                        is_null($member->getClubManagerMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubManagerMember()?->getMemberEmail();
-                        is_null($member->getClubManagerUser()?->getEmail()) ?: $this->email['Bcc'][] = $member->getClubManagerUser()?->getEmail();
+                        is_null($member->getClubManagerMember()?->getMemberEmail()) ?: $Bcc[] = $member->getClubManagerMember()?->getMemberEmail();
+                        is_null($member->getClubManagerUser()?->getEmail()) ?: $Bcc[] = $member->getClubManagerUser()?->getEmail();
                     }
 
                     break;
                 case 3:
                     foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(1, 3))) as $member)
                     {
-                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
+                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $Bcc[] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
 
                     break;
                 case 4:
                     foreach ($this->doctrine->getRepository(ClubTeacher::class)->findBy(array('clubTeacherType' => array(2, 3))) as $member)
                     {
-                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $this->email['Bcc'][] = $member->getClubTeacherMember()?->getMemberEmail();
+                        is_null($member->getClubTeacherMember()?->getMemberEmail()) ?: $Bcc[] = $member->getClubTeacherMember()?->getMemberEmail();
                     }
 
                     break;
                 case 5:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 3)) as $member)
                     {
-                        !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
+                        !$member->getClusterMemberActive() ?: $Bcc[] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 6:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 1)) as $member)
                     {
-                        !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
+                        !$member->getClusterMemberActive() ?: $Bcc[] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 7:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 2)) as $member)
                     {
-                        !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
+                        !$member->getClusterMemberActive() ?: $Bcc[] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 8:
                     foreach ($this->doctrine->getRepository(ClusterMember::class)->findBy(array('clusterMemberCluster' => 4)) as $member)
                     {
-                        !$member->getClusterMemberActive() ?: $this->email['Bcc'][] = $member->getClusterMemberEmail();
+                        !$member->getClusterMemberActive() ?: $Bcc[] = $member->getClusterMemberEmail();
                     }
 
                     break;
                 case 9:
                     foreach ($this->doctrine->getRepository(Member::class)->getCPAnimateurCandidate() as $member)
                     {
-                        $this->email['Bcc'][] = $member->getMemberEmail();
+                        $Bcc[] = $member->getMemberEmail();
                     }
 
                     break;
                 case 10:
                     foreach ($this->doctrine->getRepository(Member::class)->getActiveMemberEmailList() as $member)
                     {
-                        $this->email['Bcc'][] = $member['Email'];
+                        $Bcc[] = $member['Email'];
                     }
 
                     break;
                 case 100:
-                    $this->email['Bcc'] = array();
+                    $Bcc[] = array();
 
                     break;
             }
         }
 
-        $this->email['Bcc'] = array_unique($this->email['Bcc']);
+        $Bcc = array_unique($Bcc);
 
-        $this->send();
+        foreach ($Bcc as $email)
+        {
+            $this->email['Bcc'][] = $email;
+
+            if (sizeof($this->email['Bcc']) >= 100)
+            {
+                $this->send();
+
+                $this->email['Bcc'] = array();
+            }
+        }
+
+        if (sizeof($this->email['Bcc']) >= 1)
+        {
+            $this->send();
+        }
 
         return true;
     }
