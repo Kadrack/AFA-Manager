@@ -1,87 +1,284 @@
 <!DOCTYPE html>
-<html lang="fr" style="margin: 0">
+<html lang="fr">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <style>
-        .conteneurCarte
-        {
-            position:relative;
-            width:8.5cm;
-            height:5.5cm;
-            color:white;
-            padding:0;
+        *{
+            margin:0;
+            padding: 0;
         }
 
-        img.photo
-        {
-            position:absolute;
-            width:1.87cm;
-            top:0.65cm;
-            left:6.52cm;
-            max-height: 110px;
+        @font-face {
+            font-family: 'Fashion';
+            src: url('{{ asset('fonts/fashion-fetish/Fashion-Fetish-Light.ttf') }}');
         }
 
-        img.licence
-        {
-            position:absolute;
-            width:8.6cm;
-            height:5.4cm;
+        @font-face {
+            font-family: 'Fashion-bold';
+            src: url('{{ asset('fonts/fashion-fetish/Fashion-Fetish-Bold.ttf') }}');
+        }
+
+        @font-face {
+            font-family: 'Fashion-black';
+            src: url('{{ asset('fonts/fashion-fetish/Fashion-Fetish-Heavy.ttf') }}');
+        }
+
+        @font-face {
+            font-family: 'RNS-Light';
+            src: url('{{ asset('fonts/Rns/RNSSanz-Light.ttf') }}');
+        }
+
+        @font-face {
+            font-family: 'RNS-Medium';
+            src: url('{{ asset('fonts/Rns/RNSSanz-Medium.ttf') }}');
+        }
+
+        @font-face {
+            font-family: 'RNS-black';
+            src: url('{{ asset('fonts/Rns/RNSSanz-Bold.ttf') }}');
+        }
+
+        html,body{
+            color:#10314d;
+        }
+
+        .section_lateral{
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 7.5cm;
+            border-right: 1px solid #10314d;
+            padding: .5cm;
+        }
+
+        .section_lateral p{
+            font-family: 'RNS-Medium',sans-serif;
+            font-size: 10px;
+            line-height: 1cm;
+            position: absolute;
+            transform-origin: bottom left;
+            width: 3cm;
+            left: 0;
+            top: -.5cm;
+            color:#10314d;
+            transform: rotate(90deg);
+        }
+
+        .section_lateral p span{
+            font-family: 'RNS-Black', sans-serif;
+        }
+
+        .section_lateral ul{
+            position: absolute;
+            left: .25cm;
+            list-style: none;
+            bottom: .5cm;
+            margin:auto;
+        }
+
+        .section_lateral ul li img{
+            width: .5cm;
+            text-align: center;
+            aspect-ratio: 1;
+        }
+
+        .section_lateral .line{
+            background-color: #10314d;
+            height: 1px;
+            position: absolute;
+            transform: rotate(-25deg);
+            left: -.1cm;
+            top: 3.5cm;
+            width: 1.16cm;
+
+        }
+        .section_lateral span{
+            color:#1fefcc;
+            font-weight: 600;
+        }
+
+        .content table{
+            border-collapse: collapse;
+        }
+
+        .content tr{
+            border-bottom: 1px solid #10314d;
+            width: 100%;
+        }
+
+        .content tr:last-child{
+            border:none;
+        }
+
+        .content tr:last-child td{
+            padding-top:.33cm;
+            font-family: 'Fashion', serif;
+            font-size:11px;
+            color:#10314d;
+        }
+
+        .content tr:last-child td a span{
+            font-family: 'Fashion-black', serif;
+            color:#1fefcc;
+        }
+
+        .content td{
+            padding-left: .8cm;
+            padding-bottom:.2cm;
+            vertical-align: middle;
+            width: 4.5cm;
+        }
+
+        .content{
             top:0;
+            left:1cm;
+            position: absolute;
+            width:4.5cm;
         }
 
-        img.codebarre
-        {
-            position:absolute;
-            width:2.8cm;
-            height:1cm;
-            top:4.15cm;
-            left:5.20cm;
+        .content .line{
+            background-color: #10314d;
+            height: 1px;
+            position: absolute;
+            transform: rotate(-90deg);
+            left: 3.2cm;
+            top: 4.85cm;
+            width: .85cm;
         }
 
-        .nomPrenom
-        {
-            position:absolute;
-            top:2.9cm;
-            width:8.3cm;
-            text-align:right;
-            color:white;
-            font-family: verdana, arial, sans-serif;
-            font-size:0.8em;
+        h1, h2{
+            font-family: 'Fashion-bold', sans-serif;
+            font-size: 10px;
+            line-height: 1em;
+            color:#1fefcc  ;
         }
 
-        .club
-        {
-            position:absolute;
-            top:3.25cm;
-            width:8.3cm;
-            text-align:right;
-            color:white;
-            font-family: verdana, arial, sans-serif;
-            font-size:0.7em;
+        h2{
+            color:#10314d;
+            line-height: 1.2em;
+            font-family: 'Fashion-bold',sans-serif;
         }
 
-        .licence
-        {
-            position:absolute;
-            top:3.7cm;
-            width:8.2cm;
-            text-align:right;
-            color:red;
-            font-family: verdana, arial, sans-serif;
-            font-size:0.8em;
+        .profilPic{
+            width:2cm;
+            height: 2.5cm;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 40% 100%, 0 80%);
+            top: 0;
+            margin-bottom: .3cm;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .profilPic img{
+            width: 100%;
+        }
+
+        .row_club{
+            font-family: 'RNS-Black',sans-serif;
+            text-transform: uppercase;
+            font-size: 9px;
+            font-weight: 800;
+            padding:.2cm;
+            min-height: .8cm;
+            height: .4cm;
+        }
+
+        .row_number{
+            font-family: 'RNS-Light',sans-serif ;
+            height:.3cm;
+            padding:.2cm;
+            font-size:14px;
+        }
+
+        .row_qr{
+            padding:.3cm;
+        }
+
+        .row_qr img{
+            width:1.7cm;
+            aspect-ratio: 1;
+        }
+
+        .row_qr .line_qr_code{
+            background-color: #10314d;
+            height: 1px;
+            position: absolute;
+            top:6.48cm;
+            transform: rotate(70deg);
+            left:2.3cm;
+            width: 2.5cm;
+        }
+
+        .deco_bottom{
+            background-color: #1fefcc;
+            height: .2cm;
+            position: absolute;
+            bottom: .3cm;
+            left:.75cm;
+            width: .5cm;
+        }
+
+        .deco_ppic{
+            clip-path: polygon(38% 82%, 100% 82%, 100% 100%, 27% 100%, 0 66%, 15% 54%);
+            background-color: #1fefcc;
+            width: .8cm;
+            height: .9cm;
+            position: absolute;
+            top:1.2cm;
+            left:2.3cm;
         }
     </style>
     <title>Carte membre</title>
 </head>
-<body style="margin: 0">
-    <div class="conteneurCarte">
-        <div>&nbsp;</div>
-        <img class="licence" src="{{ asset('images/licence.jpg') }}" alt="N° licence"/>
-        <img class="photo" src="{{ data.Member.getMemberPhoto }}" alt="Photo"/>
-        <img class="codebarre" src="data:image/png;base64,{{ data.Barcode }}" alt="Code barre"/>
-        <div class="nomPrenom">{{ data.Member.memberFirstname|title }} {{ data.Member.memberName|title }}</div>
-        <div class="club">{{ data.Member.getMemberLicences.0.getMemberLicenceClub.clubName|title }} - {{ data.Member.getMemberLicences.0.getMemberLicenceClub.clubId }}</div>
-        <div class="licence"><b>Licence n° {{ data.Member.memberId }}</b></div>
-    </div>
+<body>
+<div class="section_lateral">
+    <p>CARTE <span>DE MEMBRE</span></p>
+    <span class="line"></span>
+    <ul>
+        <li><a href="https://facebook.com"><img src="{{ asset('images/facebook.svg') }}" alt="facebook"/></a></li>
+        <li><a href="https://youtube.com"><img src="{{ asset('images/youtube.svg') }}" alt="youtube"/></a></li>
+        <li><a href="https://instagram.com"><img src="{{ asset('images/instagram.svg') }}" alt="instagram"/></a></li>
+    </ul>
+    <div class="deco_bottom"></div>
+</div>
+<div class="content">
+    <table>
+        <tr>
+            <td class="row_ppic">
+                <div class="profilPic">
+                    <!-- Photo de profil -->
+                    <img src="{{ data.Member.getMemberPhoto }}"  alt="photo_de_profil"/>
+                </div>
+                <div class="deco_ppic"></div>
+
+                <!-- h1 = Prénom | h2 = Nom -->
+                <h1>{{ data.Member.memberFirstname|title }}</h1>
+                <h2>{{ data.Member.memberName|title }}</h2>
+            </td>
+        </tr>
+        <tr>
+            <td class="row_club">
+                <!-- Nom du dojo -->
+                <p>{{ data.Member.getMemberLicences.0.getMemberLicenceClub.clubName|title }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="row_number">
+                <p>{{ data.Member.memberId }}</p>
+                <span class="line"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="row_qr">
+                <img src="{{ asset('images/qr-code.svg') }}" alt="qrcode">
+                <div class="line_qr_code"></div>
+            </td>
+        </tr>
+        <tr>
+            <td><a>www.<span>aikido</span>.be</a></td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>
