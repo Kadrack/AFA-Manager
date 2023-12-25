@@ -1,0 +1,6 @@
+endroid_qr_code:
+    default:
+        writer: Endroid\QrCode\Writer\SvgWriter
+        encoding: 'UTF-8'
+        errorCorrectionLevel: 'high'
+        roundBlockSizeMode: 'enlarge'

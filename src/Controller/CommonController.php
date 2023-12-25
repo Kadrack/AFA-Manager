@@ -2,6 +2,7 @@
 // src/Controller/CommonController.php
 namespace App\Controller;
 
+use App\Entity\QrCodes;
 use App\Repository\UserRepository;
 
 use App\Service\Access;
@@ -15,7 +16,7 @@ use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -78,5 +79,16 @@ class CommonController extends AbstractController
         $em->flush();
 
         return $this->redirect($request->headers->get('referer'));
+    }
+
+    /**
+     * @param QrCodes $qrCode
+     *
+     * @return Response
+     */
+    #[Route('/lecture-qr-codes/member/{qrCode}', name:'qrReadingMember')]
+    public function qrReading(QrCodes $qrCode): Response
+    {
+        return $this->redirectToRoute('member-index', array('member' => $qrCode->getQrCodesMember()->getMemberId()));
     }
 }

@@ -202,6 +202,13 @@ class Member
     /**
      * @var ArrayCollection|Collection|null
      */
+    #[ORM\OneToMany(mappedBy: 'qrCodesMember', targetEntity: QrCodes::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['qrCodesCreationDate' => 'ASC'])]
+    private ArrayCollection|Collection|null $memberQrCodes;
+
+    /**
+     * @var ArrayCollection|Collection|null
+     */
     #[ORM\OneToMany(mappedBy: 'titleMember', targetEntity: Title::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['titleDate' => 'DESC'])]
     private ArrayCollection|Collection|null $memberTitles;
@@ -232,6 +239,7 @@ class Member
         $this->memberGradeSessionCandidates     = new ArrayCollection();
         $this->memberFormations                 = new ArrayCollection();
         $this->memberLicences                   = new ArrayCollection();
+        $this->memberQrCodes                    = new ArrayCollection();
         $this->memberTitles                     = new ArrayCollection();
         $this->memberTrainingAttendances        = new ArrayCollection();
     }
@@ -1044,6 +1052,30 @@ class Member
         }
 
         return true;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMemberQrCodes(): Collection
+    {
+        return $this->memberQrCodes;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMemberValidQrCode(): string|null
+    {
+        foreach ($this->getMemberQrCodes() as $qrCode)
+        {
+            if ($qrCode->getQrCodesIsValid())
+            {
+                return $qrCode->getQrCodesUuid();
+            }
+        }
+
+        return null;
     }
 
     /**

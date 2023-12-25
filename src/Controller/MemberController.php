@@ -7,6 +7,7 @@ use App\Entity\Grade;
 use App\Entity\ClubLesson;
 use App\Entity\Member;
 use App\Entity\MemberLicence;
+use App\Entity\QrCodes;
 use App\Entity\Title;
 
 use App\Form\MemberType;
@@ -20,11 +21,16 @@ use App\Service\SearchMember;
 
 use DateTime;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-use Exception;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 
-use Picqer\Barcode\BarcodeGeneratorPNG;
+use Exception;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -38,7 +44,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -502,13 +508,15 @@ class MemberController extends AbstractController
     }
 
     /**
-     * @param Access $access
-     * @param Member $member
-     * @param Session $session
+     * @param Access                 $access
+     * @param EntityManagerInterface $em
+     * @param Member                 $member
+     * @param Session                $session
+     *
      * @return Response
      */
     #[Route('/{member<\d+>}/imprimer-cartes', name:'licencesCardPrint')]
-    public function licencesCardPrint(Access $access, Member $member, Session $session): Response
+    public function licencesCardPrint(Access $access, EntityManagerInterface $em, Member $member, Session $session): Response
     {
         if (!$access->check('Member-LicenceCardPrint'))
         {
@@ -520,12 +528,27 @@ class MemberController extends AbstractController
             die();
         }
 
-        $generator = new BarcodeGeneratorPNG();
+        if (is_null($member->getMemberValidQrCode()))
+        {
+            $qrCodes = new QrCodes();
 
-        $barcode = base64_encode($generator->getBarcode($member->getMemberId(), $generator::TYPE_CODE_93));
+            $qrCodes->setQrCodesMember($member);
 
-        $data['Member']  = $member;
-        $data['Barcode'] = $barcode;
+            $em->persist($qrCodes);
+            $em->flush();
+
+            return $this->redirectToRoute('member-licencesCardPrint', array('member' => $member->getMemberId()));
+        }
+
+        $data['SVG'] = Builder::create()
+            ->data('https://afamanager.aikido.be/lecture-qr-codes/member/' . $member->getMemberValidQrCode())
+            ->encoding(new Encoding('UTF-8'))
+            ->roundBlockSizeMode(RoundBlockSizeMode::Enlarge)
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->backgroundColor(new Color(255, 255, 255))
+            ->build()->getDataUri();
+
+        $data['Member'] = $member;
 
         return $this->render('Member/Print/cards.html.twig', array('data' => $data));
     }
