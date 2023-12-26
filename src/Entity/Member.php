@@ -1009,6 +1009,16 @@ class Member
     }
 
     /**
+     * @return bool
+     */
+    public function getMemberIsClose(): bool
+    {
+        $limit = new DateTime('-3 year today');
+
+        return $this->getMemberDeadline() > $limit;
+    }
+
+    /**
      * @param bool $format
      *
      * @return DateTime|string|null

@@ -55,12 +55,12 @@
                 <a class="nav-link" data-bs-toggle="tab" href="#title" id="titleTab" onclick="load('{{ path('member-titleTab', {'member': data.Member.getMemberId}) }}', 'title')"><strong>Titre</strong></a>
             </li>
             {% endif %}
-            {% if access.check('Member-EmailTab') %}
+            {% if access.check('Member-EmailTab') and data.Member.getMemberEmail is not null %}
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#email" id="emailTab" onclick="load('{{ path('member-emailTab', {'member': data.Member.getMemberId}) }}', 'email')"><strong>Email</strong></a>
             </li>
             {% endif %}
-            {% if access.check('Member-PersonalTab') or app.user.member.memberId == data.Member.getMemberId %}
+            {% if (access.check('Member-PersonalTab') and data.Member.getMemberIsClose) or app.user.member.memberId == data.Member.getMemberId %}
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#personal" id="personalTab" onclick="load('{{ path('member-personalTab', {'member': data.Member.getMemberId}) }}', 'personal')"><strong>Personnelles</strong></a>
             </li>
@@ -72,8 +72,8 @@
             {% if access.check('Member-GradeTab') %}<div class="tab-pane fade show my-3" id="grade"></div>{% endif %}
             {% if access.check('Member-TrainingTab') %}<div class="tab-pane fade show my-3" id="training"></div>{% endif %}
             {% if access.check('Member-TitleTab') %}<div class="tab-pane fade show my-3" id="title"></div>{% endif %}
-            {% if access.check('Member-EmailTab') %}<div class="tab-pane fade show my-3" id="email"></div>{% endif %}
-            {% if access.check('Member-PersonalTab') or app.user.member.memberId == data.Member.getMemberId %}<div class="tab-pane fade show my-3" id="personal"></div>{% endif %}
+            {% if access.check('Member-EmailTab') and data.Member.getMemberEmail is not null %}<div class="tab-pane fade show my-3" id="email"></div>{% endif %}
+            {% if (access.check('Member-PersonalTab') and data.Member.getMemberIsClose) or app.user.member.memberId == data.Member.getMemberId %}<div class="tab-pane fade show my-3" id="personal"></div>{% endif %}
         </div>
     </div>
 {% endblock %}
