@@ -541,7 +541,7 @@ class MemberController extends AbstractController
         }
 
         $data['SVG'] = Builder::create()
-            ->data('https://afamanager.aikido.be/lecture-qr-codes/member/' . $member->getMemberValidQrCode())
+            ->data('https://afamanager.aikido.be/lecture-qr-codes/membres/' . $member->getMemberValidQrCode())
             ->encoding(new Encoding('UTF-8'))
             ->roundBlockSizeMode(RoundBlockSizeMode::Enlarge)
             ->errorCorrectionLevel(ErrorCorrectionLevel::High)
