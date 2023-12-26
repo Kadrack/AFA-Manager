@@ -248,7 +248,9 @@
             <td class="row_ppic">
                 <div class="profilPic">
                     <!-- Photo de profil -->
+                    {% if data.Member.getMemberPhoto is not null %}
                     <img src="{{ data.Member.getMemberPhoto }}" alt="photo_de_profil"/>
+                    {% endif %}
                 </div>
                 <div class="deco_ppic"></div>
 
