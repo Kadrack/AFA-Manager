@@ -6,14 +6,18 @@
 {% block body %}
     <h3 class="text-center">Liste des présences du {{ data.Lesson.getClubLessonDate(true) }} à {{ data.Lesson.getClubLessonStart(true) }} {% if access.check('Club-LessonEdit') %}<button class="btn btn-sm btn-primary" onclick="load('{{ path('club-lessonEdit', {'club': data.Club.getClubId, 'lesson': data.Lesson.getClubLessonId}) }}', 'popup')" onmouseover="this.style.cursor='pointer'">Modifier</button>{% endif %}</h3>
 
+    <div class="container col col-lg-3 text-center">
+        <button class="btn btn-lg btn-primary" onclick="window.open('{{ path('club-index', {'club': data.Club.getClubId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">Retour à la liste des cours</button>
+    </div>
+
     <div class="container col col-lg-3">
         <table id="AttendanceList" class="table table-sm table-hover user-select-none">
             <thead>
                 <tr>
-                    <th scope="col" class="text-center"></th>
-                    <th scope="col" class="text-center">Prénom</th>
-                    <th scope="col" class="text-center">Nom</th>
-                    <th scope="col" class="text-center">Echéance</th>
+                    <th scope="col" class="text-center" onclick="sortTable('AttendanceList', 0)" onmouseover="this.style.cursor='pointer'"></th>
+                    <th scope="col" class="text-center" onclick="sortTable('AttendanceList', 1)" onmouseover="this.style.cursor='pointer'">Prénom</th>
+                    <th scope="col" class="text-center" onclick="sortTable('AttendanceList', 2)" onmouseover="this.style.cursor='pointer'">Nom</th>
+                    <th scope="col" class="text-center" onclick="sortTable('AttendanceList', 3)" onmouseover="this.style.cursor='pointer'">Echéance</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +30,8 @@
                             <td>{% if attendance.getMemberSubscriptionStatus == 1 %}<i class="bi bi-check-lg text-success"></i> Jamais{% elseif attendance.getMemberSubscriptionStatus == 3 %}Ne pratique plus{% else %}{% if attendance.getMemberSubscriptionValidity > date() %}<i class="bi bi-check-lg text-success"></i>{% else %}<i class="bi bi-x-lg text-danger"></i>{% endif %} {{ attendance.getMemberSubscriptionValidity(true) }}{% endif %}</td>
                         {% else %}
                             <td colspan="3" class="text-center">Invité</td>
+                            <td class="visually-hidden">ZZ</td>
+                            <td class="visually-hidden"></td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -39,9 +45,9 @@
         <table id="MembersList" class="table table-sm table-hover user-select-none">
             <thead>
                 <tr>
-                    <th scope="col" class="text-center">Prénom</th>
-                    <th scope="col" class="text-center">Nom</th>
-                    <th scope="col" class="text-center">Echéance</th>
+                    <th scope="col" class="text-center" onclick="sortTable('MembersList', 0)" onmouseover="this.style.cursor='pointer'">Prénom</th>
+                    <th scope="col" class="text-center" onclick="sortTable('MembersList', 1)" onmouseover="this.style.cursor='pointer'">Nom</th>
+                    <th scope="col" class="text-center" onclick="sortTable('MembersList', 2)" onmouseover="this.style.cursor='pointer'">Echéance</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,6 +60,8 @@
             {% endfor %}
                 <tr onclick="window.open('{{ path('club-attendanceAdd', {'club': data.Club.getClubId, 'lesson': data.Lesson.getClubLessonId}) }}', '_self')" onmouseover="this.style.cursor='pointer'">
                     <td colspan="3" class="text-center">Invité</td>
+                    <td class="visually-hidden">ZZ</td>
+                    <td class="visually-hidden"></td>
                 </tr>
             </tbody>
         </table>
