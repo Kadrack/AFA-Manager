@@ -29,7 +29,7 @@ class Login
     {
         if ($this->parameters->get('kernel.environment') == 'dev')
         {
-            $grantedUserId = array(1, 2, 3, 7, 9, 143);
+            $grantedUserId = array(1, 2, 3, 7, 9, 13, 143);
 
             in_array($event->getAuthenticationToken()->getUser()->getId(), $grantedUserId) ?: throw new AccessDeniedException('Accès refusé');
         }
