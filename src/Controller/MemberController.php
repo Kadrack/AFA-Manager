@@ -45,6 +45,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -541,7 +542,7 @@ class MemberController extends AbstractController
         }
 
         $data['SVG'] = Builder::create()
-            ->data('https://afamanager.aikido.be/lecture-qr-codes/membres/' . $member->getMemberValidQrCode())
+            ->data($this->generateUrl('common-qrReadingMember', array('qrCode' => $member->getMemberValidQrCode()), UrlGeneratorInterface::ABSOLUTE_URL))
             ->encoding(new Encoding('UTF-8'))
             ->roundBlockSizeMode(RoundBlockSizeMode::Enlarge)
             ->errorCorrectionLevel(ErrorCorrectionLevel::High)
